@@ -13,34 +13,36 @@ using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
 using System.Data.SQLite;
+using System.Diagnostics;
+using System.Windows.Media.Animation;
+using System.Windows.Threading;
+using System.Threading;
 
 namespace WPF_Budget_Project
 {
     public partial class LoginWindow : Window
     {
-        string dbConnectionString = @"Data Source=database.db;Version=3;";
         public LoginWindow()
         {
             InitializeComponent();
             Main.NavigationService.Navigate(new LoginPage());
         }
 
-        void baza(object sender, EventArgs e)
+        private void frame_Navigating(object sender, NavigatingCancelEventArgs e)
         {
-           /* SQLiteConnection sqLiteConn = new SQLiteConnection(dbConnectionString);
-            sqLiteConn.Open();
-            //string command = "select * from userinfo where mail='" + Mail.Text + "' and password='" + Password.Password + "'";
-            SQLiteCommand comm = new SQLiteCommand(command, sqLiteConn);
-            comm.ExecuteNonQuery();
-            SQLiteDataReader read = comm.ExecuteReader();
-            if (read.Read())
+            var ta = new ThicknessAnimation();
+            ta.Duration = TimeSpan.FromSeconds(0.3);
+            ta.DecelerationRatio = 0.7;
+            ta.To = new Thickness(0, 0, 0, 0);
+            if (e.NavigationMode == NavigationMode.New)
             {
-
+                ta.From = new Thickness(500, 0, 0, 0);
             }
-            else
+            else if (e.NavigationMode == NavigationMode.Back)
             {
-               // test.Text = "KUTAS";
-            }*/
+                ta.From = new Thickness(0, 0, 500, 0);
+            }
+                (e.Content as Page).BeginAnimation(MarginProperty, ta);
         }
     }
 }

@@ -12,11 +12,13 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
+using System.Data.SQLite;
 
 namespace WPF_Budget_Project
 {
     public partial class LoginPage : Page
     {
+        string dbConnectionString = @"Data Source=database.db;Version=3;";
         public LoginPage()
         {
             InitializeComponent();
@@ -29,7 +31,23 @@ namespace WPF_Budget_Project
 
         void Login_Click(object sender, EventArgs e)
         {
-
+            SQLiteConnection sqLiteConn = new SQLiteConnection(dbConnectionString);
+            sqLiteConn.Open();
+            string command = "select * from userinfo where mail='" + Mail.Text + "' and password='" + Password.Password + "'";
+            SQLiteCommand comm = new SQLiteCommand(command, sqLiteConn);
+            comm.ExecuteNonQuery();
+            SQLiteDataReader read = comm.ExecuteReader();
+            if (read.Read())
+            {
+                Window Program = new ProgramWindow();
+                Program.Show();
+                App.Current.MainWindow.Close();
+            }
+            else
+            {
+                Window OK = new Notification("Incorrect user e-mail or password. Type the correct user mail and password, and try again");
+                OK.Show();
+            }
         }
     }
 }

@@ -10,10 +10,6 @@
       FontSize="16">
 
     <Grid>
-        <Grid.Background>
-            <ImageBrush ImageSource="/Images/LoginBackground.jpg" Stretch="Fill" />
-        </Grid.Background>
-
         <Rectangle RadiusX="40" RadiusY="40" Margin="35" Width="300" Height="300" Opacity="0.7" Fill="White">
             <Rectangle.Effect>
                 <DropShadowEffect Color="green" Direction="270" BlurRadius="15" RenderingBias="Quality" ShadowDepth="1"/>
@@ -27,7 +23,12 @@
             <TextBlock Text="Password" HorizontalAlignment="Center" Margin="0 15 0 0"/>
             <PasswordBox x:Name="Password" MaxWidth="260" Margin="0 3 0 2"/>
             <Grid Margin="20">
-                <Button Content="Sign up" MaxWidth="120" Margin="0 0 0 0" Style="{StaticResource LoginButton}" Click="Register_Click" MinHeight="35"/>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="*"/>
+                </Grid.ColumnDefinitions>
+                <Button Grid.Column="0" Content="Return" MaxWidth="120" Margin="0 0 0 0" Style="{StaticResource LoginButton}"  Click="Return_Click" MinHeight="35"/>
+                <Button Grid.Column="1" Content="Sign up" MaxWidth="120" Margin="0 0 0 0" Style="{StaticResource LoginButton}" Click="Register_Click" MinHeight="35"/>
             </Grid>
         </StackPanel>
     </Grid>

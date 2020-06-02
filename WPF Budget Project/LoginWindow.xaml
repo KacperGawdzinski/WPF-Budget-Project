@@ -11,5 +11,8 @@
       FontFamily="Comic Sans MS"
       FontSize="16"
       Icon="icon.jpg">
-    <Frame x:Name="Main" NavigationUIVisibility="Hidden"/>
+    <Window.Background>
+        <ImageBrush ImageSource="/Images/LoginBackground.jpg" Stretch="Fill" />
+    </Window.Background>
+    <Frame x:Name="Main" NavigationUIVisibility="Hidden" Navigating="frame_Navigating"/>
 </Window>

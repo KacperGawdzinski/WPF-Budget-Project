@@ -12,11 +12,13 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
+using System.Data.SQLite;
 
 namespace WPF_Budget_Project
 {
     public partial class RegisterPage : Page
     {
+        string dbConnectionString = @"Data Source=database.db;Version=3;";
         public RegisterPage()
         {
             InitializeComponent();
@@ -24,7 +26,38 @@ namespace WPF_Budget_Project
 
         void Register_Click(object sender, EventArgs e)
         {
-           // NavigationService.Navigate(new RegisterPage());
+            if (!(Mail.Text.Contains("@")))
+            {
+                Window OK = new Notification("Incorrect user e-mail");
+                OK.Show();
+                return;
+            }
+            SQLiteConnection sqLiteConn = new SQLiteConnection(dbConnectionString);
+            sqLiteConn.Open();
+            string command = "select * from userinfo where mail='" + Mail.Text + "'";
+            SQLiteCommand comm = new SQLiteCommand(command, sqLiteConn);
+            comm.ExecuteNonQuery();
+            SQLiteDataReader read = comm.ExecuteReader();
+            if (read.Read())
+            {
+                Window OK = new Notification("User e-mail is already taken. Type the different user mail and password, and try again");
+                OK.Show();
+            }
+            else
+            {
+                command = "insert into userinfo (mail,password) values('" + Mail.Text + "','" + Password.Password + "')";
+                comm = new SQLiteCommand(command, sqLiteConn);
+                comm.ExecuteNonQuery();
+                read = comm.ExecuteReader();
+                NavigationService.Navigate(new LoginPage());
+                Window OK = new Notification("Registration completed");
+                OK.Show();
+            }
+        }
+
+        void Return_Click(object sender, EventArgs e)
+        {
+            NavigationService.Navigate(new LoginPage());
         }
     }
 }

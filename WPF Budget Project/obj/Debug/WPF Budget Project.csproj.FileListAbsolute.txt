@@ -64,3 +64,5 @@ C:\Users\Kacper\Desktop\WPF-Budget_Project\WPF Budget Project\obj\Debug\Register
 C:\Users\Kacper\Desktop\WPF-Budget_Project\WPF Budget Project\obj\Debug\RegisterPage.baml
 C:\Users\Kacper\Desktop\WPF-Budget_Project\WPF Budget Project\obj\Debug\LoginPage.g.cs
 C:\Users\Kacper\Desktop\WPF-Budget_Project\WPF Budget Project\obj\Debug\LoginPage.baml
+C:\Users\Kacper\Desktop\WPF-Budget_Project\WPF Budget Project\obj\Debug\Notification.g.cs
+C:\Users\Kacper\Desktop\WPF-Budget_Project\WPF Budget Project\obj\Debug\Notification.baml
