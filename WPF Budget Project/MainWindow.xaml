@@ -1,0 +1,21 @@
+﻿<Window x:Class="WPF_Budget_Project.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:WPF_Budget_Project"
+        mc:Ignorable="d"
+        FontFamily="Comic Sans MS"
+        FontSize="16"
+        Icon="icon.jpg"
+        Title="Budget App" Height="800" Width="1200">
+    <StackPanel>
+        <StackPanel Orientation="Horizontal">
+            <Button Content="Home" MinWidth="100" Click="Home_Button_Click" MinHeight="40" Style="{StaticResource PrettyButton}"/>
+            <Button Margin="10 0 0 0" Content="Add spending" MinWidth="130" MinHeight="40" Click="Add_Spending_Button_Click" Style="{StaticResource PrettyButton}" />
+            <Button Content="testbazydanych" Click="baza"/>
+        </StackPanel>
+        <TextBlock x:Name="xd"></TextBlock>
+        <Frame x:Name="Main" NavigationUIVisibility="Hidden"/>
+    </StackPanel>
+</Window>
