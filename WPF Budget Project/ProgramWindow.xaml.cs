@@ -58,28 +58,29 @@ namespace WPF_Budget_Project
         public DateTime time = DateTime.Now;
     }
 
-    public partial class MainWindow : Window
+    public partial class ProgramWindow : Window
     {
-        string dbConnectionString = @"Data Source=database.db;Version=3;";
-        public MainWindow()
+        //string dbConnectionString = @"Data Source=database.db;Version=3;";
+        public ProgramWindow()
         {
             //Content = new LoginPage();
-            InitializeComponent();
+            // InitializeComponent();
             //Background = new SolidColorBrush(Color.FromRgb(30, 30, 30));
-           // Foreground = new SolidColorBrush(Color.FromRgb(220, 220, 220));
-            Main.Content = new Home();
+            // Foreground = new SolidColorBrush(Color.FromRgb(220, 220, 220));
+            // Main.Content = new LoginPage();
+           // Window login = new LoginWindow();
+           // Close();
+           // login.Show();
         }
 
         void Home_Button_Click(object sender, RoutedEventArgs e)
         {
-            Main.Content = new Home();
+            //Main.Content = new Home();
         }
 
         void Add_Spending_Button_Click(object sender, EventArgs e)
         {
             Main.Content = new Add_Spending();
         }
-
-
     }
 }
