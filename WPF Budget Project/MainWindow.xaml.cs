@@ -60,13 +60,14 @@ namespace WPF_Budget_Project
 
     public partial class MainWindow : Window
     {
+        string dbConnectionString = @"Data Source=database.db;Version=3;";
         public MainWindow()
         {
-            Content = new LoginPage();
+            //Content = new LoginPage();
             InitializeComponent();
             //Background = new SolidColorBrush(Color.FromRgb(30, 30, 30));
            // Foreground = new SolidColorBrush(Color.FromRgb(220, 220, 220));
-           // Main.Content = new Home();
+            Main.Content = new Home();
         }
 
         void Home_Button_Click(object sender, RoutedEventArgs e)
@@ -79,9 +80,6 @@ namespace WPF_Budget_Project
             Main.Content = new Add_Spending();
         }
 
-        void baza(object sender, EventArgs e)
-        {
 
-        }
     }
 }

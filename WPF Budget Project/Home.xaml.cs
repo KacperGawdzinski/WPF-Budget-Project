@@ -12,6 +12,7 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
+using System.Data.SQLite;
 
 namespace WPF_Budget_Project
 {
@@ -20,9 +21,28 @@ namespace WPF_Budget_Project
     /// </summary>
     public partial class Home : Page
     {
+        string dbConnectionString = @"Data Source=database.db;Version=3;";
         public Home()
         {
             InitializeComponent();
+        }
+
+        void baza(object sender, EventArgs e)
+        {
+            SQLiteConnection sqLiteConn = new SQLiteConnection(dbConnectionString);
+            sqLiteConn.Open();
+            string command = "select * from userinfo where mail='" + Mail.Text + "' and password='" + Password.Text + "'";
+            SQLiteCommand comm = new SQLiteCommand(command, sqLiteConn);
+            comm.ExecuteNonQuery();
+            SQLiteDataReader read = comm.ExecuteReader();
+            if(read.Read())
+            {
+                test.Text = "correct";
+            }
+            else
+            {
+                test.Text = "KUTAS";
+            }
         }
     }
 }

@@ -13,7 +13,6 @@
         <StackPanel Orientation="Horizontal">
             <Button Content="Home" MinWidth="100" Click="Home_Button_Click" MinHeight="40" Style="{StaticResource PrettyButton}"/>
             <Button Margin="10 0 0 0" Content="Add spending" MinWidth="130" MinHeight="40" Click="Add_Spending_Button_Click" Style="{StaticResource PrettyButton}" />
-            <Button Content="testbazydanych" Click="baza"/>
         </StackPanel>
         <TextBlock x:Name="xd"></TextBlock>
         <Frame x:Name="Main" NavigationUIVisibility="Hidden"/>
