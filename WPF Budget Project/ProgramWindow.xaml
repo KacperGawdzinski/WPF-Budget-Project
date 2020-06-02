@@ -7,12 +7,14 @@
         mc:Ignorable="d"
         FontFamily="Comic Sans MS"
         FontSize="16"
-        Icon="icon.jpg"
+        Icon="icon.ico"
+        WindowStartupLocation="CenterScreen"
+        ResizeMode="NoResize"
         Title="Budget App" Height="800" Width="1200">
     <StackPanel>
         <StackPanel Orientation="Horizontal">
-            <Button Content="Home" MinWidth="100" Click="Home_Button_Click" MinHeight="40" Style="{StaticResource PrettyButton}" IsEnabled="False"/>
-            <Button Margin="10 0 0 0" Content="Add spending" MinWidth="130" MinHeight="40" Click="Add_Spending_Button_Click" Style="{StaticResource PrettyButton}" IsEnabled="False"/>
+            <Button Content="Home" MinWidth="100" Click="Home_Button_Click" MinHeight="40" Style="{StaticResource PrettyButton}" />
+            <Button Margin="10 0 0 0" Content="Add spending" MinWidth="130" MinHeight="40" Click="Add_Spending_Button_Click" Style="{StaticResource PrettyButton}" />
         </StackPanel>
         <TextBlock x:Name="xd"></TextBlock>
         <Frame x:Name="Main" NavigationUIVisibility="Hidden"/>

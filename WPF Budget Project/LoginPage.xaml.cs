@@ -31,6 +31,12 @@ namespace WPF_Budget_Project
 
         void Login_Click(object sender, EventArgs e)
         {
+            if(Mail.Text == "" || Password.Password=="")
+            {
+                Window OK = new Notification("Every field must be filled!");
+                OK.Show();
+                return;
+            }
             SQLiteConnection sqLiteConn = new SQLiteConnection(dbConnectionString);
             sqLiteConn.Open();
             string command = "select * from userinfo where mail='" + Mail.Text + "' and password='" + Password.Password + "'";

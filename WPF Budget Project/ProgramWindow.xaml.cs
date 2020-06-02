@@ -64,7 +64,7 @@ namespace WPF_Budget_Project
         public ProgramWindow()
         {
             //Content = new LoginPage();
-            // InitializeComponent();
+             InitializeComponent();
             //Background = new SolidColorBrush(Color.FromRgb(30, 30, 30));
             // Foreground = new SolidColorBrush(Color.FromRgb(220, 220, 220));
             // Main.Content = new LoginPage();

@@ -6,11 +6,12 @@
         xmlns:local="clr-namespace:WPF_Budget_Project"
         mc:Ignorable="d"
         WindowStartupLocation="CenterScreen"
+        ResizeMode="NoResize"
         FontFamily="Comic Sans MS"
         FontSize="14"
         Title="Notification" Height="170" Width="250">
     <StackPanel>
-        <TextBlock x:Name="Notification_Text" Text="xd" Margin="5 0 5 0" TextWrapping="Wrap" MaxWidth="300" HorizontalAlignment="Center"/>
+        <TextBlock x:Name="Notification_Text" Margin="5 0 5 0" TextWrapping="Wrap" MaxWidth="300" HorizontalAlignment="Center"/>
         <Button Content="OK" Style="{StaticResource LoginButton}" MaxWidth="100" MinHeight="40" Margin="0 20 0 10" Click="OK_Click"/>
     </StackPanel>
 </Window>

@@ -26,12 +26,19 @@ namespace WPF_Budget_Project
 
         void Register_Click(object sender, EventArgs e)
         {
+            if (Mail.Text == "" || Password.Password == "")
+            {
+                Window OK = new Notification("Every field must be filled!");
+                OK.Show();
+                return;
+            }
             if (!(Mail.Text.Contains("@")))
             {
                 Window OK = new Notification("Incorrect user e-mail");
                 OK.Show();
                 return;
             }
+
             SQLiteConnection sqLiteConn = new SQLiteConnection(dbConnectionString);
             sqLiteConn.Open();
             string command = "select * from userinfo where mail='" + Mail.Text + "'";
@@ -57,7 +64,7 @@ namespace WPF_Budget_Project
 
         void Return_Click(object sender, EventArgs e)
         {
-            NavigationService.Navigate(new LoginPage());
+            NavigationService.GoBack();
         }
     }
 }

@@ -28,10 +28,10 @@ namespace WPF_Budget_Project
             Main.NavigationService.Navigate(new LoginPage());
         }
 
-        private void frame_Navigating(object sender, NavigatingCancelEventArgs e)
+        private void Frame_Navigating(object sender, NavigatingCancelEventArgs e)
         {
             var ta = new ThicknessAnimation();
-            ta.Duration = TimeSpan.FromSeconds(0.3);
+            ta.Duration = TimeSpan.FromSeconds(0.2);
             ta.DecelerationRatio = 0.7;
             ta.To = new Thickness(0, 0, 0, 0);
             if (e.NavigationMode == NavigationMode.New)
@@ -42,7 +42,7 @@ namespace WPF_Budget_Project
             {
                 ta.From = new Thickness(0, 0, 500, 0);
             }
-                (e.Content as Page).BeginAnimation(MarginProperty, ta);
+            (e.Content as Page).BeginAnimation(MarginProperty, ta);
         }
     }
 }
