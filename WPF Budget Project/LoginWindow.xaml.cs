@@ -22,6 +22,7 @@ namespace WPF_Budget_Project
         public LoginWindow()
         {
             InitializeComponent();
+            Main.NavigationService.Navigate(new LoginPage());
         }
 
         void baza(object sender, EventArgs e)

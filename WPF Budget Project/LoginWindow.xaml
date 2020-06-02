@@ -11,32 +11,5 @@
       FontFamily="Comic Sans MS"
       FontSize="16"
       Icon="icon.jpg">
-
-    <Grid>
-        <Grid.Background>
-            <ImageBrush ImageSource="/Images/LoginBackground.jpg" Stretch="Fill" />
-        </Grid.Background>
-        <Rectangle RadiusX="40" RadiusY="40" Margin="35" Width="300" Height="300" Opacity="0.7" Fill="White">
-            <Rectangle.Effect>
-                <DropShadowEffect Color="green" Direction="270" BlurRadius="15" RenderingBias="Quality" ShadowDepth="1"/>
-            </Rectangle.Effect>
-        </Rectangle>
-        <StackPanel Width="300" Height="300">
-        <TextBlock Text="LOGIN" HorizontalAlignment="Center" Margin="20" FontSize="24"/>
-        <Separator/>
-        <TextBlock Text="E-Mail" HorizontalAlignment="Center" Margin="0 15 0 2"/>
-        <TextBox x:Name="Mail" MaxWidth="260"/>
-            <TextBlock Text="Password" HorizontalAlignment="Center" Margin="0 15 0 0"/>
-            <PasswordBox x:Name="Password" MaxWidth="260" Margin="0 3 0 2"/>
-        <Grid Margin="20">
-            <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="*"/>
-                <ColumnDefinition Width="*"/>
-            </Grid.ColumnDefinitions>
-                <Button Grid.Column="0" Content="Login" Click="baza" MaxWidth="120" MinHeight="35" Margin="0 0 0 0" Style="{StaticResource LoginButton}"/>
-                <Button Grid.Column="1" Content="Sign up" Click="baza" MaxWidth="120" Margin="0 0 0 0" Style="{StaticResource LoginButton}" MinHeight="35"/>
-        </Grid>
-            <Frame x:Name="Main" NavigationUIVisibility="Hidden"/>
-        </StackPanel>
-    </Grid>
+    <Frame x:Name="Main" NavigationUIVisibility="Hidden"/>
 </Window>
