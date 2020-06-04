@@ -4,11 +4,42 @@
       xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
       xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
       xmlns:local="clr-namespace:WPF_Budget_Project"
+      xmlns:lvc="clr-namespace:LiveCharts.Wpf;assembly=LiveCharts.Wpf"
       mc:Ignorable="d" 
-      d:DesignHeight="450" d:DesignWidth="800"
       Title="Home">
 
     <Grid>
-        <TextBlock x:Name="Balance" Text="Balance:" MinHeight="100" Margin="670 40 0 0" FontSize="48"/>
+        <Grid Height="300" Width="450" VerticalAlignment="Top" HorizontalAlignment="Right" Margin="30 70 100 0">
+            <lvc:PieChart Name="Chart" Series="{Binding SeriesCollection}" 
+                          LegendLocation="Left" InnerRadius="100">
+                <lvc:PieChart.ChartLegend>
+                    <lvc:DefaultLegend BulletSize="20"/>
+                </lvc:PieChart.ChartLegend>
+                <lvc:PieChart.DataTooltip>
+                    <lvc:DefaultTooltip Visibility="Hidden"/>
+                </lvc:PieChart.DataTooltip>
+            </lvc:PieChart>
+            <Grid  Margin="151 0 0 0">
+                <Ellipse Width="200" Height="200" Fill="#a5d6a7"/>
+                <TextBlock x:Name="Balance" FontSize="34" HorizontalAlignment="Center" VerticalAlignment="Center" Margin="0 0 0 10"/>
+                <TextBlock x:Name="BalanceText" Text="Total Balance" HorizontalAlignment="Center" VerticalAlignment="Center" FontSize="18" Foreground="#424242" Margin="0 45 0 0"/>
+            </Grid>
+        </Grid>
+        <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"></RowDefinition>
+            <RowDefinition Height="*"></RowDefinition>
+        </Grid.RowDefinitions>
+            <StackPanel Grid.Row="0" Orientation="Horizontal">
+                <Button Click="RestartOnClick">Restart</Button>
+            <TextBlock VerticalAlignment="Center" Padding="10 0">Series</TextBlock>
+            <Button Click="AddSeriesOnClick" MinWidth="30">
+                +
+            </Button>
+                <Button Click="RemoveSeriesOnClick" MinWidth="30">
+                    -
+                </Button>
+            </StackPanel>
+        </Grid>
     </Grid>
 </Page>

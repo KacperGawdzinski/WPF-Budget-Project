@@ -1,10 +1,12 @@
 {
   "version": 2,
-  "dgSpecHash": "FlMUWahfdwHQ7MBYLx+Fs7xYEQDKtB2CX1swCckNiglT6AQ8kDMGsFAL7El7pysBLaIUbWJEhUKjt35ytoNlCw==",
+  "dgSpecHash": "5cnzKJz2dp8kNQx7AqxRaEGQ+y/ZGvY2LY8qKOD1F8FwcArPMPQCB5eCNDqQUJWXeV9n5VrZ3ZXUCh7yflePYw==",
   "success": true,
   "projectFilePath": "C:\\Users\\Kacper\\Desktop\\WPF-Budget_Project\\WPF Budget Project\\WPF Budget Project.csproj",
   "expectedPackageFiles": [
     "C:\\Users\\Kacper\\.nuget\\packages\\entityframework\\6.3.0\\entityframework.6.3.0.nupkg.sha512",
+    "C:\\Users\\Kacper\\.nuget\\packages\\livecharts\\0.9.7\\livecharts.0.9.7.nupkg.sha512",
+    "C:\\Users\\Kacper\\.nuget\\packages\\livecharts.wpf\\0.9.7\\livecharts.wpf.0.9.7.nupkg.sha512",
     "C:\\Users\\Kacper\\.nuget\\packages\\materialdesigncolors\\1.2.6\\materialdesigncolors.1.2.6.nupkg.sha512",
     "C:\\Users\\Kacper\\.nuget\\packages\\materialdesignthemes\\3.1.3\\materialdesignthemes.3.1.3.nupkg.sha512",
     "C:\\Users\\Kacper\\.nuget\\packages\\system.data.sqlite\\1.0.113.1\\system.data.sqlite.1.0.113.1.nupkg.sha512",

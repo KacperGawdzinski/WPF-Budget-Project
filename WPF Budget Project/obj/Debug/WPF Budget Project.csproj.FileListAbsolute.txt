@@ -69,3 +69,7 @@ C:\Users\Kacper\Desktop\WPF-Budget_Project\WPF Budget Project\obj\Debug\WPF Budg
 C:\Users\Kacper\Desktop\WPF-Budget_Project\WPF Budget Project\obj\Debug\WPF Budget Project.exe
 C:\Users\Kacper\Desktop\WPF-Budget_Project\WPF Budget Project\obj\Debug\WPF Budget Project.pdb
 C:\Users\Kacper\Desktop\WPF-Budget_Project\WPF Budget Project\obj\Debug\WPF Budget Project.csprojAssemblyReference.cache
+C:\Users\Kacper\Desktop\WPF-Budget_Project\WPF Budget Project\bin\Debug\LiveCharts.dll
+C:\Users\Kacper\Desktop\WPF-Budget_Project\WPF Budget Project\bin\Debug\LiveCharts.pdb
+C:\Users\Kacper\Desktop\WPF-Budget_Project\WPF Budget Project\bin\Debug\LiveCharts.Wpf.dll
+C:\Users\Kacper\Desktop\WPF-Budget_Project\WPF Budget Project\bin\Debug\LiveCharts.Wpf.pdb

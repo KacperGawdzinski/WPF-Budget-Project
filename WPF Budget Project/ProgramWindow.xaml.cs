@@ -61,25 +61,19 @@ namespace WPF_Budget_Project
     public partial class ProgramWindow : Window
     {
         string UserMail;
-        public ProgramWindow(string x)
+        string dbConnectionString;
+        public ProgramWindow(string x, string y)
         {
             InitializeComponent();
             UserMail = x;
-            Main.Navigate(new Home(UserMail));
-           // Date.Text = "Today is: " + DateTime.Today.ToString("dd-MM-yyyy");
-        }
-
-        public ProgramWindow()
-        {
-            InitializeComponent();
-            UserMail = "TEST";
-            Main.Navigate(new Home(UserMail));
+            dbConnectionString = y;
+            Main.Navigate(new Home(UserMail,dbConnectionString));
             // Date.Text = "Today is: " + DateTime.Today.ToString("dd-MM-yyyy");
         }
 
         void Home_Button_Click(object sender, RoutedEventArgs e)
         {
-            Main.Navigate(new Home(UserMail));
+            Main.Navigate(new Home(UserMail, dbConnectionString));
         }
 
         void Add_Spending_Button_Click(object sender, EventArgs e)
@@ -103,7 +97,7 @@ namespace WPF_Budget_Project
             OpenButton.Visibility = Visibility.Collapsed;
             CloseButton.Visibility = Visibility.Visible;
             SidePanel.Focus();
-            SidePanel.LostFocus
+            SidePanel.MouseLeave += CloseButton_Click;
         }
     }
 }

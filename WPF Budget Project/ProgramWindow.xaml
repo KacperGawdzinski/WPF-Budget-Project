@@ -14,10 +14,6 @@
         ResizeMode="NoResize"
         Title="Clerk" Height="800" Width="1200">
     
-    <Window.Background>
-        <ImageBrush ImageSource="/Images/ProgramBackground.jpg" Stretch="Fill" />
-    </Window.Background>
-    
     <Window.Resources>
         <Storyboard x:Key="MenuOpen">
             <DoubleAnimationUsingKeyFrames Storyboard.TargetProperty="(FrameworkElement.Width)" Storyboard.TargetName="SidePanel">
@@ -40,28 +36,28 @@
         <EventTrigger RoutedEvent="ButtonBase.Click" SourceName="CloseButton">
             <BeginStoryboard Storyboard="{StaticResource MenuClose}"/>
         </EventTrigger>
-        <EventTrigger RoutedEvent="LostFocus" SourceName="SidePanel">
+        <EventTrigger RoutedEvent="Grid.MouseLeave" SourceName="SidePanel">
             <BeginStoryboard Storyboard="{StaticResource MenuClose}"/>
-            
         </EventTrigger>
     </Window.Triggers>
 
     <Grid>
-        <Button x:Name="CloseButton" Visibility="Collapsed" Click="CloseButton_Click" Height="30"  HorizontalAlignment="Left" VerticalAlignment="Top">
+        <Frame x:Name="Main" NavigationUIVisibility="Hidden" Navigated="Main_Navigated" Background="#66bb6a"/>
+        <Button x:Name="CloseButton" BorderBrush="#2e7d32" Background="#2e7d32" Visibility="Collapsed" Click="CloseButton_Click" Height="30"  HorizontalAlignment="Left" VerticalAlignment="Top">
             <StackPanel Orientation="Horizontal">
                 <materialDesign:PackIcon Kind="ArrowLeft" VerticalAlignment="Center"/>
                 </StackPanel>
             </Button>
-        <Button x:Name="OpenButton" Click="OpenButton_Click" HorizontalAlignment="Left" Height="30" VerticalAlignment="Top">
+        <Button x:Name="OpenButton" BorderBrush="#2e7d32" Background="#2e7d32" Click="OpenButton_Click" HorizontalAlignment="Left" Height="30" VerticalAlignment="Top">
             <StackPanel Orientation="Horizontal">
                 <materialDesign:PackIcon Kind="Menu" VerticalAlignment="Center"/>
             </StackPanel>
         </Button>
 
         <Grid x:Name="SidePanel" Width="0" HorizontalAlignment="Left" Background="LightYellow" Margin="0 30 0 430" Focusable="True">
-            <ListView Background="LightYellow" ScrollViewer.HorizontalScrollBarVisibility="Hidden">
-                <ListViewItem Height="60">
-                    <Button x:Name="HomeButton">
+            <ListView Background="LightYellow" ScrollViewer.HorizontalScrollBarVisibility="Hidden" >
+                <ListViewItem Height="60" >
+                    <Button x:Name="HomeButton" BorderBrush="#2e7d32" Background="#2e7d32" >
                         <StackPanel Orientation="Horizontal">
                             <materialDesign:PackIcon Kind="Home" VerticalAlignment="Center" HorizontalAlignment="Center"/>
                             <TextBlock Text="Home" Margin="20 0 0 0"/>
@@ -69,7 +65,7 @@
                     </Button>
                 </ListViewItem>
                 <ListViewItem Height="60">
-                    <Button x:Name="AddButton">
+                    <Button x:Name="AddButton" BorderBrush="#2e7d32" Background="#2e7d32">
                         <StackPanel Orientation="Horizontal">
                             <materialDesign:PackIcon Kind="Plus" VerticalAlignment="Center" HorizontalAlignment="Center"/>
                             <TextBlock Text="Add entry" Margin="20 0 0 0"/>
@@ -77,7 +73,7 @@
                     </Button>
                 </ListViewItem>
                 <ListViewItem Height="60">
-                    <Button x:Name="SubstractButton">
+                    <Button x:Name="SubstractButton" BorderBrush="#2e7d32" Background="#2e7d32">
                         <StackPanel Orientation="Horizontal">
                             <materialDesign:PackIcon Kind="Minus" VerticalAlignment="Center" HorizontalAlignment="Center"/>
                             <TextBlock Text="Delete entry" Margin="20 0 0 0"/>
@@ -85,7 +81,7 @@
                     </Button>
                 </ListViewItem>
                 <ListViewItem Height="60">
-                    <Button x:Name="HistoryButton">
+                    <Button x:Name="HistoryButton" BorderBrush="#2e7d32" Background="#2e7d32">
                         <StackPanel Orientation="Horizontal">
                             <materialDesign:PackIcon Kind="History" VerticalAlignment="Center" HorizontalAlignment="Center"/>
                             <TextBlock Text="History" Margin="20 0 0 0"/>
@@ -93,7 +89,7 @@
                     </Button>
                 </ListViewItem>
                 <ListViewItem Height="60">
-                    <Button x:Name="AnalysisButton">
+                    <Button x:Name="AnalysisButton" BorderBrush="#2e7d32" Background="#2e7d32">
                         <StackPanel Orientation="Horizontal">
                             <materialDesign:PackIcon Kind="Analog" VerticalAlignment="Center" HorizontalAlignment="Center"/>
                             <TextBlock Text="Analysis" Margin="20 0 0 0"/>
@@ -102,7 +98,5 @@
                 </ListViewItem>
             </ListView>
         </Grid>
-        <Frame x:Name="Main" NavigationUIVisibility="Hidden" Navigated="Main_Navigated"/>
-        <Button Content="XDDDDDDDDDDDDDD"/>
     </Grid>
 </Window>

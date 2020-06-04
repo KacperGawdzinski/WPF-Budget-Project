@@ -45,7 +45,9 @@ namespace WPF_Budget_Project
             SQLiteDataReader read = comm.ExecuteReader();
             if (read.Read())
             {
-                Window Program = new ProgramWindow(Mail.Text);
+                read.Close();
+                sqLiteConn.Close();
+                Window Program = new ProgramWindow(Mail.Text, dbConnectionString);
                 Program.Show();
                 App.Current.MainWindow.Close();
             }
