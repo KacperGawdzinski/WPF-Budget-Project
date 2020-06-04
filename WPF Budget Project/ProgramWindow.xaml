@@ -3,20 +3,106 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
         xmlns:local="clr-namespace:WPF_Budget_Project"
         mc:Ignorable="d"
         FontFamily="Comic Sans MS"
         FontSize="16"
+        Foreground="White"
         Icon="icon.ico"
         WindowStartupLocation="CenterScreen"
         ResizeMode="NoResize"
-        Title="Budget App" Height="800" Width="1200">
-    <StackPanel>
-        <StackPanel Orientation="Horizontal">
-            <Button Content="Home" MinWidth="100" Click="Home_Button_Click" MinHeight="40" Style="{StaticResource PrettyButton}" />
-            <Button Margin="10 0 0 0" Content="Add spending" MinWidth="130" MinHeight="40" Click="Add_Spending_Button_Click" Style="{StaticResource PrettyButton}" />
-        </StackPanel>
-        <TextBlock x:Name="xd"></TextBlock>
-        <Frame x:Name="Main" NavigationUIVisibility="Hidden"/>
-    </StackPanel>
+        Title="Clerk" Height="800" Width="1200">
+    
+    <Window.Background>
+        <ImageBrush ImageSource="/Images/ProgramBackground.jpg" Stretch="Fill" />
+    </Window.Background>
+    
+    <Window.Resources>
+        <Storyboard x:Key="MenuOpen">
+            <DoubleAnimationUsingKeyFrames Storyboard.TargetProperty="(FrameworkElement.Width)" Storyboard.TargetName="SidePanel">
+                <EasingDoubleKeyFrame KeyTime="0" Value="0"/> <!--expected width when starting animation-->
+                <EasingDoubleKeyFrame KeyTime="0:0:0:0.1" Value="200"/> <!--expected width after animation-->
+            </DoubleAnimationUsingKeyFrames>
+        </Storyboard>
+        <Storyboard x:Key="MenuClose">
+            <DoubleAnimationUsingKeyFrames Storyboard.TargetProperty="(FrameworkElement.Width)" Storyboard.TargetName="SidePanel">
+                <EasingDoubleKeyFrame KeyTime="0" Value="200"/>
+                <EasingDoubleKeyFrame KeyTime="0:0:0:0.1" Value="0"/>
+            </DoubleAnimationUsingKeyFrames>
+        </Storyboard>
+    </Window.Resources>
+    
+    <Window.Triggers>
+        <EventTrigger RoutedEvent="ButtonBase.Click" SourceName="OpenButton">
+            <BeginStoryboard Storyboard="{StaticResource MenuOpen}"/>
+        </EventTrigger>
+        <EventTrigger RoutedEvent="ButtonBase.Click" SourceName="CloseButton">
+            <BeginStoryboard Storyboard="{StaticResource MenuClose}"/>
+        </EventTrigger>
+        <EventTrigger RoutedEvent="LostFocus" SourceName="SidePanel">
+            <BeginStoryboard Storyboard="{StaticResource MenuClose}"/>
+            
+        </EventTrigger>
+    </Window.Triggers>
+
+    <Grid>
+        <Button x:Name="CloseButton" Visibility="Collapsed" Click="CloseButton_Click" Height="30"  HorizontalAlignment="Left" VerticalAlignment="Top">
+            <StackPanel Orientation="Horizontal">
+                <materialDesign:PackIcon Kind="ArrowLeft" VerticalAlignment="Center"/>
+                </StackPanel>
+            </Button>
+        <Button x:Name="OpenButton" Click="OpenButton_Click" HorizontalAlignment="Left" Height="30" VerticalAlignment="Top">
+            <StackPanel Orientation="Horizontal">
+                <materialDesign:PackIcon Kind="Menu" VerticalAlignment="Center"/>
+            </StackPanel>
+        </Button>
+
+        <Grid x:Name="SidePanel" Width="0" HorizontalAlignment="Left" Background="LightYellow" Margin="0 30 0 430" Focusable="True">
+            <ListView Background="LightYellow" ScrollViewer.HorizontalScrollBarVisibility="Hidden">
+                <ListViewItem Height="60">
+                    <Button x:Name="HomeButton">
+                        <StackPanel Orientation="Horizontal">
+                            <materialDesign:PackIcon Kind="Home" VerticalAlignment="Center" HorizontalAlignment="Center"/>
+                            <TextBlock Text="Home" Margin="20 0 0 0"/>
+                        </StackPanel>
+                    </Button>
+                </ListViewItem>
+                <ListViewItem Height="60">
+                    <Button x:Name="AddButton">
+                        <StackPanel Orientation="Horizontal">
+                            <materialDesign:PackIcon Kind="Plus" VerticalAlignment="Center" HorizontalAlignment="Center"/>
+                            <TextBlock Text="Add entry" Margin="20 0 0 0"/>
+                        </StackPanel>
+                    </Button>
+                </ListViewItem>
+                <ListViewItem Height="60">
+                    <Button x:Name="SubstractButton">
+                        <StackPanel Orientation="Horizontal">
+                            <materialDesign:PackIcon Kind="Minus" VerticalAlignment="Center" HorizontalAlignment="Center"/>
+                            <TextBlock Text="Delete entry" Margin="20 0 0 0"/>
+                        </StackPanel>
+                    </Button>
+                </ListViewItem>
+                <ListViewItem Height="60">
+                    <Button x:Name="HistoryButton">
+                        <StackPanel Orientation="Horizontal">
+                            <materialDesign:PackIcon Kind="History" VerticalAlignment="Center" HorizontalAlignment="Center"/>
+                            <TextBlock Text="History" Margin="20 0 0 0"/>
+                        </StackPanel>
+                    </Button>
+                </ListViewItem>
+                <ListViewItem Height="60">
+                    <Button x:Name="AnalysisButton">
+                        <StackPanel Orientation="Horizontal">
+                            <materialDesign:PackIcon Kind="Analog" VerticalAlignment="Center" HorizontalAlignment="Center"/>
+                            <TextBlock Text="Analysis" Margin="20 0 0 0"/>
+                        </StackPanel>
+                    </Button>
+                </ListViewItem>
+            </ListView>
+        </Grid>
+        <Frame x:Name="Main" NavigationUIVisibility="Hidden" Navigated="Main_Navigated"/>
+        <Button Content="XDDDDDDDDDDDDDD"/>
+    </Grid>
 </Window>

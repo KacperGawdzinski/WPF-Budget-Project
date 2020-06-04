@@ -60,27 +60,50 @@ namespace WPF_Budget_Project
 
     public partial class ProgramWindow : Window
     {
-        //string dbConnectionString = @"Data Source=database.db;Version=3;";
+        string UserMail;
+        public ProgramWindow(string x)
+        {
+            InitializeComponent();
+            UserMail = x;
+            Main.Navigate(new Home(UserMail));
+           // Date.Text = "Today is: " + DateTime.Today.ToString("dd-MM-yyyy");
+        }
+
         public ProgramWindow()
         {
-            //Content = new LoginPage();
-             InitializeComponent();
-            //Background = new SolidColorBrush(Color.FromRgb(30, 30, 30));
-            // Foreground = new SolidColorBrush(Color.FromRgb(220, 220, 220));
-            // Main.Content = new LoginPage();
-           // Window login = new LoginWindow();
-           // Close();
-           // login.Show();
+            InitializeComponent();
+            UserMail = "TEST";
+            Main.Navigate(new Home(UserMail));
+            // Date.Text = "Today is: " + DateTime.Today.ToString("dd-MM-yyyy");
         }
 
         void Home_Button_Click(object sender, RoutedEventArgs e)
         {
-            //Main.Content = new Home();
+            Main.Navigate(new Home(UserMail));
         }
 
         void Add_Spending_Button_Click(object sender, EventArgs e)
         {
             Main.Content = new Add_Spending();
+        }
+
+        private void Main_Navigated(object sender, EventArgs e)
+        {
+
+        }
+
+        private void CloseButton_Click(object sender, EventArgs e)
+        {
+            OpenButton.Visibility = Visibility.Visible;
+            CloseButton.Visibility = Visibility.Collapsed;
+        }
+
+        private void OpenButton_Click(object sender, EventArgs e)
+        {
+            OpenButton.Visibility = Visibility.Collapsed;
+            CloseButton.Visibility = Visibility.Visible;
+            SidePanel.Focus();
+            SidePanel.LostFocus
         }
     }
 }
