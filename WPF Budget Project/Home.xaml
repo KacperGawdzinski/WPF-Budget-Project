@@ -19,7 +19,7 @@
                     <lvc:DefaultTooltip Visibility="Hidden"/>
                 </lvc:PieChart.DataTooltip>
             </lvc:PieChart>
-            <Grid  Margin="151 0 0 0">
+            <Grid Margin="126 0 0 0">
                 <Ellipse Width="200" Height="200" Fill="#a5d6a7"/>
                 <TextBlock x:Name="Balance" FontSize="34" HorizontalAlignment="Center" VerticalAlignment="Center" Margin="0 0 0 10"/>
                 <TextBlock x:Name="BalanceText" Text="Total Balance" HorizontalAlignment="Center" VerticalAlignment="Center" FontSize="18" Foreground="#424242" Margin="0 45 0 0"/>

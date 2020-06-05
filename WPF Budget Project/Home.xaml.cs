@@ -27,19 +27,17 @@ namespace WPF_Budget_Project
             UserMail = x;
             InitializeComponent();
             Balance.Text = "1";
-            dbConnectionString = y;
+            /*dbConnectionString = y;
             string sql = "create table xd (name TEXT, score TEXT)";
             SQLiteConnection m_dbConnection = new SQLiteConnection(dbConnectionString);
             m_dbConnection.Open();
             SQLiteCommand command = new SQLiteCommand(sql, m_dbConnection);
             command.ExecuteNonQuery();
-            m_dbConnection.Close();
-
-
+            m_dbConnection.Close();*/
 
             SeriesCollection = new SeriesCollection
             {
-                new PieSeries
+                /*new PieSeries
                 {
                     Title = "Food",
                     Values = new ChartValues<ObservableValue> { new ObservableValue(20) },
@@ -62,7 +60,7 @@ namespace WPF_Budget_Project
                     Title = "Explorer",
                     Values = new ChartValues<ObservableValue> { new ObservableValue(4) },
                   //  DataLabels = true
-                }
+                }*/
             };
             DataContext = this;
         }
@@ -72,7 +70,7 @@ namespace WPF_Budget_Project
         private void AddSeriesOnClick(object sender, RoutedEventArgs e)
         {
             var r = new Random();
-            var c = SeriesCollection.Count > 0 ? SeriesCollection[0].Values.Count : 5;
+            var c = SeriesCollection.Count > 0 ? SeriesCollection[0].Values.Count : 1;
 
             var vals = new ChartValues<ObservableValue>();
 

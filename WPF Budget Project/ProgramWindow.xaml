@@ -57,7 +57,7 @@
         <Grid x:Name="SidePanel" Width="0" HorizontalAlignment="Left" Background="LightYellow" Margin="0 30 0 430" Focusable="True">
             <ListView Background="LightYellow" ScrollViewer.HorizontalScrollBarVisibility="Hidden" >
                 <ListViewItem Height="60" >
-                    <Button x:Name="HomeButton" BorderBrush="#2e7d32" Background="#2e7d32" >
+                    <Button x:Name="HomeButton" BorderBrush="#2e7d32" Background="#2e7d32" Click="Home_Button_Click">
                         <StackPanel Orientation="Horizontal">
                             <materialDesign:PackIcon Kind="Home" VerticalAlignment="Center" HorizontalAlignment="Center"/>
                             <TextBlock Text="Home" Margin="20 0 0 0"/>
@@ -65,7 +65,7 @@
                     </Button>
                 </ListViewItem>
                 <ListViewItem Height="60">
-                    <Button x:Name="AddButton" BorderBrush="#2e7d32" Background="#2e7d32">
+                    <Button x:Name="AddButton" BorderBrush="#2e7d32" Background="#2e7d32" Click="AddButton_Click">
                         <StackPanel Orientation="Horizontal">
                             <materialDesign:PackIcon Kind="Plus" VerticalAlignment="Center" HorizontalAlignment="Center"/>
                             <TextBlock Text="Add entry" Margin="20 0 0 0"/>

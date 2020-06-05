@@ -16,7 +16,7 @@ using System.Data.SQLite;
 
 namespace WPF_Budget_Project
 {
-    public partial class Category
+    /*public partial class Category
     {
         string name;
         double max;
@@ -56,7 +56,7 @@ namespace WPF_Budget_Project
     public partial class Budget
     {
         public DateTime time = DateTime.Now;
-    }
+    }*/
 
     public partial class ProgramWindow : Window
     {
@@ -68,7 +68,7 @@ namespace WPF_Budget_Project
             UserMail = x;
             dbConnectionString = y;
             Main.Navigate(new Home(UserMail,dbConnectionString));
-            // Date.Text = "Today is: " + DateTime.Today.ToString("dd-MM-yyyy");
+            //Date.Text = "Today is: " + DateTime.Today.ToString("dd-MM-yyyy");
         }
 
         void Home_Button_Click(object sender, RoutedEventArgs e)
@@ -76,9 +76,9 @@ namespace WPF_Budget_Project
             Main.Navigate(new Home(UserMail, dbConnectionString));
         }
 
-        void Add_Spending_Button_Click(object sender, EventArgs e)
+        void AddButton_Click(object sender, EventArgs e)
         {
-            Main.Content = new Add_Spending();
+            Main.Navigate(new AddPage());
         }
 
         private void Main_Navigated(object sender, EventArgs e)

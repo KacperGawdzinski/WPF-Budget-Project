@@ -16,11 +16,11 @@ using System.Windows.Shapes;
 namespace WPF_Budget_Project
 {
     /// <summary>
-    /// Logika interakcji dla klasy Add_Spending.xaml
+    /// Logika interakcji dla klasy AddPage.xaml
     /// </summary>
-    public partial class Add_Spending : Page
+    public partial class AddPage : Page
     {
-        public Add_Spending()
+        public AddPage()
         {
             InitializeComponent();
         }
