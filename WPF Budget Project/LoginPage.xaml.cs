@@ -47,7 +47,7 @@ namespace WPF_Budget_Project
             {
                 read.Close();
                 sqLiteConn.Close();
-                Window Program = new ProgramWindow(Mail.Text, dbConnectionString);
+                Window Program = new ProgramWindow(Mail.Text);
                 Program.Show();
                 App.Current.MainWindow.Close();
             }

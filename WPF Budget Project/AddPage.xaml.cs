@@ -27,6 +27,9 @@ namespace WPF_Budget_Project
         public AddPage()
         {
             InitializeComponent();
+            /*DateTime x = new DateTime(2000,1,11);
+            x = x.AddDays(50);
+            Console.WriteLine(x.ToString("dd.MM.yyyy"));*/
         }
 
         void IncomeChecked(object sender, EventArgs e)

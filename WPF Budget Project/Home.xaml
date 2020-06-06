@@ -6,10 +6,19 @@
       xmlns:local="clr-namespace:WPF_Budget_Project"
       xmlns:lvc="clr-namespace:LiveCharts.Wpf;assembly=LiveCharts.Wpf"
       mc:Ignorable="d" 
-      Title="Home">
+      Title="Home"
+      FontFamily="Comic Sans MS"
+      FontSize="16"
+      Foreground="White">
 
     <Grid>
+        <TextBlock x:Name="Date" HorizontalAlignment="Center" Margin="0 30 0 0"/>
         <Grid Height="300" Width="450" VerticalAlignment="Top" HorizontalAlignment="Right" Margin="30 70 100 0">
+            <Grid Margin="140 0 0 0">
+                <Ellipse Width="240" Height="240" Fill="#a5d6a7"/>
+                <TextBlock x:Name="Balance" FontSize="34" HorizontalAlignment="Center" VerticalAlignment="Center" Margin="0 0 0 10"/>
+                <TextBlock x:Name="BalanceText" Text="Total Balance" HorizontalAlignment="Center" VerticalAlignment="Center" FontSize="18" Foreground="#424242" Margin="0 50 0 0"/>
+            </Grid>
             <lvc:PieChart Name="Chart" Series="{Binding Rounded}" 
                           LegendLocation="Left" InnerRadius="100">
                 <lvc:PieChart.ChartLegend>
@@ -19,11 +28,6 @@
                     <lvc:DefaultTooltip Visibility="Hidden"/>
                 </lvc:PieChart.DataTooltip>
             </lvc:PieChart>
-            <Grid Margin="126 0 0 0">
-                <Ellipse Width="200" Height="200" Fill="#a5d6a7"/>
-                <TextBlock x:Name="Balance" FontSize="34" HorizontalAlignment="Center" VerticalAlignment="Center" Margin="0 0 0 10"/>
-                <TextBlock x:Name="BalanceText" Text="Total Balance" HorizontalAlignment="Center" VerticalAlignment="Center" FontSize="18" Foreground="#424242" Margin="0 50 0 0"/>
-            </Grid>
         </Grid>
         <Grid>
             <Grid.RowDefinitions>
@@ -33,9 +37,6 @@
             <StackPanel Grid.Row="0" Orientation="Horizontal">
                 <Button Click="RestartOnClick">Restart</Button>
                 <TextBlock VerticalAlignment="Center" Padding="10 0">Series</TextBlock>
-                <Button Click="AddSeriesOnClick" MinWidth="30">
-                    +
-                </Button>
                 <Button Click="RemoveSeriesOnClick" MinWidth="30">
                     -
                 </Button>

@@ -16,54 +16,51 @@ using LiveCharts;
 using LiveCharts.Defaults;
 using LiveCharts.Wpf;
 using System.Data.SQLite;
+using System.Globalization;
+using System.Data;
+
 namespace WPF_Budget_Project
 {
     public partial class Home : Page
     {
         string UserMail;
-        string dbConnectionString;
-        public Home(string x, string y)
+        public Home(string mail)
         {
-            UserMail = x;
             InitializeComponent();
-            Balance.Text = "1";
-            /*dbConnectionString = y;
-            string sql = "create table xd (name TEXT, score TEXT)";
-            SQLiteConnection m_dbConnection = new SQLiteConnection(dbConnectionString);
-            m_dbConnection.Open();
-            SQLiteCommand command = new SQLiteCommand(sql, m_dbConnection);
-            command.ExecuteNonQuery();
-            m_dbConnection.Close();*/
-
-            Rounded = new SeriesCollection
-            {
-              /*  new PieSeries
-                {
-                    Title = "Food",
-                    Values = new ChartValues<ObservableValue> { new ObservableValue(20) },
-                    DataLabels = true
-                },
-                new PieSeries
-                {
-                    Title = "Taxes",
-                    Values = new ChartValues<ObservableValue> { new ObservableValue(2) },
-                   // DataLabels = true
-                },
-                new PieSeries
-                {
-                    Title = "",
-                    Values = new ChartValues<ObservableValue> { new ObservableValue(10) },
-                   // DataLabels = true
-                },
-                new PieSeries
-                {
-                    Title = "Explorer",
-                    Values = new ChartValues<ObservableValue> { new ObservableValue(4) },
-                  //  DataLabels = true
-                }*/
-            };
+            Date.Text = "Today is: " + DateTime.Today.ToString("dd.MM.yyyy");
+            Rounded = new SeriesCollection();
             DataContext = this;
 
+            UserMail = mail;
+            Balance.Text = "1";
+            List<string> ColumnNames = new List<string>();
+            var sqLiteConn = new SQLiteConnection(@"Data Source=database.db;Version=3;");
+            sqLiteConn.Open();
+            string command = "select * from [gawdzinskikacper@gmail.com-expend]";
+            SQLiteCommand conn = new SQLiteCommand(command, sqLiteConn);
+            conn.ExecuteNonQuery();
+            SQLiteDataReader read = conn.ExecuteReader();
+            for (int i = 0; i < read.FieldCount; i++)
+            {
+                string temp = read.GetName(i);
+                if (temp == "Date" || temp == "id" || temp == "Repeatability" || temp == "MaxValue")
+                    continue;
+                ColumnNames.Add(temp);
+            }
+
+            for (int i = 0; i < ColumnNames.Count(); i++)
+            {
+                SQLiteCommand SumCommand = new SQLiteCommand("SELECT SUM(" + ColumnNames[i] + ") FROM [gawdzinskikacper@gmail.com-expend]", sqLiteConn);
+                double val = (double)SumCommand.ExecuteScalar();
+                var AddValue = new ChartValues<ObservableValue>();
+                AddValue.Add(new ObservableValue(val));
+                Rounded.Add(new PieSeries
+                {
+                    Values = AddValue,
+                    Title = ColumnNames[i]
+                });
+            }
+        
             Basic = new SeriesCollection
             {
                 new LineSeries
@@ -87,7 +84,8 @@ namespace WPF_Budget_Project
             };
 
             Labels = new[] { "Jan", "Feb", "Mar", "Apr", "May" };
-            YFormatter = value => value.ToString("C");
+            YFormatter = value => value.ToString("C", CultureInfo.CreateSpecificCulture("en-US"));
+
 
             //modifying the series collection will animate and update the chart
             /*Basic.Add(new LineSeries
@@ -110,24 +108,6 @@ namespace WPF_Budget_Project
         public SeriesCollection Basic { get; set; }
         public string[] Labels { get; set; }
         public Func<double, string> YFormatter { get; set; }
-
-        private void AddSeriesOnClick(object sender, RoutedEventArgs e)
-        {
-            var r = new Random();
-            var c = Rounded.Count > 0 ? Rounded[0].Values.Count : 1;
-
-            var vals = new ChartValues<ObservableValue>();
-
-            for (var i = 0; i < c; i++)
-            {
-                vals.Add(new ObservableValue(r.Next(0, 10)));
-            }
-
-            Rounded.Add(new PieSeries
-            {
-                Values = vals
-            });
-        }
 
         private void RemoveSeriesOnClick(object sender, RoutedEventArgs e)
         {

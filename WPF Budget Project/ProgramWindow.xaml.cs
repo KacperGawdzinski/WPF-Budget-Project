@@ -47,33 +47,21 @@ namespace WPF_Budget_Project
             max = x;
         }
     }
-
-    public partial class Spending
-    {
-        Category c = new Category();
-    }
-
-    public partial class Budget
-    {
-        public DateTime time = DateTime.Now;
-    }*/
+*/
 
     public partial class ProgramWindow : Window
     {
         string UserMail;
-        string dbConnectionString;
-        public ProgramWindow(string x, string y)
+        public ProgramWindow(string x)
         {
             InitializeComponent();
             UserMail = x;
-            dbConnectionString = y;
-            Main.Navigate(new Home(UserMail,dbConnectionString));
-            //Date.Text = "Today is: " + DateTime.Today.ToString("dd-MM-yyyy");
+            Main.Navigate(new Home(UserMail));
         }
 
         void Home_Button_Click(object sender, RoutedEventArgs e)
         {
-            Main.Navigate(new Home(UserMail, dbConnectionString));
+            Main.Navigate(new Home(UserMail));
         }
 
         void AddButton_Click(object sender, EventArgs e)
