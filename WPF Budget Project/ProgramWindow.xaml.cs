@@ -88,14 +88,14 @@ namespace WPF_Budget_Project
 
         private void CloseButton_Click(object sender, EventArgs e)
         {
-            OpenButton.Visibility = Visibility.Visible;
-            CloseButton.Visibility = Visibility.Collapsed;
+          // // OpenButton.Visibility = Visibility.Visible;
+          //  CloseButton.Visibility = Visibility.Collapsed;
         }
 
         private void OpenButton_Click(object sender, EventArgs e)
         {
-            OpenButton.Visibility = Visibility.Collapsed;
-            CloseButton.Visibility = Visibility.Visible;
+           // OpenButton.Visibility = Visibility.Collapsed;
+           // CloseButton.Visibility = Visibility.Visible;
             SidePanel.Focus();
             SidePanel.MouseLeave += CloseButton_Click;
         }
