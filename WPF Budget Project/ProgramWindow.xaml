@@ -33,9 +33,6 @@
         <EventTrigger RoutedEvent="Grid.MouseEnter" SourceName="SidePanel">
             <BeginStoryboard Storyboard="{StaticResource MenuOpen}"/>
         </EventTrigger>
-        <!--<EventTrigger RoutedEvent="ButtonBase.Click" SourceName="CloseButton">
-            <BeginStoryboard Storyboard="{StaticResource MenuClose}"/>
-        </EventTrigger>-->
         <EventTrigger RoutedEvent="Grid.MouseLeave" SourceName="SidePanel">
             <BeginStoryboard Storyboard="{StaticResource MenuClose}"/>
         </EventTrigger>
@@ -43,60 +40,7 @@
 
     <Grid>
         <Frame x:Name="Main" NavigationUIVisibility="Hidden" Navigated="Main_Navigated" Background="#66bb6a"/>
-        <!-- <Button x:Name="CloseButton" BorderBrush="#2e7d32" Background="#2e7d32" Visibility="Collapsed" Click="CloseButton_Click" Height="30"  HorizontalAlignment="Left" VerticalAlignment="Top">
-            <StackPanel Orientation="Horizontal">
-                <materialDesign:PackIcon Kind="ArrowLeft" VerticalAlignment="Center"/>
-                </StackPanel>
-            </Button>
-        <Button x:Name="OpenButton" BorderBrush="#2e7d32" Background="#2e7d32" Click="OpenButton_Click" HorizontalAlignment="Left" Height="30" VerticalAlignment="Top">
-            <StackPanel Orientation="Horizontal">
-                <materialDesign:PackIcon Kind="Menu" VerticalAlignment="Center"/>
-            </StackPanel>
-        </Button>-->
-
         <Grid x:Name="SidePanel" Width="65" HorizontalAlignment="Left" Background="#2e7d32" Focusable="True">
-           <!-- <ListView ScrollViewer.HorizontalScrollBarVisibility="Hidden" >
-                <ListViewItem Height="60" >
-                    <Button x:Name="HomeButton" BorderBrush="{x:Null}" Background="{x:Null}" Click="Home_Button_Click">
-                        <StackPanel Orientation="Horizontal">
-                            <materialDesign:PackIcon Kind="Home" VerticalAlignment="Center" HorizontalAlignment="Center"/>
-                            <TextBlock Text="Home" Margin="20 0 0 0"/>
-                        </StackPanel>
-                    </Button>
-                </ListViewItem>
-                <ListViewItem Height="60">
-                    <Button x:Name="AddButton" BorderBrush="{x:Null}" Background="{x:Null}" Click="AddButton_Click">
-                        <StackPanel Orientation="Horizontal">
-                            <materialDesign:PackIcon Kind="Plus" VerticalAlignment="Center" HorizontalAlignment="Center"/>
-                            <TextBlock Text="Add entry" Margin="20 0 0 0"/>
-                        </StackPanel>
-                    </Button>
-                </ListViewItem>
-                <ListViewItem Height="60">
-                    <Button x:Name="SubstractButton" BorderBrush="{x:Null}" Background="{x:Null}">
-                        <StackPanel Orientation="Horizontal">
-                            <materialDesign:PackIcon Kind="Minus" VerticalAlignment="Center" HorizontalAlignment="Center"/>
-                            <TextBlock Text="Delete entry" Margin="20 0 0 0"/>
-                        </StackPanel>
-                    </Button>
-                </ListViewItem>
-                <ListViewItem Height="60">
-                    <Button x:Name="HistoryButton" BorderBrush="{x:Null}" Background="{x:Null}">
-                        <StackPanel Orientation="Horizontal">
-                            <materialDesign:PackIcon Kind="History" VerticalAlignment="Center" HorizontalAlignment="Center"/>
-                            <TextBlock Text="History" Margin="20 0 0 0"/>
-                        </StackPanel>
-                    </Button>
-                </ListViewItem>
-                <ListViewItem Height="60">
-                    <Button x:Name="AnalysisButton" BorderBrush="{x:Null}" Background="{x:Null}">
-                        <StackPanel Orientation="Horizontal">
-                            <materialDesign:PackIcon Kind="Analog" VerticalAlignment="Center" HorizontalAlignment="Center"/>
-                            <TextBlock Text="Analysis" Margin="20 0 0 0"/>
-                        </StackPanel>
-                    </Button>
-                </ListViewItem>
-            </ListView>-->
             <StackPanel>
                 <Button x:Name="HomeButton" Foreground="White" BorderBrush="{x:Null}" Background="{x:Null}" Click="Home_Button_Click" Margin="0 20 0 0">
                     <Grid HorizontalAlignment="Left" Width="135">
