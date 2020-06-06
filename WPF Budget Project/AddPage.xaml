@@ -20,10 +20,10 @@
                     <ColumnDefinition Width="*"/>
                     <ColumnDefinition Width="*"/>
                 </Grid.ColumnDefinitions>
-                <CheckBox x:Name="IncomeCheck" Background="#2e7d32" Grid.Column="0" HorizontalAlignment="Center" Margin="100 0 0 0" Checked="IncomeChecked" Unchecked="IncomeUnchecked">
+                <CheckBox x:Name="IncomeCheck" Background="#2e7d32" Grid.Column="0" HorizontalAlignment="Center" Margin="100 0 0 0" Checked="IncomeChecked" >
                     <TextBlock Text="Income"/>
                 </CheckBox>
-                <CheckBox x:Name="ExpendCheck" Background="#2e7d32" Grid.Column="1" HorizontalAlignment="Center" Margin="0 0 100 0" Checked="ExpendChecked" Unchecked="ExpendUnchecked">
+                <CheckBox x:Name="ExpendCheck" Background="#2e7d32" Grid.Column="1" HorizontalAlignment="Center" Margin="0 0 100 0" Checked="ExpendChecked" >
                     <TextBlock Text="Expend"/>
                 </CheckBox>
             </Grid>

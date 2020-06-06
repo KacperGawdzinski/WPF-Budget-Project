@@ -20,10 +20,10 @@ namespace WPF_Budget_Project
 {
     public partial class AddPage : Page
     {
-        bool TypeInsertBuilt = false;   //change name to be more user friendly
-        bool InsertGrid = false;
-        bool IncomeUsed = false;
-        bool MoreChild = false;
+        bool TypeInsertBuilt = false;
+        bool ExpendUsed = false;
+        bool IncomeUsed = true;
+        bool SaveInsideGrid = false;
         public AddPage()
         {
             InitializeComponent();
@@ -32,10 +32,17 @@ namespace WPF_Budget_Project
         void IncomeChecked(object sender, EventArgs e)
         {
             IncomeUsed = true;
-            if(ExpendCheck.IsChecked == true)
+            if (ExpendCheck.IsChecked == true)
             {
                 ExpendCheck.IsChecked = false;
             }
+            if (TypeInsertBuilt)
+            {
+                Stack.Children.RemoveAt(4);
+                Stack.Children.RemoveAt(3);
+                TypeInsertBuilt = false;
+            }
+            TypeCombo.Items.Clear();
             var sqLiteConn = new SQLiteConnection(@"Data Source=database.db;Version=3;");
             sqLiteConn.Open();
             string command = "select * from [gawdzinskikacper@gmail.com-income]";
@@ -57,9 +64,9 @@ namespace WPF_Budget_Project
             TypeCombo.Items.Add(x);
             read.Close();
             sqLiteConn.Close();
-            if(InsertGrid)
+            if(ExpendUsed)
             {
-                InsertGrid = false;
+                ExpendUsed = false;
                 Stack.Children.RemoveAt(3);
                 TextBlock Val = new TextBlock();
                 TextBox InsVal = new TextBox();
@@ -76,10 +83,18 @@ namespace WPF_Budget_Project
         void ExpendChecked(object sender, EventArgs e)
         {
             if (IncomeCheck.IsChecked == true)
-            {
+            { 
                 IncomeCheck.IsChecked = false;
             }
-            InsertGrid = true;
+            if (TypeInsertBuilt)
+            {
+                Stack.Children.RemoveAt(4);
+                Stack.Children.RemoveAt(3);
+                TypeInsertBuilt = false;
+            }
+            TypeCombo.Items.Clear();
+            ExpendUsed = true;
+            //TypeInsertBuilt = false;
             var sqLiteConn = new SQLiteConnection(@"Data Source=database.db;Version=3;");
             sqLiteConn.Open();
             string command = "select * from [gawdzinskikacper@gmail.com-expend]";
@@ -139,28 +154,6 @@ namespace WPF_Budget_Project
             }
         }
 
-        void IncomeUnchecked(object sender, EventArgs e)
-        {
-            if (TypeInsertBuilt)
-            {
-                Stack.Children.RemoveAt(4);
-                Stack.Children.RemoveAt(3);
-                TypeInsertBuilt = false;
-            }
-            TypeCombo.Items.Clear();
-        }
-
-        void ExpendUnchecked(object sender, EventArgs e)
-        {
-            if (TypeInsertBuilt)
-            {
-                Stack.Children.RemoveAt(4);
-                Stack.Children.RemoveAt(3);
-                TypeInsertBuilt = false;
-            }
-            TypeCombo.Items.Clear();
-        }
-
         void TypeComboChanged(object sender, EventArgs e)
         {
             Console.WriteLine(TypeCombo.Text);
@@ -177,7 +170,7 @@ namespace WPF_Budget_Project
                 TypeInsert.HorizontalAlignment = HorizontalAlignment.Center;
                 Stack.Children.Insert(3, TypeInsertText);
                 Stack.Children.Insert(4, TypeInsert);
-                if(PeriodicCheck.IsChecked == true)
+                if(PeriodicCheck.IsChecked == true && ExpendCheck.IsChecked == true && SaveInsideGrid == false)
                 {
                     Stack.Children.RemoveAt(Stack.Children.Count - 1);
                     Button Save = new Button();
@@ -199,7 +192,7 @@ namespace WPF_Budget_Project
                     Save.BorderBrush = (Brush)bc.ConvertFrom("#2e7d32");
                     Save.Margin = new Thickness(250, 100, 0, 0);
                     PeriodicGrid.Children.Add(Save);   //rewrite as function - duplicate of 233-253
-                    MoreChild = true;
+                    SaveInsideGrid = true;
                 }
             }
             else
@@ -212,6 +205,7 @@ namespace WPF_Budget_Project
                 }
             }
         }
+
         void PeriodicChecked(object sender, EventArgs e)
         {
             TextBlock PeriodicText = new TextBlock();
@@ -274,7 +268,7 @@ namespace WPF_Budget_Project
                 Save.BorderBrush = (Brush)bc.ConvertFrom("#2e7d32");
                 Save.Margin = new Thickness(250, 100, 0, 0);
                 PeriodicGrid.Children.Add(Save);
-                MoreChild = true;
+                SaveInsideGrid = true;
             }
         }
         void PeriodicUnchecked(object sender, EventArgs e)
@@ -283,9 +277,9 @@ namespace WPF_Budget_Project
             PeriodicGrid.Children.RemoveAt(PeriodicGrid.Children.Count - 1);
             PeriodicGrid.Children.RemoveAt(PeriodicGrid.Children.Count - 1);
             PeriodicGrid.Children.RemoveAt(PeriodicGrid.Children.Count - 1);
-            if(MoreChild)
+            if(SaveInsideGrid)
             {
-                MoreChild = false;
+                SaveInsideGrid = false;
                 PeriodicGrid.Children.RemoveAt(PeriodicGrid.Children.Count - 1);
                 Button Save = new Button();
                 TextBlock Txt = new TextBlock();
