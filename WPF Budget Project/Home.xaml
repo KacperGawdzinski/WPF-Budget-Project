@@ -12,9 +12,9 @@
       Foreground="White">
 
     <Grid>
-        <TextBlock x:Name="Date" HorizontalAlignment="Center" Margin="0 30 0 0"/>
+        <TextBlock x:Name="Date" HorizontalAlignment="Center" Margin="680 20 0 0"/>
         <Grid Height="300" Width="450" VerticalAlignment="Top" HorizontalAlignment="Right" Margin="30 70 100 0">
-            <Grid Margin="140 0 0 0">
+            <Grid Margin="160 0 0 0">
                 <Ellipse Width="240" Height="240" Fill="#a5d6a7"/>
                 <TextBlock x:Name="Balance" FontSize="34" HorizontalAlignment="Center" VerticalAlignment="Center" Margin="0 0 0 10"/>
                 <TextBlock x:Name="BalanceText" Text="Total Balance" HorizontalAlignment="Center" VerticalAlignment="Center" FontSize="18" Foreground="#424242" Margin="0 50 0 0"/>
@@ -29,49 +29,23 @@
                 </lvc:PieChart.DataTooltip>
             </lvc:PieChart>
         </Grid>
-        <Grid>
-            <Grid.RowDefinitions>
-                <RowDefinition Height="Auto"></RowDefinition>
-                <RowDefinition Height="*"></RowDefinition>
-            </Grid.RowDefinitions>
-            <StackPanel Grid.Row="0" Orientation="Horizontal">
-                <Button Click="RestartOnClick">Restart</Button>
-                <TextBlock VerticalAlignment="Center" Padding="10 0">Series</TextBlock>
-                <Button Click="RemoveSeriesOnClick" MinWidth="30">
-                    -
-                </Button>
-            </StackPanel>
+        <TextBlock Text="Latest Transactions" Margin="290 40 0 0"/>
+        <Grid MaxHeight="250" Width="400" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="160 70 0 0">
+            <Border BorderBrush="Black" BorderThickness="2" Background="#2e7d32">
+                <StackPanel Name="LatestTransactions" Height="300" Width="400" HorizontalAlignment="Left" VerticalAlignment="Top"/>
+            </Border>
         </Grid>
-        <Grid x:Name="List" Height="300" Width="400" HorizontalAlignment="Left" Margin="160 80 0 0" VerticalAlignment="Top">
-            <ListView>
-                <ListViewItem>
-                    <Button Width="50"/>
-                </ListViewItem>
-                <ListViewItem>
-                    <Button Width="50"/>
-                </ListViewItem>
-                <ListViewItem>
-                    <Button Width="50"/>
-                </ListViewItem>
-                <ListViewItem>
-                    <Button Width="50"/>
-                </ListViewItem>
-                <ListViewItem>
-                    <Button Width="50"/>
-                </ListViewItem>
-                <ListViewItem>
-                    <Button Width="50"/>
-                </ListViewItem>
-            </ListView>
-        </Grid>
-        <Grid x:Name="Table" HorizontalAlignment="Center" VerticalAlignment="Bottom">
+        <Grid x:Name="Table" HorizontalAlignment="Center" VerticalAlignment="Bottom" Margin="50 0 0 20">
             <lvc:CartesianChart Series="{Binding Basic}" LegendLocation="Right" Width="900" Height="350">
                 <lvc:CartesianChart.AxisY>
-                    <lvc:Axis Title="Sales" LabelFormatter="{Binding YFormatter}"></lvc:Axis>
+                    <lvc:Axis FontFamily="Comic Sans MS" Foreground="White" LabelFormatter="{Binding YFormatter}"></lvc:Axis>
                 </lvc:CartesianChart.AxisY>
                 <lvc:CartesianChart.AxisX>
-                    <lvc:Axis Title="Month" Labels="{Binding Labels}"></lvc:Axis>
+                    <lvc:Axis FontFamily="Comic Sans MS" Foreground="White" Labels="{Binding Labels}"></lvc:Axis>
                 </lvc:CartesianChart.AxisX>
+                <lvc:CartesianChart.DataTooltip>
+                    <lvc:DefaultTooltip Visibility="Hidden"/>
+                </lvc:CartesianChart.DataTooltip>
             </lvc:CartesianChart>
         </Grid>
     </Grid>
