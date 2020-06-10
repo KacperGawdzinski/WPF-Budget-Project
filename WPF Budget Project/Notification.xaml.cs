@@ -20,7 +20,7 @@ namespace WPF_Budget_Project
         {
             InitializeComponent();
             Notification_Text.Text = x;
-            if(x == "Registration completed" || x == "Incorrect user e-mail" || x == "Every field must be filled!")
+            if(x.Length <= 30)
             {
                 Height = 130;
             }

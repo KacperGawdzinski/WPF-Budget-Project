@@ -51,7 +51,6 @@ namespace WPF_Budget_Project
             Basic = new SeriesCollection();
 
             UserMail = mail;
-            Balance.Text = "1";
             List<string> ColumnNames = new List<string>();
             var sqLiteConn = new SQLiteConnection(@"Data Source=database.db;Version=3;");
             sqLiteConn.Open();
@@ -97,7 +96,7 @@ namespace WPF_Budget_Project
             Balance.Text = balance.ToString() + "$";
             Basic.Add(new LineSeries
             {
-                Title = "Balance",
+                Title = "Balance history",
                 Values = AddNewValue,
                 LineSmoothness = 1,
             });

@@ -15,6 +15,7 @@ using System.Windows.Shapes;
 using System.Data.SQLite;
 using System.Security.RightsManagement;
 using System.Data.SqlTypes;
+using System.Collections.Specialized;
 
 namespace WPF_Budget_Project
 {
@@ -97,7 +98,6 @@ namespace WPF_Budget_Project
             }
             TypeCombo.Items.Clear();
             ExpendUsed = true;
-            //TypeInsertBuilt = false;
             var sqLiteConn = new SQLiteConnection(@"Data Source=database.db;Version=3;");
             sqLiteConn.Open();
             string command = "select * from [gawdzinskikacper@gmail.com-expend]";
@@ -194,6 +194,7 @@ namespace WPF_Budget_Project
                     Save.Background = (Brush)bc.ConvertFrom("#2e7d32");
                     Save.BorderBrush = (Brush)bc.ConvertFrom("#2e7d32");
                     Save.Margin = new Thickness(250, 100, 0, 0);
+                    Save.Click += SaveClick;
                     PeriodicGrid.Children.Add(Save);   //rewrite as function - duplicate of 233-253
                     SaveInsideGrid = true;
                 }
@@ -243,7 +244,7 @@ namespace WPF_Budget_Project
 
             // Date.DisplayDateStart = new DateTime(2009, 1, 10);
             Date.DisplayDate = new DateTime(2009, 3, 15);
-            Date.SelectedDate = new DateTime(2009, 2, 15);
+            //Date.SelectedDate = new DateTime(2009, 2, 15);
             box.Child = Date;
             PeriodicGrid.Children.Add(PeriodicText);
             PeriodicGrid.Children.Add(PeriodicBox);
@@ -266,6 +267,7 @@ namespace WPF_Budget_Project
                 Save.BorderBrush = null;
                 Save.Width = 100;
                 Save.Height = 40;
+                Save.Click += SaveClick;
                 BrushConverter bc = new BrushConverter();
                 Save.Background = (Brush)bc.ConvertFrom("#2e7d32");
                 Save.BorderBrush = (Brush)bc.ConvertFrom("#2e7d32");
@@ -302,8 +304,201 @@ namespace WPF_Budget_Project
                 Save.Background = (Brush)bc.ConvertFrom("#2e7d32");
                 Save.BorderBrush = (Brush)bc.ConvertFrom("#2e7d32");
                 Save.Margin = new Thickness(0, 20, 0, 0);
+                Save.Click += SaveClick;
+                Save.Name = "SaveButton";
                 Stack.Children.Add(Save);   //rewrite as function - duplicate of 233-253
             }
+        }
+
+        public IEnumerable<T> FindVisualChildren<T>(DependencyObject depObj) where T : DependencyObject
+        {
+            if (depObj != null)
+            {
+                for (int i = 0; i < VisualTreeHelper.GetChildrenCount(depObj); i++)
+                {
+                    DependencyObject child = VisualTreeHelper.GetChild(depObj, i);
+
+                    if (child != null && child is T)
+                        yield return (T)child;
+
+                    foreach (T childOfChild in FindVisualChildren<T>(child))
+                        yield return childOfChild;
+                }
+            }
+        }
+
+        void ShowError(string warning)
+        {
+            Window OK = new Notification(warning);
+            OK.Show();
+            return;
+        }
+
+        void SaveClick(object sender, EventArgs e)
+        {
+            int k = 0;
+            if (IncomeCheck.IsChecked == true)
+            {
+                if (TypeCombo.Text == "New type...")
+                {
+                    foreach (var val in FindVisualChildren<TextBox>(MainGrid))
+                    {
+                        if (k == 1)
+                            if (val.Text.Length == 0)
+                            {
+                                ShowError("Insert new type!");
+                                return;
+                            }
+
+                        if (k == 2)
+                        {
+                            if (val.Text.Length == 0)
+                            {
+                                ShowError("Insert value!");
+                                return;
+                            }
+                            for (int i = 0; i < val.Text.Length; i++)
+                                if (Char.IsLetter(val.Text[i]))
+                                {
+                                    ShowError("Value must be a number!");
+                                    return;
+                                }
+                        }
+                        k++;
+                    }
+                }
+                else if (TypeCombo.Text != "")
+                {
+                    foreach (var val in FindVisualChildren<TextBox>(this))
+                    {
+                        if (k == 1)
+                        {
+                            if (val.Text.Length == 0)
+                            {
+                                ShowError("Insert value!");
+                                return;
+                            }
+                            for (int i = 0; i < val.Text.Length; i++)
+                                if (Char.IsLetter(val.Text[i]))
+                                {
+                                    ShowError("Value must be a number!");
+                                    return;
+                                }
+                        }
+                        k++;
+                    }
+                }
+                else
+                {
+                    ShowError("Choose type!");
+                    return;
+                }
+            }
+
+            else if (ExpendCheck.IsChecked == true)  //huge spaghetti - needs division into functions but I dont have much time due to exams
+            {
+                if (TypeCombo.Text == "New type...")
+                {
+                    foreach (var val in FindVisualChildren<TextBox>(MainGrid))
+                    {
+                        if (k == 1)
+                            if (val.Text.Length == 0)
+                            {
+                                ShowError("Insert new type!");
+                                return;
+                            }
+
+                        if (k == 2 || k == 3)
+                        {
+                            if (val.Text.Length == 0)
+                            {
+                                ShowError("Insert value!");
+                                return;
+                            }
+                            for (int i = 0; i < val.Text.Length; i++)
+                                if (Char.IsLetter(val.Text[i]))
+                                {
+                                    ShowError("Value must be a number!");
+                                    return;
+                                }
+                        }
+                        k++;
+                    }
+                }
+                else if (TypeCombo.Text != "")
+                {
+                    foreach (var val in FindVisualChildren<TextBox>(this))
+                    {
+                        if (k == 1)
+                        {
+                            if (val.Text.Length == 0)
+                            {
+                                ShowError("Insert value!");
+                                return;
+                            }
+                            for (int i = 0; i < val.Text.Length; i++)
+                                if (Char.IsLetter(val.Text[i]))
+                                {
+                                    ShowError("Value must be a number!");
+                                    return;
+                                }
+                        }
+                        k++;
+                    }
+                }
+                else
+                {
+                    ShowError("Choose type!");
+                    return;
+                }
+            }
+
+            else
+            {
+                ShowError("Choose category!");
+                return;
+            }
+
+            k = 0;
+            if (PeriodicCheck.IsChecked == true)
+            {
+               /* foreach (var val in FindVisualChildren<TextBox>(this))
+                {
+                    if (k == 2)
+                        for (int i = 0; i < val.Text.Length; i++)
+                            if (Char.IsLetter(val.Text[i]))
+                                ShowError();
+                    k++;
+                }
+                k = 0;*/
+                foreach (var val in FindVisualChildren<Calendar>(this))
+                {
+                    try
+                    {
+                        Console.WriteLine(val.SelectedDate.Value.ToString("dd.MM.yyyy"));
+                    }
+                    catch(InvalidOperationException)
+                    {
+                        ShowError("Choose category!");
+                        return;
+                    }
+                }
+
+                foreach (var val in FindVisualChildren<ComboBox>(this))
+                {
+                    if (k == 0)
+                    {
+                        k++;
+                        continue;
+                    }
+                    if(val.Text == "")
+                    {
+                        ShowError("Choose interval!");
+                        return;
+                    }
+                }
+            }
+            Console.WriteLine("przeszlo");
         }
     }
 }
