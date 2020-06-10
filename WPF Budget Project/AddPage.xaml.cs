@@ -16,59 +16,69 @@ using System.Data.SQLite;
 using System.Security.RightsManagement;
 using System.Data.SqlTypes;
 using System.Collections.Specialized;
+using System.Data.Entity.ModelConfiguration.Configuration;
+using System.Data.Entity.Core;
 
 namespace WPF_Budget_Project
 {
     public partial class AddPage : Page
     {
+        string UserMail;
         bool TypeInsertBuilt = false;
         bool ExpendUsed = false;
         bool IncomeUsed = true;
         bool SaveInsideGrid = false;
-        public AddPage()
+        public AddPage(string x)
         {
             InitializeComponent();
+            UserMail = x;
             /*DateTime x = new DateTime(2000,1,11);
             x = x.AddDays(50);
             Console.WriteLine(x.ToString("dd.MM.yyyy"));*/
         }
 
+        #region GUIAdapt
         void IncomeChecked(object sender, EventArgs e)
         {
-            IncomeUsed = true;
-            if (ExpendCheck.IsChecked == true)
-            {
-                ExpendCheck.IsChecked = false;
-            }
-            if (TypeInsertBuilt)
-            {
-                Stack.Children.RemoveAt(4);
-                Stack.Children.RemoveAt(3);
-                TypeInsertBuilt = false;
-            }
-            TypeCombo.Items.Clear();
-            var sqLiteConn = new SQLiteConnection(@"Data Source=database.db;Version=3;");
-            sqLiteConn.Open();
-            string command = "select * from [gawdzinskikacper@gmail.com-income]";
-            SQLiteCommand comm = new SQLiteCommand(command, sqLiteConn);
-            comm.ExecuteNonQuery();
+            RemoveOldCategories(true);                   //cleaning main combo box
             ComboBoxItem x;
-            SQLiteDataReader read = comm.ExecuteReader();
-            for (var i = 0; i < read.FieldCount; i++)
+            string[] temp = ReadColumns(true);           //all columns from table
+            for (int i=0;i<temp.Length;i++)
             {
-                string temp = read.GetName(i);
-                if (temp == "Data" || temp == "id" || temp == "Repeatability")
+                if (temp[i] == "Date" || temp[i] == "id" || temp[i] == "Repeatability")
                     continue;
                 x = new ComboBoxItem();
-                x.Content = temp;
+                x.Content = temp[i];
                 TypeCombo.Items.Add(x);
             }
             x = new ComboBoxItem();
             x.Content = "New type...";
             TypeCombo.Items.Add(x);
-            read.Close();
-            sqLiteConn.Close();
-            if(ExpendUsed)
+            RebuildAfterExpend();                       //clean maxvalue button
+        }
+
+        void ExpendChecked(object sender, EventArgs e)
+        {
+            RemoveOldCategories(false); 
+            ComboBoxItem x;
+            string[] temp = ReadColumns(false);
+            for (int i = 0; i < temp.Length; i++)
+            {
+                if (temp[i] == "Date" || temp[i] == "id" || temp[i] == "Repeatability" || temp[i] == "MaxValue")
+                    continue;
+                x = new ComboBoxItem();
+                x.Content = temp[i];
+                TypeCombo.Items.Add(x);
+            }
+            x = new ComboBoxItem();
+            x.Content = "New type...";
+            TypeCombo.Items.Add(x);
+            RebuildAfterIncome();   
+        }
+
+        void RebuildAfterExpend()
+        {
+            if (ExpendUsed)
             {
                 ExpendUsed = false;
                 Stack.Children.RemoveAt(3);
@@ -84,42 +94,8 @@ namespace WPF_Budget_Project
             }
         }
 
-        void ExpendChecked(object sender, EventArgs e)
+        void RebuildAfterIncome()
         {
-            if (IncomeCheck.IsChecked == true)
-            { 
-                IncomeCheck.IsChecked = false;
-            }
-            if (TypeInsertBuilt)
-            {
-                Stack.Children.RemoveAt(4);
-                Stack.Children.RemoveAt(3);
-                TypeInsertBuilt = false;
-            }
-            TypeCombo.Items.Clear();
-            ExpendUsed = true;
-            var sqLiteConn = new SQLiteConnection(@"Data Source=database.db;Version=3;");
-            sqLiteConn.Open();
-            string command = "select * from [gawdzinskikacper@gmail.com-expend]";
-            SQLiteCommand comm = new SQLiteCommand(command, sqLiteConn);
-            comm.ExecuteNonQuery();
-            ComboBoxItem x;
-            SQLiteDataReader read = comm.ExecuteReader();
-            for (var i = 0; i < read.FieldCount; i++)
-            {
-                string temp = read.GetName(i);
-                if (temp == "Data" || temp == "id" || temp == "Repeatability" || temp == "MaxValue")
-                    continue;
-                x = new ComboBoxItem();
-                x.Content = temp;
-                TypeCombo.Items.Add(x);
-            }
-            x = new ComboBoxItem();
-            x.Content = "New type...";
-            TypeCombo.Items.Add(x);
-            read.Close();
-            sqLiteConn.Close();
-
             if (IncomeUsed)
             {
                 IncomeUsed = false;
@@ -157,9 +133,54 @@ namespace WPF_Budget_Project
             }
         }
 
+
+        string[] ReadColumns(bool income)
+        {
+            List<string> l = new List<string>();
+            var sqLiteConn = new SQLiteConnection(@"Data Source=database.db;Version=3;");
+            sqLiteConn.Open();
+            SQLiteCommand comm;
+            if (income)
+                comm = new SQLiteCommand("CREATE TABLE IF NOT EXISTS [" + UserMail + "-income] (id INTEGER PRIMARY KEY AUTOINCREMENT, Date TEXT, Repeatability TEXT)", sqLiteConn);
+            else
+                comm = new SQLiteCommand("CREATE TABLE IF NOT EXISTS [" + UserMail + "-expend] (id INTEGER PRIMARY KEY AUTOINCREMENT, Date TEXT, Repeatability TEXT, MaxValue REAL)", sqLiteConn);
+            comm.ExecuteNonQuery();
+            if(income)
+                comm = new SQLiteCommand("select * from [" + UserMail + "-income]", sqLiteConn);
+            else
+                comm = new SQLiteCommand("select * from [" + UserMail + "-expend]", sqLiteConn);
+            comm.ExecuteNonQuery();
+            SQLiteDataReader read = comm.ExecuteReader();
+            for (var i = 0; i < read.FieldCount; i++)
+            {
+                l.Add(read.GetName(i));
+            }
+            read.Close();
+            sqLiteConn.Close();
+            return l.ToArray();
+        }
+
+        void RemoveOldCategories(bool income)
+        {
+            if (income)
+                IncomeUsed = true;
+            else
+                ExpendUsed = true;
+            if (ExpendCheck.IsChecked == true && income)
+                ExpendCheck.IsChecked = false;
+            if (IncomeCheck.IsChecked == true && !income)
+                IncomeCheck.IsChecked = false;
+            if (TypeInsertBuilt)
+            {
+                Stack.Children.RemoveAt(4);
+                Stack.Children.RemoveAt(3);
+                TypeInsertBuilt = false;
+            }
+            TypeCombo.Items.Clear();
+        }
+
         void TypeComboChanged(object sender, EventArgs e)
         {
-            Console.WriteLine(TypeCombo.Text);
             if (TypeCombo.Text == "New type..." && TypeInsertBuilt == false)
             {
                 TypeInsertBuilt = true;
@@ -173,29 +194,10 @@ namespace WPF_Budget_Project
                 TypeInsert.HorizontalAlignment = HorizontalAlignment.Center;
                 Stack.Children.Insert(3, TypeInsertText);
                 Stack.Children.Insert(4, TypeInsert);
-                if(PeriodicCheck.IsChecked == true && ExpendCheck.IsChecked == true && SaveInsideGrid == false)
+                if(PeriodicCheck.IsChecked == true && SaveInsideGrid == false)
                 {
                     Stack.Children.RemoveAt(Stack.Children.Count - 1);
-                    Button Save = new Button();
-                    TextBlock Txt = new TextBlock();
-                    StackPanel temp = new StackPanel();
-                    Txt.Text = "Save";
-                    Txt.Margin = new Thickness(10, 0, 0, 0);
-                    temp.Orientation = Orientation.Horizontal;
-                    temp.Children.Add(new MaterialDesignThemes.Wpf.PackIcon
-                    { Kind = MaterialDesignThemes.Wpf.PackIconKind.ContentSave });
-                    temp.Children.Add(Txt);
-                    Save.Content = temp;
-                    Save.Background = null;
-                    Save.BorderBrush = null;
-                    Save.Width = 100;
-                    Save.Height = 40;
-                    BrushConverter bc = new BrushConverter();
-                    Save.Background = (Brush)bc.ConvertFrom("#2e7d32");
-                    Save.BorderBrush = (Brush)bc.ConvertFrom("#2e7d32");
-                    Save.Margin = new Thickness(250, 100, 0, 0);
-                    Save.Click += SaveClick;
-                    PeriodicGrid.Children.Add(Save);   //rewrite as function - duplicate of 233-253
+                    PeriodicGrid.Children.Add(MakeSaveButton(250, 100, 0, 0));
                     SaveInsideGrid = true;
                 }
             }
@@ -241,10 +243,7 @@ namespace WPF_Budget_Project
             box.MaxWidth = 250;
             box.MaxHeight = 300;
             box.Margin = new Thickness(80, 35, 0, 0);
-
-            // Date.DisplayDateStart = new DateTime(2009, 1, 10);
-            Date.DisplayDate = new DateTime(2009, 3, 15);
-            //Date.SelectedDate = new DateTime(2009, 2, 15);
+            Date.DisplayDate = new DateTime(2009, 3, 15);//! change to actual
             box.Child = Date;
             PeriodicGrid.Children.Add(PeriodicText);
             PeriodicGrid.Children.Add(PeriodicBox);
@@ -253,63 +252,50 @@ namespace WPF_Budget_Project
             if(ExpendCheck.IsEnabled && TypeInsertBuilt)
             {
                 Stack.Children.RemoveAt(Stack.Children.Count - 1);
-                Button Save = new Button();
-                TextBlock Txt = new TextBlock();
-                Txt.Text = "Save";
-                Txt.Margin = new Thickness(10, 0, 0, 0);
-                StackPanel temp = new StackPanel();
-                temp.Orientation = Orientation.Horizontal;
-                temp.Children.Add(new MaterialDesignThemes.Wpf.PackIcon
-                { Kind = MaterialDesignThemes.Wpf.PackIconKind.ContentSave });
-                temp.Children.Add(Txt);
-                Save.Content = temp;
-                Save.Background = null;
-                Save.BorderBrush = null;
-                Save.Width = 100;
-                Save.Height = 40;
-                Save.Click += SaveClick;
-                BrushConverter bc = new BrushConverter();
-                Save.Background = (Brush)bc.ConvertFrom("#2e7d32");
-                Save.BorderBrush = (Brush)bc.ConvertFrom("#2e7d32");
-                Save.Margin = new Thickness(250, 100, 0, 0);
-                PeriodicGrid.Children.Add(Save);
+                PeriodicGrid.Children.Add(MakeSaveButton(250,100,0,0));
                 SaveInsideGrid = true;
             }
         }
         void PeriodicUnchecked(object sender, EventArgs e)
         {
-            PeriodicGrid.Children.RemoveAt(PeriodicGrid.Children.Count - 1);
-            PeriodicGrid.Children.RemoveAt(PeriodicGrid.Children.Count - 1);
-            PeriodicGrid.Children.RemoveAt(PeriodicGrid.Children.Count - 1);
-            PeriodicGrid.Children.RemoveAt(PeriodicGrid.Children.Count - 1);
+            for(int i=0;i<4;i++)
+                PeriodicGrid.Children.RemoveAt(PeriodicGrid.Children.Count - 1);
+
             if(SaveInsideGrid)
             {
                 SaveInsideGrid = false;
                 PeriodicGrid.Children.RemoveAt(PeriodicGrid.Children.Count - 1);
-                Button Save = new Button();
-                TextBlock Txt = new TextBlock();
-                StackPanel temp = new StackPanel();
-                Txt.Text = "Save";
-                Txt.Margin = new Thickness(10, 0, 0, 0);
-                temp.Orientation = Orientation.Horizontal;
-                temp.Children.Add(new MaterialDesignThemes.Wpf.PackIcon
-                { Kind = MaterialDesignThemes.Wpf.PackIconKind.ContentSave });
-                temp.Children.Add(Txt);
-                Save.Content = temp;
-                Save.Background = null;
-                Save.BorderBrush = null;
-                Save.Width = 100;
-                Save.Height = 40;
-                BrushConverter bc = new BrushConverter();
-                Save.Background = (Brush)bc.ConvertFrom("#2e7d32");
-                Save.BorderBrush = (Brush)bc.ConvertFrom("#2e7d32");
-                Save.Margin = new Thickness(0, 20, 0, 0);
-                Save.Click += SaveClick;
-                Save.Name = "SaveButton";
-                Stack.Children.Add(Save);   //rewrite as function - duplicate of 233-253
+                Stack.Children.Add(MakeSaveButton(0, 20, 0, 0));
             }
         }
 
+        Button MakeSaveButton(int a, int b, int c, int d)
+        {
+            Button Save = new Button();
+            TextBlock Txt = new TextBlock();
+            StackPanel temp = new StackPanel();
+            Txt.Text = "Save";
+            Txt.Margin = new Thickness(10, 0, 0, 0);
+            temp.Orientation = Orientation.Horizontal;
+            temp.Children.Add(new MaterialDesignThemes.Wpf.PackIcon
+            { Kind = MaterialDesignThemes.Wpf.PackIconKind.ContentSave });
+            temp.Children.Add(Txt);
+            Save.Content = temp;
+            Save.Background = null;
+            Save.BorderBrush = null;
+            Save.Width = 100;
+            Save.Height = 40;
+            BrushConverter bc = new BrushConverter();
+            Save.Background = (Brush)bc.ConvertFrom("#2e7d32");
+            Save.BorderBrush = (Brush)bc.ConvertFrom("#2e7d32");
+            Save.Margin = new Thickness(a, b, c, d);
+            Save.Click += SaveClick;
+            Save.Name = "SaveButton";
+            return Save;
+        }
+
+        #endregion
+        #region UtilityFunctions
         public IEnumerable<T> FindVisualChildren<T>(DependencyObject depObj) where T : DependencyObject
         {
             if (depObj != null)
@@ -326,7 +312,8 @@ namespace WPF_Budget_Project
                 }
             }
         }
-
+        #endregion
+        #region InputCheck
         void ShowError(string warning)
         {
             Window OK = new Notification(warning);
@@ -334,7 +321,7 @@ namespace WPF_Budget_Project
             return;
         }
 
-        void SaveClick(object sender, EventArgs e)
+        bool CheckInputData()
         {
             int k = 0;
             if (IncomeCheck.IsChecked == true)
@@ -347,7 +334,7 @@ namespace WPF_Budget_Project
                             if (val.Text.Length == 0)
                             {
                                 ShowError("Insert new type!");
-                                return;
+                                return false;
                             }
 
                         if (k == 2)
@@ -355,13 +342,13 @@ namespace WPF_Budget_Project
                             if (val.Text.Length == 0)
                             {
                                 ShowError("Insert value!");
-                                return;
+                                return false;
                             }
                             for (int i = 0; i < val.Text.Length; i++)
                                 if (Char.IsLetter(val.Text[i]))
                                 {
                                     ShowError("Value must be a number!");
-                                    return;
+                                    return false;
                                 }
                         }
                         k++;
@@ -376,13 +363,13 @@ namespace WPF_Budget_Project
                             if (val.Text.Length == 0)
                             {
                                 ShowError("Insert value!");
-                                return;
+                                return false;
                             }
                             for (int i = 0; i < val.Text.Length; i++)
                                 if (Char.IsLetter(val.Text[i]))
                                 {
                                     ShowError("Value must be a number!");
-                                    return;
+                                    return false;
                                 }
                         }
                         k++;
@@ -391,7 +378,7 @@ namespace WPF_Budget_Project
                 else
                 {
                     ShowError("Choose type!");
-                    return;
+                    return false;
                 }
             }
 
@@ -405,7 +392,7 @@ namespace WPF_Budget_Project
                             if (val.Text.Length == 0)
                             {
                                 ShowError("Insert new type!");
-                                return;
+                                return false;
                             }
 
                         if (k == 2 || k == 3)
@@ -413,13 +400,13 @@ namespace WPF_Budget_Project
                             if (val.Text.Length == 0)
                             {
                                 ShowError("Insert value!");
-                                return;
+                                return false;
                             }
                             for (int i = 0; i < val.Text.Length; i++)
                                 if (Char.IsLetter(val.Text[i]))
                                 {
                                     ShowError("Value must be a number!");
-                                    return;
+                                    return false;
                                 }
                         }
                         k++;
@@ -434,13 +421,13 @@ namespace WPF_Budget_Project
                             if (val.Text.Length == 0)
                             {
                                 ShowError("Insert value!");
-                                return;
+                                return false;
                             }
                             for (int i = 0; i < val.Text.Length; i++)
                                 if (Char.IsLetter(val.Text[i]))
                                 {
                                     ShowError("Value must be a number!");
-                                    return;
+                                    return false;
                                 }
                         }
                         k++;
@@ -449,28 +436,19 @@ namespace WPF_Budget_Project
                 else
                 {
                     ShowError("Choose type!");
-                    return;
+                    return false;
                 }
             }
 
             else
             {
                 ShowError("Choose category!");
-                return;
+                return false;
             }
 
             k = 0;
             if (PeriodicCheck.IsChecked == true)
             {
-               /* foreach (var val in FindVisualChildren<TextBox>(this))
-                {
-                    if (k == 2)
-                        for (int i = 0; i < val.Text.Length; i++)
-                            if (Char.IsLetter(val.Text[i]))
-                                ShowError();
-                    k++;
-                }
-                k = 0;*/
                 foreach (var val in FindVisualChildren<Calendar>(this))
                 {
                     try
@@ -480,7 +458,7 @@ namespace WPF_Budget_Project
                     catch(InvalidOperationException)
                     {
                         ShowError("Choose category!");
-                        return;
+                        return false;
                     }
                 }
 
@@ -494,11 +472,39 @@ namespace WPF_Budget_Project
                     if(val.Text == "")
                     {
                         ShowError("Choose interval!");
-                        return;
+                        return false;
                     }
                 }
             }
-            Console.WriteLine("przeszlo");
+            return true;
+        }
+        #endregion
+        #region SaveData
+        void SaveClick(object sender, EventArgs e)
+        {
+            if(CheckInputData())
+            {
+                int k = 0;
+                if (TypeCombo.Text == "New type...")
+                {
+                    foreach (var val in FindVisualChildren<TextBox>(MainGrid))
+                    {
+                        if (k == 1)
+                        {
+                            var sqLiteConn = new SQLiteConnection(@"Data Source=database.db;Version=3;");
+                            sqLiteConn.Open();
+                            SQLiteCommand comm = new SQLiteCommand("alter table[" + UserMail + "-income] add[" + val.Text + "] REAL", sqLiteConn);
+                            comm.ExecuteNonQuery();
+                            comm = new SQLiteCommand("select * from [" + UserMail + "-expend]", sqLiteConn);
+                            comm.ExecuteNonQuery();
+                            ComboBoxItem x;
+                            //SQLiteDataReader read = comm.ExecuteReader(); ("alter table [Product] add [ProductId] int default 0 NOT NULL"))
+                        }
+                        k++;
+                    }
+                }
+            }
+        }
+            #endregion
         }
     }
-}

@@ -33,7 +33,7 @@ namespace WPF_Budget_Project
 
         void AddButton_Click(object sender, EventArgs e)
         {
-            Main.Navigate(new AddPage());
+            Main.Navigate(new AddPage(UserMail));
         }
 
         private void Main_Navigated(object sender, EventArgs e)
