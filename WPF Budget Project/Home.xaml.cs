@@ -105,7 +105,6 @@ namespace WPF_Budget_Project
             {
                 Labels[i] = Labels[i].Remove(5, 5);
             }
-            Console.WriteLine(Labels[0]);
             YFormatter = value => value.ToString("C", CultureInfo.CreateSpecificCulture("en-US"));
             DataContext = this;
 

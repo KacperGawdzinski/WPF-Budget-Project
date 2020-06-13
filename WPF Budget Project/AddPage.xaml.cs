@@ -18,15 +18,37 @@ using System.Data.SqlTypes;
 using System.Collections.Specialized;
 using System.Data.Entity.ModelConfiguration.Configuration;
 using System.Data.Entity.Core;
+using System.Net.Http.Headers;
 
 namespace WPF_Budget_Project
 {
+    public partial class Pack
+    {
+        int sum;
+        List<string> s;
+        public Pack(int x, List<string> y)
+        {
+            sum = x;
+            s = y;
+        }
+        public int Sum()
+        {
+            return sum;
+        }
+        public List<string> Input()
+        {
+            return s;
+        }
+    };
+
+
     public partial class AddPage : Page
     {
+        #region Contructor & Variables
         string UserMail;
-        bool TypeInsertBuilt = false;
         bool ExpendUsed = false;
         bool IncomeUsed = true;
+        bool TypeInsertBuilt = false;
         bool SaveInsideGrid = false;
         public AddPage(string x)
         {
@@ -36,7 +58,7 @@ namespace WPF_Budget_Project
             x = x.AddDays(50);
             Console.WriteLine(x.ToString("dd.MM.yyyy"));*/
         }
-
+        #endregion
         #region GUIAdapt
         void IncomeChecked(object sender, EventArgs e)
         {
@@ -134,7 +156,7 @@ namespace WPF_Budget_Project
         }
 
 
-        string[] ReadColumns(bool income)
+        string[] ReadColumns(bool income)   //might need slight modification to filter data,id etc in place
         {
             List<string> l = new List<string>();
             var sqLiteConn = new SQLiteConnection(@"Data Source=database.db;Version=3;");
@@ -236,14 +258,16 @@ namespace WPF_Budget_Project
             StartDate.Text = "Start Date";
             StartDate.HorizontalAlignment = HorizontalAlignment.Left;
             StartDate.Width = 200;
-            StartDate.Margin = new Thickness(140, 10, 0, 0);
+            StartDate.Margin = new Thickness(155, 10, 0, 0);
             Calendar Date = new Calendar();
             Viewbox box = new Viewbox();
             box.HorizontalAlignment = HorizontalAlignment.Left;
             box.MaxWidth = 250;
             box.MaxHeight = 300;
             box.Margin = new Thickness(80, 35, 0, 0);
-            Date.DisplayDate = new DateTime(2009, 3, 15);//! change to actual
+            string d = DateTime.Today.ToString("dd.MM.yyyy");
+            string[] t = d.Split('.');
+            Date.DisplayDate = new DateTime(Convert.ToInt32(t[2]), Convert.ToInt32(t[1]), Convert.ToInt32(t[0]));
             box.Child = Date;
             PeriodicGrid.Children.Add(PeriodicText);
             PeriodicGrid.Children.Add(PeriodicBox);
@@ -321,41 +345,56 @@ namespace WPF_Budget_Project
             return;
         }
 
-        bool CheckInputData()
+        Pack CheckInputData()
         {
-            int k = 0;
+            int k = 0, sum = 0;
+            List<string> l = new List<string>();
             if (IncomeCheck.IsChecked == true)
             {
                 if (TypeCombo.Text == "New type...")
                 {
+                    sum++;
                     foreach (var val in FindVisualChildren<TextBox>(MainGrid))
                     {
                         if (k == 1)
+                        {
                             if (val.Text.Length == 0)
                             {
                                 ShowError("Insert new type!");
-                                return false;
+                                return null;
                             }
-
+                            string[] temp = ReadColumns(true);
+                            for (int i = 0; i < temp.Length; i++)
+                                if (temp[i] == val.Text)
+                                {
+                                    ShowError("This column already exists!");
+                                    return null;
+                                }
+                            l.Add(val.Text);
+                        }
                         if (k == 2)
                         {
                             if (val.Text.Length == 0)
                             {
                                 ShowError("Insert value!");
-                                return false;
+                                return null;
                             }
                             for (int i = 0; i < val.Text.Length; i++)
+                            {
                                 if (Char.IsLetter(val.Text[i]))
                                 {
                                     ShowError("Value must be a number!");
-                                    return false;
+                                    return null;
                                 }
+                            }
+                            l.Add(val.Text);
                         }
                         k++;
                     }
                 }
                 else if (TypeCombo.Text != "")
                 {
+                    l.Add(TypeCombo.Text);
                     foreach (var val in FindVisualChildren<TextBox>(this))
                     {
                         if (k == 1)
@@ -363,14 +402,15 @@ namespace WPF_Budget_Project
                             if (val.Text.Length == 0)
                             {
                                 ShowError("Insert value!");
-                                return false;
+                                return null;
                             }
                             for (int i = 0; i < val.Text.Length; i++)
                                 if (Char.IsLetter(val.Text[i]))
                                 {
                                     ShowError("Value must be a number!");
-                                    return false;
+                                    return null;
                                 }
+                            l.Add(val.Text);
                         }
                         k++;
                     }
@@ -378,42 +418,56 @@ namespace WPF_Budget_Project
                 else
                 {
                     ShowError("Choose type!");
-                    return false;
+                    return null;
                 }
             }
 
             else if (ExpendCheck.IsChecked == true)  //huge spaghetti - needs division into functions but I dont have much time due to exams
             {
+                sum = 4;
                 if (TypeCombo.Text == "New type...")
                 {
+                    sum++;
                     foreach (var val in FindVisualChildren<TextBox>(MainGrid))
                     {
                         if (k == 1)
+                        {
                             if (val.Text.Length == 0)
                             {
                                 ShowError("Insert new type!");
-                                return false;
+                                return null;
                             }
+                            string[] temp = ReadColumns(true);
+                            for (int i = 0; i < temp.Length; i++)
+                                if (temp[i] == val.Text)
+                                {
+                                    ShowError("This column already exists!");
+                                    return null;
+                                }
+                            l.Add(val.Text);
+                        }
 
                         if (k == 2 || k == 3)
                         {
                             if (val.Text.Length == 0)
                             {
                                 ShowError("Insert value!");
-                                return false;
+                                return null;
                             }
                             for (int i = 0; i < val.Text.Length; i++)
                                 if (Char.IsLetter(val.Text[i]))
                                 {
                                     ShowError("Value must be a number!");
-                                    return false;
+                                    return null;
                                 }
+                            l.Add(val.Text);
                         }
                         k++;
                     }
                 }
                 else if (TypeCombo.Text != "")
                 {
+                    l.Add(TypeCombo.Text);
                     foreach (var val in FindVisualChildren<TextBox>(this))
                     {
                         if (k == 1)
@@ -421,14 +475,15 @@ namespace WPF_Budget_Project
                             if (val.Text.Length == 0)
                             {
                                 ShowError("Insert value!");
-                                return false;
+                                return null;
                             }
                             for (int i = 0; i < val.Text.Length; i++)
                                 if (Char.IsLetter(val.Text[i]))
                                 {
                                     ShowError("Value must be a number!");
-                                    return false;
+                                    return null;
                                 }
+                            l.Add(val.Text);
                         }
                         k++;
                     }
@@ -436,75 +491,117 @@ namespace WPF_Budget_Project
                 else
                 {
                     ShowError("Choose type!");
-                    return false;
+                    return null;
                 }
             }
 
             else
             {
                 ShowError("Choose category!");
-                return false;
+                return null;
             }
 
             k = 0;
             if (PeriodicCheck.IsChecked == true)
             {
+                sum = sum + 2;
                 foreach (var val in FindVisualChildren<Calendar>(this))
                 {
                     try
                     {
-                        Console.WriteLine(val.SelectedDate.Value.ToString("dd.MM.yyyy"));
+                        l.Add(val.SelectedDate.Value.ToString("dd.MM.yyyy"));
                     }
                     catch(InvalidOperationException)
                     {
-                        ShowError("Choose category!");
-                        return false;
+                        ShowError("Choose date!");
+                        return null;
                     }
                 }
 
                 foreach (var val in FindVisualChildren<ComboBox>(this))
                 {
-                    if (k == 0)
+                    if (k == 1)
                     {
+                        if (val.Text == "")
+                        {
+                            ShowError("Choose interval!");
+                            return null;
+                        }
+                        l.Add(val.Text);
                         k++;
                         continue;
                     }
-                    if(val.Text == "")
-                    {
-                        ShowError("Choose interval!");
-                        return false;
-                    }
+                    k++;
                 }
             }
-            return true;
+            Pack res = new Pack(sum,l);
+            return res;
         }
         #endregion
         #region SaveData
         void SaveClick(object sender, EventArgs e)
         {
-            if(CheckInputData())
+            Pack InputData = CheckInputData();
+            if (InputData != null)
             {
-                int k = 0;
-                if (TypeCombo.Text == "New type...")
+                var sqLiteConn = new SQLiteConnection(@"Data Source=database.db;Version=3;");
+                sqLiteConn.Open();
+                SQLiteCommand comm;
+                switch (InputData.Sum())
                 {
-                    foreach (var val in FindVisualChildren<TextBox>(MainGrid))
-                    {
-                        if (k == 1)
-                        {
-                            var sqLiteConn = new SQLiteConnection(@"Data Source=database.db;Version=3;");
-                            sqLiteConn.Open();
-                            SQLiteCommand comm = new SQLiteCommand("alter table[" + UserMail + "-income] add[" + val.Text + "] REAL", sqLiteConn);
-                            comm.ExecuteNonQuery();
-                            comm = new SQLiteCommand("select * from [" + UserMail + "-expend]", sqLiteConn);
-                            comm.ExecuteNonQuery();
-                            ComboBoxItem x;
-                            //SQLiteDataReader read = comm.ExecuteReader(); ("alter table [Product] add [ProductId] int default 0 NOT NULL"))
-                        }
-                        k++;
-                    }
+                    case 0:
+                        comm = new SQLiteCommand("insert into [" + UserMail +"-income] ("+InputData.Input()[0]+",Date,Repeatability) " +
+                            "values('" + InputData.Input()[1] + "', '" + DateTime.Today.ToString("dd.MM.yyyy") + "', 'false')", sqLiteConn);
+                        comm.ExecuteNonQuery();
+                        break;
+                    case 1:
+                        comm = new SQLiteCommand("alter table[" + UserMail + "-income] add[" + InputData.Input()[0] + "] REAL", sqLiteConn);
+                        comm.ExecuteNonQuery();
+                        comm = new SQLiteCommand("insert into [" + UserMail + "-income] (" + InputData.Input()[0] + ",Date,Repeatability) " +
+                             "values('" + InputData.Input()[1] + "', '" + DateTime.Today.ToString("dd.MM.yyyy") + "', 'false')", sqLiteConn);
+                        comm.ExecuteNonQuery();
+                        break;
+                    case 2:
+                        comm = new SQLiteCommand("insert into [" + UserMail + "-income] (" + InputData.Input()[0] + ",Date,Repeatability) " +
+                             "values('" + InputData.Input()[1] + "', '" + InputData.Input()[2] + "', '" + InputData.Input()[3]+"')", sqLiteConn);
+                        comm.ExecuteNonQuery();
+                        break;
+                    case 3:
+                        comm = new SQLiteCommand("alter table[" + UserMail + "-income] add[" + InputData.Input()[0] + "] REAL", sqLiteConn);
+                        comm.ExecuteNonQuery();
+                        comm = new SQLiteCommand("insert into [" + UserMail + "-income] (" + InputData.Input()[0] + ",Date,Repeatability) " +
+                             "values('" + InputData.Input()[1] + "', '" + InputData.Input()[2] + "', '" + InputData.Input()[3] + "')", sqLiteConn);
+                        comm.ExecuteNonQuery();
+                        break;
+                    case 4:
+                        comm = new SQLiteCommand("insert into [" + UserMail + "-expend] (" + InputData.Input()[0] + ",Date,Repeatability,MaxValue) " +
+                            "values('" + InputData.Input()[1] + "', '" + DateTime.Today.ToString("dd.MM.yyyy") + "', 'false', '" + InputData.Input()[2]+"')", sqLiteConn);
+                        comm.ExecuteNonQuery();
+                        break;
+                    case 5:
+                        comm = new SQLiteCommand("alter table[" + UserMail + "-expend] add[" + InputData.Input()[0] + "] REAL", sqLiteConn);
+                        comm.ExecuteNonQuery();
+                        comm = new SQLiteCommand("insert into [" + UserMail + "-expend] (" + InputData.Input()[0] + ",Date,Repeatability,MaxValue) " +
+                            "values('" + InputData.Input()[1] + "', '" + DateTime.Today.ToString("dd.MM.yyyy") + "', 'false', '" + InputData.Input()[2] + "')", sqLiteConn);
+                        comm.ExecuteNonQuery();
+                        break;
+                    case 6:
+                        comm = new SQLiteCommand("insert into [" + UserMail + "-expend] (" + InputData.Input()[0] + ",Date,Repeatability,MaxValue) " +
+                             "values('" + InputData.Input()[1] + "', '" + InputData.Input()[3] + "', '" + InputData.Input()[4] + "', '" + InputData.Input()[2] + "')", sqLiteConn);
+                        comm.ExecuteNonQuery();
+                        break;
+                    case 7:
+                        comm = new SQLiteCommand("alter table[" + UserMail + "-expend] add[" + InputData.Input()[0] + "] REAL", sqLiteConn);
+                        comm.ExecuteNonQuery();
+                        comm = new SQLiteCommand("insert into [" + UserMail + "-expend] (" + InputData.Input()[0] + ",Date,Repeatability,MaxValue) " +
+                             "values('" + InputData.Input()[1] + "', '" + InputData.Input()[3] + "', '" + InputData.Input()[4] + "', '" + InputData.Input()[2] + "')", sqLiteConn);
+                        comm.ExecuteNonQuery();
+                        break;
                 }
+                 Window OK = new Notification("Transaction added!");
+                 OK.Show();
             }
         }
-            #endregion
-        }
+        #endregion
     }
+}
