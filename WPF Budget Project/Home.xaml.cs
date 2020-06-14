@@ -42,47 +42,56 @@ namespace WPF_Budget_Project
 
     public partial class Home : Page
     {
+        #region Constructor & Variables
         string UserMail;
         public Home(string mail)
         {
-            InitializeComponent();
-            Date.Text = "Today is: " + DateTime.Today.ToString("dd.MM.yyyy");
-            Rounded = new SeriesCollection();
-            Basic = new SeriesCollection();
 
             UserMail = mail;
-            List<string> ColumnNames = new List<string>();
+            InitializeComponent();
+            Date.Text = "Today is: " + DateTime.Today.ToString("dd.MM.yyyy");
+
             var sqLiteConn = new SQLiteConnection(@"Data Source=database.db;Version=3;");
             sqLiteConn.Open();
-            string command = "select * from [gawdzinskikacper@gmail.com-expend]";
-            SQLiteCommand conn = new SQLiteCommand(command, sqLiteConn);
-            conn.ExecuteNonQuery();
-            SQLiteDataReader read = conn.ExecuteReader();
-            for (int i = 0; i < read.FieldCount; i++)
-            {
-                string temp = read.GetName(i);
-                if (temp == "Date" || temp == "id" || temp == "Repeatability" || temp == "MaxValue")
-                    continue;
-                ColumnNames.Add(temp);
-            }
+            string IncomeDatabase = "[" + UserMail + "-income]";
+            string ExpendDatabase = "[" + UserMail + "-expend]";
+            List<string> IncomeColumns = new List<string>(ColumnNames(true,sqLiteConn,IncomeDatabase));
+            List<string> ExpendColumns = new List<string>(ColumnNames(false, sqLiteConn,ExpendDatabase));
+            int length = TableLength(sqLiteConn, ExpendDatabase);
+            int length2 = TableLength(sqLiteConn, IncomeDatabase);
 
-            for (int i = 0; i < ColumnNames.Count(); i++)
+            ArrayOfPacked[] p1 = GetFiveLast(sqLiteConn, length, ExpendColumns, "select * from " + ExpendDatabase, false);
+            ArrayOfPacked[] p2 = GetFiveLast(sqLiteConn, length2, IncomeColumns, "select * from "+ IncomeDatabase, true);
+            BuildLastTransactions(sqLiteConn, length, length2, p1, p2);
+            BuildLineChart(sqLiteConn);
+            BuildPieChart(ExpendColumns, sqLiteConn, ExpendDatabase);
+            sqLiteConn.Close();
+        }
+        #endregion
+        #region Charts
+        void BuildPieChart(List<string> ColumnNamesList, SQLiteConnection sqLiteConn, string db)
+        {
+            Rounded = new SeriesCollection();
+            for (int i = 0; i < ColumnNamesList.Count(); i++)
             {
-                SQLiteCommand SumCommand = new SQLiteCommand("SELECT SUM(" + ColumnNames[i] + ") FROM [gawdzinskikacper@gmail.com-expend]", sqLiteConn);
+                SQLiteCommand SumCommand = new SQLiteCommand("SELECT SUM(" + ColumnNamesList[i] + ") FROM "+db, sqLiteConn);
                 double val = (double)SumCommand.ExecuteScalar();
                 var AddValue = new ChartValues<ObservableValue>();
                 AddValue.Add(new ObservableValue(val));
                 Rounded.Add(new PieSeries
                 {
                     Values = AddValue,
-                    Title = ColumnNames[i]
+                    Title = ColumnNamesList[i]
                 });
             }
+        }
 
-            command = "select * from [gawdzinskikacper@gmail.com-balance]";
-            conn = new SQLiteCommand(command, sqLiteConn);
+        void BuildLineChart(SQLiteConnection sqLiteConn)
+        {
+            Basic = new SeriesCollection();
+            SQLiteCommand conn = new SQLiteCommand("select * from [gawdzinskikacper@gmail.com-balance]", sqLiteConn);
             conn.ExecuteNonQuery();
-            read = conn.ExecuteReader();
+            SQLiteDataReader read = conn.ExecuteReader();
 
             List<string> Data = new List<string>();
             var AddNewValue = new ChartValues<ObservableValue>();
@@ -101,73 +110,12 @@ namespace WPF_Budget_Project
                 LineSmoothness = 1,
             });
             Labels = Data.ToArray();
-            for(int i=0;i<Labels.Length;i++)
+            for (int i = 0; i < Labels.Length; i++)
             {
                 Labels[i] = Labels[i].Remove(5, 5);
             }
             YFormatter = value => value.ToString("C", CultureInfo.CreateSpecificCulture("en-US"));
             DataContext = this;
-
-            command = "select count(*) from [gawdzinskikacper@gmail.com-expend]";
-            conn = new SQLiteCommand(command, sqLiteConn);
-            int length = Convert.ToInt32(conn.ExecuteScalar());
-            ArrayOfPacked[] ArrayOfPacked = GetFiveLast(sqLiteConn, length, ColumnNames, "select * from [gawdzinskikacper@gmail.com-expend]", false);
-
-            ColumnNames = new List<string>();
-            command = "select * from [gawdzinskikacper@gmail.com-income]";
-            conn = new SQLiteCommand(command, sqLiteConn);
-            conn.ExecuteNonQuery();
-            read = conn.ExecuteReader();
-            for (int i = 0; i < read.FieldCount; i++)
-            {
-                string temp = read.GetName(i);
-                if (temp == "Date" || temp == "id" || temp == "Repeatability")
-                    continue;
-                ColumnNames.Add(temp);
-            }
-
-            command = "select count(*) from [gawdzinskikacper@gmail.com-income]";
-            conn = new SQLiteCommand(command, sqLiteConn);
-            int length2 = Convert.ToInt32(conn.ExecuteScalar());
-            ArrayOfPacked[] ArrayOfPacked2 = GetFiveLast(sqLiteConn, length2, ColumnNames, "select * from [gawdzinskikacper@gmail.com-income]", true);
-            length--; length2--;
-            if (length > 4)
-                length = 4;
-            if (length2 > 4)
-                length2 = 4;
-            int size = 5; 
-
-            while(size != 0 || (length == -1 && length2 == -1))
-            {
-                if (length == -1)
-                {
-                    LatestTransactions.Children.Add(MakeGrid(ArrayOfPacked2[length2]));
-                    length2--; size--;
-                    continue;
-                }
-                if (length2 == -1)
-                {
-                    LatestTransactions.Children.Add(MakeGrid(ArrayOfPacked[length]));
-                    length--; size--;
-                    continue;
-                }
-                int t = string.Compare(ArrayOfPacked[length].dat.Text, ArrayOfPacked2[length2].dat.Text);
-                if(t == -1)
-                {
-                    LatestTransactions.Children.Add(MakeGrid(ArrayOfPacked2[length2]));
-                    length2--; size--;
-                }
-                else if (t == 1)
-                {
-                    LatestTransactions.Children.Add(MakeGrid(ArrayOfPacked[length]));
-                    length--; size--;
-                }
-                else
-                {
-                    LatestTransactions.Children.Add(MakeGrid(ArrayOfPacked[length]));
-                    length--; size--;
-                }
-            }
         }
 
         public SeriesCollection Rounded { get; set; }
@@ -180,10 +128,83 @@ namespace WPF_Budget_Project
             if (Rounded.Count > 0)
                 Rounded.RemoveAt(0);
         }
-
         private void RestartOnClick(object sender, RoutedEventArgs e)
         {
             Chart.Update(true, true);
+        }
+        #endregion
+        #region LastTransactionList
+        void BuildLastTransactions(SQLiteConnection sqLiteConn, int length, int length2, ArrayOfPacked[] p1, ArrayOfPacked[] p2)
+        {//TODO - fix bug if dates aren't sorted 
+            length--; length2--;
+            if (length > 4)
+                length = 4;
+            if (length2 > 4)
+                length2 = 4;
+            int size = 5;
+
+            while (size != 0 && (length != -1 || length2 != -1))
+            {
+                if (length == -1)
+                {
+                    LatestTransactions.Children.Add(MakeGrid(p2[length2]));
+                    length2--; size--;
+                    continue;
+                }
+                if (length2 == -1)
+                {
+                    LatestTransactions.Children.Add(MakeGrid(p1[length]));
+                    length--; size--;
+                    continue;
+                }
+                int t = string.Compare(p1[length].dat.Text, p2[length2].dat.Text);
+                if (t == -1)
+                {
+                    LatestTransactions.Children.Add(MakeGrid(p2[length2]));
+                    length2--; size--;
+                }
+                else if (t == 1)
+                {
+                    LatestTransactions.Children.Add(MakeGrid(p1[length]));
+                    length--; size--;
+                }
+                else
+                {
+                    LatestTransactions.Children.Add(MakeGrid(p1[length]));
+                    length--; size--;
+                }
+            }
+        }
+
+        List<string> ColumnNames(bool income, SQLiteConnection sqLiteConn, string db)
+        {
+            List<string> ColumnNamesList = new List<string>();
+            SQLiteCommand conn= new SQLiteCommand("select * from "+db, sqLiteConn);
+            conn.ExecuteNonQuery();
+            SQLiteDataReader read = conn.ExecuteReader();
+            for (int i = 0; i < read.FieldCount; i++)
+            {
+                string temp = read.GetName(i);
+                if (income)
+                {
+                    if (temp == "Date" || temp == "id" || temp == "Repeatability")
+                        continue;
+                }
+                else
+                {
+                    if (temp == "Date" || temp == "id" || temp == "Repeatability" || temp == "MaxValue")
+                        continue;
+                }
+                ColumnNamesList.Add(temp);
+            }
+            read.Close();
+            return ColumnNamesList;
+        }
+
+        int TableLength(SQLiteConnection sqLiteConn, string db)
+        { 
+            SQLiteCommand conn = new SQLiteCommand("select count(*) from "+db, sqLiteConn);
+            return Convert.ToInt32(conn.ExecuteScalar());
         }
 
         private ArrayOfPacked[] GetFiveLast(SQLiteConnection x, int length, List<string> ColumnNames, string command, bool income)
@@ -270,4 +291,6 @@ namespace WPF_Budget_Project
             return make;
         }
     }
+    #endregion
+        
 }
