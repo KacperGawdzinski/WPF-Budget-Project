@@ -28,14 +28,14 @@ namespace WPF_Budget_Project
         public TextBlock cat;
         public TextBlock dat;
         public bool income;
-        public ArrayOfPacked(string x, string y, string z, bool k)
+        public ArrayOfPacked(string x, string y, long z, bool k)
         {
             val = new TextBlock();
             val.Text = x;
             cat = new TextBlock();
             cat.Text = y;
             dat = new TextBlock();
-            dat.Text = z;
+            dat.Text = z.ToString();
             income = k;
         }
     };
@@ -55,6 +55,7 @@ namespace WPF_Budget_Project
             sqLiteConn.Open();
             string IncomeDatabase = "[" + UserMail + "-income]";
             string ExpendDatabase = "[" + UserMail + "-expend]";
+            string BalanceDatabase = "[" + UserMail + "-balance]";
             List<string> IncomeColumns = new List<string>(ColumnNames(true,sqLiteConn,IncomeDatabase));
             List<string> ExpendColumns = new List<string>(ColumnNames(false, sqLiteConn,ExpendDatabase));
             int length = TableLength(sqLiteConn, ExpendDatabase);
@@ -62,8 +63,9 @@ namespace WPF_Budget_Project
 
             ArrayOfPacked[] p1 = GetFiveLast(sqLiteConn, length, ExpendColumns, "select * from " + ExpendDatabase, false);
             ArrayOfPacked[] p2 = GetFiveLast(sqLiteConn, length2, IncomeColumns, "select * from "+ IncomeDatabase, true);
+            SimulateBalance(sqLiteConn, BalanceDatabase, IncomeDatabase, ExpendDatabase);
             BuildLastTransactions(sqLiteConn, length, length2, p1, p2);
-            BuildLineChart(sqLiteConn);
+            BuildLineChart(sqLiteConn, BalanceDatabase);
             BuildPieChart(ExpendColumns, sqLiteConn, ExpendDatabase);
             sqLiteConn.Close();
         }
@@ -74,7 +76,7 @@ namespace WPF_Budget_Project
             Rounded = new SeriesCollection();
             for (int i = 0; i < ColumnNamesList.Count(); i++)
             {
-                SQLiteCommand SumCommand = new SQLiteCommand("SELECT SUM(" + ColumnNamesList[i] + ") FROM "+db, sqLiteConn);
+                SQLiteCommand SumCommand = new SQLiteCommand("SELECT SUM(" + ColumnNamesList[i] + ") FROM "+ db, sqLiteConn);
                 double val = (double)SumCommand.ExecuteScalar();
                 var AddValue = new ChartValues<ObservableValue>();
                 AddValue.Add(new ObservableValue(val));
@@ -86,10 +88,10 @@ namespace WPF_Budget_Project
             }
         }
 
-        void BuildLineChart(SQLiteConnection sqLiteConn)
+        void BuildLineChart(SQLiteConnection sqLiteConn, string db)
         {
             Basic = new SeriesCollection();
-            SQLiteCommand conn = new SQLiteCommand("select * from [gawdzinskikacper@gmail.com-balance]", sqLiteConn);
+            SQLiteCommand conn = new SQLiteCommand("select * from " + db, sqLiteConn);
             conn.ExecuteNonQuery();
             SQLiteDataReader read = conn.ExecuteReader();
 
@@ -100,7 +102,7 @@ namespace WPF_Budget_Project
             {
                 AddNewValue.Add(new ObservableValue((double)read["Balance"]));
                 balance = (double)read["Balance"];
-                Data.Add((string)read["Date"]);
+                Data.Add(((long)read["Date"]).ToString());
             }
             Balance.Text = balance.ToString() + "$";
             Basic.Add(new LineSeries
@@ -109,11 +111,11 @@ namespace WPF_Budget_Project
                 Values = AddNewValue,
                 LineSmoothness = 1,
             });
-            Labels = Data.ToArray();
-            for (int i = 0; i < Labels.Length; i++)
+            Labels = Data.ToArray();/*
+            for (int i = 0; i < Labels.Length; i++)?????????
             {
                 Labels[i] = Labels[i].Remove(5, 5);
-            }
+            }*/
             YFormatter = value => value.ToString("C", CultureInfo.CreateSpecificCulture("en-US"));
             DataContext = this;
         }
@@ -179,7 +181,13 @@ namespace WPF_Budget_Project
         List<string> ColumnNames(bool income, SQLiteConnection sqLiteConn, string db)
         {
             List<string> ColumnNamesList = new List<string>();
-            SQLiteCommand conn= new SQLiteCommand("select * from "+db, sqLiteConn);
+            SQLiteCommand conn;
+            if (income)
+                conn = new SQLiteCommand("CREATE TABLE IF NOT EXISTS " + db +" (id INTEGER PRIMARY KEY AUTOINCREMENT, Date TEXT, Repeatability TEXT)", sqLiteConn);
+            else
+                conn = new SQLiteCommand("CREATE TABLE IF NOT EXISTS " + db + " (id INTEGER PRIMARY KEY AUTOINCREMENT, Date TEXT, Repeatability TEXT, MaxValue REAL)", sqLiteConn);
+            conn.ExecuteNonQuery();
+            conn = new SQLiteCommand("select * from " + db, sqLiteConn);
             conn.ExecuteNonQuery();
             SQLiteDataReader read = conn.ExecuteReader();
             for (int i = 0; i < read.FieldCount; i++)
@@ -207,7 +215,7 @@ namespace WPF_Budget_Project
             return Convert.ToInt32(conn.ExecuteScalar());
         }
 
-        private ArrayOfPacked[] GetFiveLast(SQLiteConnection x, int length, List<string> ColumnNames, string command, bool income)
+        ArrayOfPacked[] GetFiveLast(SQLiteConnection x, int length, List<string> ColumnNames, string command, bool income)
         {
             if (length == 0)
                 return null;
@@ -216,7 +224,7 @@ namespace WPF_Budget_Project
             conn.ExecuteNonQuery();
             SQLiteDataReader read = conn.ExecuteReader();
             ArrayOfPacked[] ArrayOfPacked;
-            int k = 0; double r; string d; string c;
+            int k = 0; double r; long d; string c;
             if (length > 5)
             {
                 ArrayOfPacked = new ArrayOfPacked[5];
@@ -234,7 +242,7 @@ namespace WPF_Budget_Project
 
             while (read.Read()) //due to the lack of sql classes (next year) this code is kinda inefficient
             {
-                d = (string)read["Date"];
+                d = (long)read["Date"];
                 for (int j = 0; j < ColumnNames.Count; j++)
                 {
                     try
@@ -290,7 +298,51 @@ namespace WPF_Budget_Project
             make.Height = 50;
             return make;
         }
+        #endregion
+        #region Simulation
+        void SimulateBalance(SQLiteConnection sqLiteConn, string dbb, string dbi, string dbe)
+        {
+            //table creator
+            SQLiteCommand comm = new SQLiteCommand("CREATE TABLE IF NOT EXISTS " + dbb + " (id INTEGER PRIMARY KEY AUTOINCREMENT, Balance REAL, Date INTEGER)", sqLiteConn);
+            comm.ExecuteNonQuery();
+            comm = new SQLiteCommand("SELECT count(*) FROM " + dbb, sqLiteConn);
+            int row_sum = Convert.ToInt32(comm.ExecuteScalar());
+            if(row_sum == 0)
+            {
+                comm = new SQLiteCommand("insert into " + dbb +" (Balance,Date) values('0','" + DateTime.Today.ToString("yyyyMMdd") + "')", sqLiteConn);
+                comm.ExecuteNonQuery();
+                return;
+            }
+
+            //checking latest date, if it's equal to today's return
+            comm = new SQLiteCommand("SELECT* FROM "+ dbb + "ORDER BY Date DESC LIMIT 1", sqLiteConn);
+            comm.ExecuteNonQuery();
+            SQLiteDataReader read = comm.ExecuteReader();
+            read.Read();
+            long LastDate = (long)read["Date"];
+            if (Convert.ToInt64(DateTime.Today.ToString("yyyyMMdd")) == LastDate)
+                return;
+
+            //analysing periodic transactions
+            DateTime x = DateTime.Today;
+             x = x.AddMonths(-1);
+            comm = new SQLiteCommand("SELECT * FROM "+ dbe + " WHERE Date >= " + x.ToString("yyyyMMdd"), sqLiteConn);
+            read = comm.ExecuteReader();
+            while(read.Read())
+            {
+                if(!((string)read["Repeatability"]).Equals("NULL"))
+                {
+                    long date = (long)read["Date"];
+                    int a, b, c;
+                    a = (int)(date / 10000);
+                    b = (int)((date - a*10000) / 100);
+                    c = (int)(date - a*10000 - b*100);
+                    x = new DateTime(a, b, c);
+                    Console.WriteLine(x.ToString());
+
+                }
+            }
+        }
+        #endregion
     }
-    #endregion
-        
 }

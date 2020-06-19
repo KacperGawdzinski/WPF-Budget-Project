@@ -54,9 +54,6 @@ namespace WPF_Budget_Project
         {
             InitializeComponent();
             UserMail = x;
-            /*DateTime x = new DateTime(2000,1,11);
-            x = x.AddDays(50);
-            Console.WriteLine(x.ToString("dd.MM.yyyy"));*/
         }
         #endregion
         #region GUIAdapt
@@ -67,7 +64,7 @@ namespace WPF_Budget_Project
             string[] temp = ReadColumns(true);           //all columns from table
             for (int i=0;i<temp.Length;i++)
             {
-                if (temp[i] == "Date" || temp[i] == "id" || temp[i] == "Repeatability")
+                if (temp[i] == "DATE" || temp[i] == "ID" || temp[i] == "REPEATABILITY" || temp[i] == "NO")
                     continue;
                 x = new ComboBoxItem();
                 x.Content = temp[i];
@@ -86,7 +83,7 @@ namespace WPF_Budget_Project
             string[] temp = ReadColumns(false);
             for (int i = 0; i < temp.Length; i++)
             {
-                if (temp[i] == "Date" || temp[i] == "id" || temp[i] == "Repeatability" || temp[i] == "MaxValue")
+                if (temp[i] == "DATE" || temp[i] == "ID" || temp[i] == "REPEATABILITY" || temp[i] == "NO" || temp[i] == "MAXVALUE")
                     continue;
                 x = new ComboBoxItem();
                 x.Content = temp[i];
@@ -162,11 +159,6 @@ namespace WPF_Budget_Project
             var sqLiteConn = new SQLiteConnection(@"Data Source=database.db;Version=3;");
             sqLiteConn.Open();
             SQLiteCommand comm;
-            if (income)
-                comm = new SQLiteCommand("CREATE TABLE IF NOT EXISTS [" + UserMail + "-income] (id INTEGER PRIMARY KEY AUTOINCREMENT, Date TEXT, Repeatability TEXT)", sqLiteConn);
-            else
-                comm = new SQLiteCommand("CREATE TABLE IF NOT EXISTS [" + UserMail + "-expend] (id INTEGER PRIMARY KEY AUTOINCREMENT, Date TEXT, Repeatability TEXT, MaxValue REAL)", sqLiteConn);
-            comm.ExecuteNonQuery();
             if(income)
                 comm = new SQLiteCommand("select * from [" + UserMail + "-income]", sqLiteConn);
             else
@@ -349,7 +341,7 @@ namespace WPF_Budget_Project
         {
             int k = 0, sum = 0;
             List<string> l = new List<string>();
-            if (IncomeCheck.IsChecked == true)
+            if (IncomeCheck.IsChecked == true)//TODO can be done much shorter without checking maxvalue
             {
                 if (TypeCombo.Text == "New type...")
                 {
@@ -509,7 +501,7 @@ namespace WPF_Budget_Project
                 {
                     try
                     {
-                        l.Add(val.SelectedDate.Value.ToString("dd.MM.yyyy"));
+                        l.Add(val.SelectedDate.Value.ToString("yyyyMMdd"));
                     }
                     catch(InvalidOperationException)
                     {
@@ -547,54 +539,55 @@ namespace WPF_Budget_Project
                 var sqLiteConn = new SQLiteConnection(@"Data Source=database.db;Version=3;");
                 sqLiteConn.Open();
                 SQLiteCommand comm;
+                Guid guid = Guid.NewGuid();
                 switch (InputData.Sum())
                 {
                     case 0:
-                        comm = new SQLiteCommand("insert into [" + UserMail +"-income] ("+InputData.Input()[0]+",Date,Repeatability) " +
-                            "values('" + InputData.Input()[1] + "', '" + DateTime.Today.ToString("dd.MM.yyyy") + "', 'false')", sqLiteConn);
+                        comm = new SQLiteCommand("INSERT INTO [" + UserMail +"-income] ("+InputData.Input()[0]+", DATE, REPEATABILITY, ID) " +
+                            "values('" + InputData.Input()[1] + "', '" + DateTime.Today.ToString("yyyyMMdd") + "', 'NULL', "+ guid.ToString() +")", sqLiteConn);
                         comm.ExecuteNonQuery();
                         break;
                     case 1:
-                        comm = new SQLiteCommand("alter table[" + UserMail + "-income] add[" + InputData.Input()[0] + "] REAL", sqLiteConn);
+                        comm = new SQLiteCommand("ALTER TABLE[" + UserMail + "-income] ADD[" + InputData.Input()[0] + "] REAL", sqLiteConn);
                         comm.ExecuteNonQuery();
-                        comm = new SQLiteCommand("insert into [" + UserMail + "-income] (" + InputData.Input()[0] + ",Date,Repeatability) " +
-                             "values('" + InputData.Input()[1] + "', '" + DateTime.Today.ToString("dd.MM.yyyy") + "', 'false')", sqLiteConn);
+                        comm = new SQLiteCommand("INSERT INTO [" + UserMail + "-income] (" + InputData.Input()[0] + ", DATE, REPEATABILITY, ID) " +
+                            "values('" + InputData.Input()[1] + "', '" + DateTime.Today.ToString("yyyyMMdd") + "', 'NULL', " + guid.ToString() + ")", sqLiteConn);
                         comm.ExecuteNonQuery();
                         break;
                     case 2:
-                        comm = new SQLiteCommand("insert into [" + UserMail + "-income] (" + InputData.Input()[0] + ",Date,Repeatability) " +
-                             "values('" + InputData.Input()[1] + "', '" + InputData.Input()[2] + "', '" + InputData.Input()[3]+"')", sqLiteConn);
+                        comm = new SQLiteCommand("INSERT INTO [" + UserMail + "-income] (" + InputData.Input()[0] + ", DATE, REPEATABILITY, ID) " +
+                             "values('" + InputData.Input()[1] + "', '" + InputData.Input()[2] + "', '" + InputData.Input()[3] + "', '" + guid.ToString() + ")", sqLiteConn);
                         comm.ExecuteNonQuery();
                         break;
                     case 3:
-                        comm = new SQLiteCommand("alter table[" + UserMail + "-income] add[" + InputData.Input()[0] + "] REAL", sqLiteConn);
+                        comm = new SQLiteCommand("ALTER TABLE[" + UserMail + "-income] ADD[" + InputData.Input()[0] + "] REAL", sqLiteConn);
                         comm.ExecuteNonQuery();
-                        comm = new SQLiteCommand("insert into [" + UserMail + "-income] (" + InputData.Input()[0] + ",Date,Repeatability) " +
-                             "values('" + InputData.Input()[1] + "', '" + InputData.Input()[2] + "', '" + InputData.Input()[3] + "')", sqLiteConn);
+                        comm = new SQLiteCommand("INSERT INTO [" + UserMail + "-income] (" + InputData.Input()[0] + ", DATE, REPEATABILITY, ID) " +
+                             "values('" + InputData.Input()[1] + "', '" + InputData.Input()[2] + "', '" + InputData.Input()[3] + "', '" + guid.ToString() + ")", sqLiteConn);
                         comm.ExecuteNonQuery();
                         break;
                     case 4:
-                        comm = new SQLiteCommand("insert into [" + UserMail + "-expend] (" + InputData.Input()[0] + ",Date,Repeatability,MaxValue) " +
-                            "values('" + InputData.Input()[1] + "', '" + DateTime.Today.ToString("dd.MM.yyyy") + "', 'false', '" + InputData.Input()[2]+"')", sqLiteConn);
+                        comm = new SQLiteCommand("INSERT INTO [" + UserMail + "-expend] (" + InputData.Input()[0] + ", DATE, REPEATABILITY, MAXVALUE, ID) " +
+                            "values('" + InputData.Input()[1] + "', '" + DateTime.Today.ToString("dd.MM.yyyy") + "', 'NULL', '" + InputData.Input()[2] + "', '" + guid.ToString() + "')", sqLiteConn);
                         comm.ExecuteNonQuery();
                         break;
                     case 5:
-                        comm = new SQLiteCommand("alter table[" + UserMail + "-expend] add[" + InputData.Input()[0] + "] REAL", sqLiteConn);
+                        comm = new SQLiteCommand("ALTER TABLE[" + UserMail + "-expend] ADD[" + InputData.Input()[0] + "] REAL", sqLiteConn);
                         comm.ExecuteNonQuery();
-                        comm = new SQLiteCommand("insert into [" + UserMail + "-expend] (" + InputData.Input()[0] + ",Date,Repeatability,MaxValue) " +
-                            "values('" + InputData.Input()[1] + "', '" + DateTime.Today.ToString("dd.MM.yyyy") + "', 'false', '" + InputData.Input()[2] + "')", sqLiteConn);
+                        comm = new SQLiteCommand("INSERT INTO [" + UserMail + "-expend] (" + InputData.Input()[0] + ", DATE, REPEATABILITY, MAXVALUE, ID) " +
+                            "values('" + InputData.Input()[1] + "', '" + DateTime.Today.ToString("dd.MM.yyyy") + "', 'NULL', '" + InputData.Input()[2] + "', '" + guid.ToString() + "')", sqLiteConn);
                         comm.ExecuteNonQuery();
                         break;
                     case 6:
-                        comm = new SQLiteCommand("insert into [" + UserMail + "-expend] (" + InputData.Input()[0] + ",Date,Repeatability,MaxValue) " +
-                             "values('" + InputData.Input()[1] + "', '" + InputData.Input()[3] + "', '" + InputData.Input()[4] + "', '" + InputData.Input()[2] + "')", sqLiteConn);
+                        comm = new SQLiteCommand("INSERT INTO [" + UserMail + "-expend] (" + InputData.Input()[0] + ", DATE, REPEATABILITY, MAXVALUE, ID) " +
+                             "values('" + InputData.Input()[1] + "', '" + InputData.Input()[3] + "', '" + InputData.Input()[4] + "', '" + InputData.Input()[2] + "', '" + guid.ToString() + "')", sqLiteConn);
                         comm.ExecuteNonQuery();
                         break;
                     case 7:
-                        comm = new SQLiteCommand("alter table[" + UserMail + "-expend] add[" + InputData.Input()[0] + "] REAL", sqLiteConn);
+                        comm = new SQLiteCommand("ALTER TABLE[" + UserMail + "-expend] ADD[" + InputData.Input()[0] + "] REAL", sqLiteConn);
                         comm.ExecuteNonQuery();
-                        comm = new SQLiteCommand("insert into [" + UserMail + "-expend] (" + InputData.Input()[0] + ",Date,Repeatability,MaxValue) " +
-                             "values('" + InputData.Input()[1] + "', '" + InputData.Input()[3] + "', '" + InputData.Input()[4] + "', '" + InputData.Input()[2] + "')", sqLiteConn);
+                        comm = new SQLiteCommand("INSERT INTO [" + UserMail + "-expend] (" + InputData.Input()[0] + ", DATE, REPEATABILITY, MAXVALUE, ID) " +
+                             "values('" + InputData.Input()[1] + "', '" + InputData.Input()[3] + "', '" + InputData.Input()[4] + "', '" + InputData.Input()[2] + "', '" + guid.ToString() + "')", sqLiteConn);
                         comm.ExecuteNonQuery();
                         break;
                 }
