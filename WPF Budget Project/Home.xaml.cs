@@ -20,6 +20,8 @@ using System.Globalization;
 using System.Data;
 using System.IO;
 
+//TODO - MAXVALUE MUST APPEAR ONLY ONCE WHEN USER INSERTS NEW TYPE!
+//TODO - SIMULATION AT ADD
 namespace WPF_Budget_Project
 {
     public partial class ArrayOfPacked
@@ -74,10 +76,18 @@ namespace WPF_Budget_Project
         void BuildPieChart(List<string> ColumnNamesList, SQLiteConnection sqLiteConn, string db)
         {
             Rounded = new SeriesCollection();
+            double val;
             for (int i = 0; i < ColumnNamesList.Count(); i++)
             {
                 SQLiteCommand SumCommand = new SQLiteCommand("SELECT SUM(" + ColumnNamesList[i] + ") FROM "+ db, sqLiteConn);
-                double val = (double)SumCommand.ExecuteScalar();
+                try
+                {
+                    val = (double)SumCommand.ExecuteScalar();
+                }
+                catch(InvalidCastException)
+                {
+                    continue;
+                }
                 var AddValue = new ChartValues<ObservableValue>();
                 AddValue.Add(new ObservableValue(val));
                 Rounded.Add(new PieSeries
@@ -183,9 +193,9 @@ namespace WPF_Budget_Project
             List<string> ColumnNamesList = new List<string>();
             SQLiteCommand conn;
             if (income)
-                conn = new SQLiteCommand("CREATE TABLE IF NOT EXISTS " + db +" (id INTEGER PRIMARY KEY AUTOINCREMENT, Date TEXT, Repeatability TEXT)", sqLiteConn);
+                conn = new SQLiteCommand("CREATE TABLE IF NOT EXISTS " + db +" (NO INTEGER PRIMARY KEY AUTOINCREMENT, ID TEXT, DATE INTEGER, REPEATABILITY TEXT)", sqLiteConn);
             else
-                conn = new SQLiteCommand("CREATE TABLE IF NOT EXISTS " + db + " (id INTEGER PRIMARY KEY AUTOINCREMENT, Date TEXT, Repeatability TEXT, MaxValue REAL)", sqLiteConn);
+                conn = new SQLiteCommand("CREATE TABLE IF NOT EXISTS " + db + " (NO INTEGER PRIMARY KEY AUTOINCREMENT, ID TEXT, DATE INTEGER, REPEATABILITY TEXT, MAXVALUE REAL)", sqLiteConn);
             conn.ExecuteNonQuery();
             conn = new SQLiteCommand("select * from " + db, sqLiteConn);
             conn.ExecuteNonQuery();
@@ -195,12 +205,12 @@ namespace WPF_Budget_Project
                 string temp = read.GetName(i);
                 if (income)
                 {
-                    if (temp == "Date" || temp == "id" || temp == "Repeatability")
+                    if (temp == "DATE" || temp == "ID" || temp == "REPEATABILITY" || temp == "NO")
                         continue;
                 }
                 else
                 {
-                    if (temp == "Date" || temp == "id" || temp == "Repeatability" || temp == "MaxValue")
+                    if (temp == "DATE" || temp == "ID" || temp == "REPEATABILITY" || temp == "NO" || temp == "MAXVALUE")
                         continue;
                 }
                 ColumnNamesList.Add(temp);
@@ -303,45 +313,86 @@ namespace WPF_Budget_Project
         void SimulateBalance(SQLiteConnection sqLiteConn, string dbb, string dbi, string dbe)
         {
             //table creator
-            SQLiteCommand comm = new SQLiteCommand("CREATE TABLE IF NOT EXISTS " + dbb + " (id INTEGER PRIMARY KEY AUTOINCREMENT, Balance REAL, Date INTEGER)", sqLiteConn);
+            SQLiteCommand comm = new SQLiteCommand("CREATE TABLE IF NOT EXISTS " + dbb + " (NO INTEGER PRIMARY KEY AUTOINCREMENT, BALANCE REAL, DATE INTEGER)", sqLiteConn);
             comm.ExecuteNonQuery();
             comm = new SQLiteCommand("SELECT count(*) FROM " + dbb, sqLiteConn);
             int row_sum = Convert.ToInt32(comm.ExecuteScalar());
             if(row_sum == 0)
             {
-                comm = new SQLiteCommand("insert into " + dbb +" (Balance,Date) values('0','" + DateTime.Today.ToString("yyyyMMdd") + "')", sqLiteConn);
+                comm = new SQLiteCommand("INSERT INTO " + dbb +" (BALANCE,DATE) values('0','" + DateTime.Today.ToString("yyyyMMdd") + "')", sqLiteConn);
                 comm.ExecuteNonQuery();
                 return;
             }
 
             //checking latest date, if it's equal to today's return
-            comm = new SQLiteCommand("SELECT* FROM "+ dbb + "ORDER BY Date DESC LIMIT 1", sqLiteConn);
+            comm = new SQLiteCommand("SELECT* FROM "+ dbb + "ORDER BY DATE DESC LIMIT 1", sqLiteConn);
             comm.ExecuteNonQuery();
             SQLiteDataReader read = comm.ExecuteReader();
             read.Read();
-            long LastDate = (long)read["Date"];
+            long LastDate = (long)read["DATE"];
+            double v = (double)read["BALANCE"];
             if (Convert.ToInt64(DateTime.Today.ToString("yyyyMMdd")) == LastDate)
                 return;
 
             //analysing periodic transactions
-            DateTime x = DateTime.Today;
-             x = x.AddMonths(-1);
-            comm = new SQLiteCommand("SELECT * FROM "+ dbe + " WHERE Date >= " + x.ToString("yyyyMMdd"), sqLiteConn);
+            List<double> vals = new List<double>();
+            DateTime x = ConvertToClass(LastDate);
+            DateTime LastDateClass = ConvertToClass(LastDate);
+            //temp = temp.AddDays(1);
+            TimeSpan number_between = DateTime.Today.Subtract(x);
+            for(int i=0;i<number_between.TotalDays;i++)
+            {
+                vals.Add(v);
+               // comm = new SQLiteCommand("INSERT INTO " + dbb + " (BALANCE,DATE) values('"+ v +"','" + temp.ToString("yyyyMMdd") + "')", sqLiteConn);
+               // temp = temp.AddDays(1);
+               // comm.ExecuteNonQuery();
+            }
+
+            x = x.AddMonths(-1);
+            comm = new SQLiteCommand("SELECT * FROM "+ dbe +" WHERE DATE >= " + x.ToString("yyyyMMdd") + " AND REPEATABILITY IS NOT NULL ORDER BY DATE DESC", sqLiteConn);
             read = comm.ExecuteReader();
+            List<string> id = new List<string>();
             while(read.Read())
             {
-                if(!((string)read["Repeatability"]).Equals("NULL"))
-                {
-                    long date = (long)read["Date"];
+                    /*long date = (long)read["Date"];
                     int a, b, c;
                     a = (int)(date / 10000);
                     b = (int)((date - a*10000) / 100);
                     c = (int)(date - a*10000 - b*100);
                     x = new DateTime(a, b, c);
-                    Console.WriteLine(x.ToString());
+                    Console.WriteLine(x.ToString());//wieloktornosci teraa*/
+                    string code = (string)read["ID"];
+                if (id.Contains(code))
+                    continue;
+                id.Add(code);
+                vals = CountNewBalance((string)read["REPEATABILITY"], LastDateClass, ConvertToClass((long)read["DATE"]));
 
-                }
             }
+        }
+
+        List<double> CountNewBalance(string period, DateTime actual, DateTime temp)
+        {
+            TimeSpan between = actual.Subtract(temp);
+            Console.WriteLine(between.TotalDays);
+            /*int t;
+            if (period.Equals("Monthly"))
+                t = 7;
+            else if (period.Equals("Weekly"))
+                t = 7;
+            else
+                t = 7;*/
+            return (new List<double>());
+
+        }
+
+        DateTime ConvertToClass(long date)
+        {
+            int a, b, c;
+            a = (int)(date / 10000);
+            b = (int)((date - a * 10000) / 100);
+            c = (int)(date - a * 10000 - b * 100);
+            DateTime x = new DateTime(a, b, c);
+            return x;
         }
         #endregion
     }

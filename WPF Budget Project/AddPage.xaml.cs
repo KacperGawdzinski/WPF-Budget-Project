@@ -462,7 +462,7 @@ namespace WPF_Budget_Project
                     l.Add(TypeCombo.Text);
                     foreach (var val in FindVisualChildren<TextBox>(this))
                     {
-                        if (k == 1)
+                        if (k == 1 || k== 2)
                         {
                             if (val.Text.Length == 0)
                             {
@@ -543,15 +543,15 @@ namespace WPF_Budget_Project
                 switch (InputData.Sum())
                 {
                     case 0:
-                        comm = new SQLiteCommand("INSERT INTO [" + UserMail +"-income] ("+InputData.Input()[0]+", DATE, REPEATABILITY, ID) " +
-                            "values('" + InputData.Input()[1] + "', '" + DateTime.Today.ToString("yyyyMMdd") + "', 'NULL', "+ guid.ToString() +")", sqLiteConn);
+                        comm = new SQLiteCommand("INSERT INTO [" + UserMail +"-income] ("+InputData.Input()[0]+", DATE, ID) " +
+                            "values('" + InputData.Input()[1] + "', '" + DateTime.Today.ToString("yyyyMMdd") + "', "+ guid.ToString() +")", sqLiteConn);
                         comm.ExecuteNonQuery();
                         break;
                     case 1:
                         comm = new SQLiteCommand("ALTER TABLE[" + UserMail + "-income] ADD[" + InputData.Input()[0] + "] REAL", sqLiteConn);
                         comm.ExecuteNonQuery();
-                        comm = new SQLiteCommand("INSERT INTO [" + UserMail + "-income] (" + InputData.Input()[0] + ", DATE, REPEATABILITY, ID) " +
-                            "values('" + InputData.Input()[1] + "', '" + DateTime.Today.ToString("yyyyMMdd") + "', 'NULL', " + guid.ToString() + ")", sqLiteConn);
+                        comm = new SQLiteCommand("INSERT INTO [" + UserMail + "-income] (" + InputData.Input()[0] + ", DATE, ID) " +
+                            "values('" + InputData.Input()[1] + "', '" + DateTime.Today.ToString("yyyyMMdd") + "', '" + guid.ToString() + ")", sqLiteConn);
                         comm.ExecuteNonQuery();
                         break;
                     case 2:
@@ -567,15 +567,15 @@ namespace WPF_Budget_Project
                         comm.ExecuteNonQuery();
                         break;
                     case 4:
-                        comm = new SQLiteCommand("INSERT INTO [" + UserMail + "-expend] (" + InputData.Input()[0] + ", DATE, REPEATABILITY, MAXVALUE, ID) " +
-                            "values('" + InputData.Input()[1] + "', '" + DateTime.Today.ToString("dd.MM.yyyy") + "', 'NULL', '" + InputData.Input()[2] + "', '" + guid.ToString() + "')", sqLiteConn);
+                        comm = new SQLiteCommand("INSERT INTO [" + UserMail + "-expend] (" + InputData.Input()[0] + ", DATE, MAXVALUE, ID) " +
+                            "values('" + InputData.Input()[1] + "', '" + DateTime.Today.ToString("yyyyMMdd") + "', '" + InputData.Input()[2] + "', '" + guid.ToString() + "')", sqLiteConn);
                         comm.ExecuteNonQuery();
                         break;
                     case 5:
                         comm = new SQLiteCommand("ALTER TABLE[" + UserMail + "-expend] ADD[" + InputData.Input()[0] + "] REAL", sqLiteConn);
                         comm.ExecuteNonQuery();
-                        comm = new SQLiteCommand("INSERT INTO [" + UserMail + "-expend] (" + InputData.Input()[0] + ", DATE, REPEATABILITY, MAXVALUE, ID) " +
-                            "values('" + InputData.Input()[1] + "', '" + DateTime.Today.ToString("dd.MM.yyyy") + "', 'NULL', '" + InputData.Input()[2] + "', '" + guid.ToString() + "')", sqLiteConn);
+                        comm = new SQLiteCommand("INSERT INTO [" + UserMail + "-expend] (" + InputData.Input()[0] + ", DATE, MAXVALUE, ID) " +
+                            "values('" + InputData.Input()[1] + "', '" + DateTime.Today.ToString("yyyyMMdd") + "', " + InputData.Input()[2] + "', '" + guid.ToString() + "')", sqLiteConn);
                         comm.ExecuteNonQuery();
                         break;
                     case 6:
