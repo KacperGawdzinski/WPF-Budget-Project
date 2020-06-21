@@ -101,7 +101,7 @@ namespace WPF_Budget_Project
         void BuildLineChart(SQLiteConnection sqLiteConn, string db)
         {
             Basic = new SeriesCollection();
-            SQLiteCommand conn = new SQLiteCommand("select * from " + db, sqLiteConn);
+            SQLiteCommand conn = new SQLiteCommand("SELECT * FROM " + db + "ORDER BY DATE", sqLiteConn);
             conn.ExecuteNonQuery();
             SQLiteDataReader read = conn.ExecuteReader();
 
@@ -335,6 +335,7 @@ namespace WPF_Budget_Project
                 return;
 
             //analysing periodic transactions
+            /*
             List<double> vals = new List<double>();
             DateTime x = ConvertToClass(LastDate);
             DateTime LastDateClass = ConvertToClass(LastDate);
@@ -354,13 +355,7 @@ namespace WPF_Budget_Project
             List<string> id = new List<string>();
             while(read.Read())
             {
-                    /*long date = (long)read["Date"];
-                    int a, b, c;
-                    a = (int)(date / 10000);
-                    b = (int)((date - a*10000) / 100);
-                    c = (int)(date - a*10000 - b*100);
-                    x = new DateTime(a, b, c);
-                    Console.WriteLine(x.ToString());//wieloktornosci teraa*/
+                    //Console.WriteLine(x.ToString());//wieloktornosci teraa
                     string code = (string)read["ID"];
                 if (id.Contains(code))
                     continue;
@@ -374,13 +369,6 @@ namespace WPF_Budget_Project
         {
             TimeSpan between = actual.Subtract(temp);
             Console.WriteLine(between.TotalDays);
-            /*int t;
-            if (period.Equals("Monthly"))
-                t = 7;
-            else if (period.Equals("Weekly"))
-                t = 7;
-            else
-                t = 7;*/
             return (new List<double>());
 
         }
@@ -393,6 +381,7 @@ namespace WPF_Budget_Project
             c = (int)(date - a * 10000 - b * 100);
             DateTime x = new DateTime(a, b, c);
             return x;
+        }*/
         }
         #endregion
     }

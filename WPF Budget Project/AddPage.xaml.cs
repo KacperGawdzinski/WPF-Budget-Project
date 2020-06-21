@@ -41,7 +41,7 @@ namespace WPF_Budget_Project
         }
     };
 
-
+    //TODO : ADD VALUE INPUT WITH DOTS EX 59.99
     public partial class AddPage : Page
     {
         #region Contructor & Variables
@@ -591,10 +591,79 @@ namespace WPF_Budget_Project
                         comm.ExecuteNonQuery();
                         break;
                 }
-                 Window OK = new Notification("Transaction added!");
-                 OK.Show();
+                Window OK = new Notification("Transaction added!");
+                OK.Show();
+                if (InputData.Sum() == 2 || InputData.Sum() == 3 || InputData.Sum() == 6 || InputData.Sum() == 7)
+                    Simulate(InputData, sqLiteConn);
+            }
+        }
+
+        void Simulate(Pack InputData, SQLiteConnection sqLiteConn)
+        {
+            SQLiteCommand comm;
+            if (InputData.Input().Count == 5)//expend
+            {
+                int t = string.Compare(InputData.Input()[3], DateTime.Today.ToString("yyyyMMdd"));  //if transaction date is smaller than today's date we need to simulate
+                if (t == -1 || t == 0)
+                {
+                    comm = new SQLiteCommand("SELECT* FROM [" + UserMail + "-balance] ORDER BY DATE LIMIT 1", sqLiteConn);  //check if we need to add new rows to balance history
+                    SQLiteDataReader read = comm.ExecuteReader();
+                    read.Read();
+                    LongToDateTime x = new LongToDateTime();
+                    DateTime t1 = x.ConvertToClass(Convert.ToInt64(InputData.Input()[3]));
+                    DateTime t2 = x.ConvertToClass((long)read["Date"]);
+                    TimeSpan y = t2.Subtract(t1);
+                    if (Convert.ToInt64(InputData.Input()[3]) < (long)read["Date"]) //check if we need to add new rows in the history
+                    {
+                        double InsertBalance = (double)read["Balance"];
+                        double k = y.TotalDays;
+                        while(k > 0)
+                        {
+                            comm = new SQLiteCommand("INSERT INTO [" + UserMail + "-balance] (BALANCE, DATE) VALUES("+ InsertBalance + ", " + t1.ToString("yyyyMMdd") + ")", sqLiteConn);
+                            comm.ExecuteNonQuery();
+                            t1 = t1.AddDays(1);
+                            k--;
+                        }
+                        t1 = t1.AddDays(-y.TotalDays);
+                    }
+                    //now we're sure that balance days were added so we have to modify their values
+                    comm = new SQLiteCommand("SELECT* FROM [" + UserMail + "-balance] ORDER BY DATE", sqLiteConn);
+                    read = comm.ExecuteReader();
+                    double val = Convert.ToDouble(InputData.Input()[1]);
+                    int l, temp = 0;
+                    if (InputData.Input()[4].Equals("Mounthly"))
+                        l = 1;
+                    else if (InputData.Input()[4].Equals("Weekly"))
+                        l = 7;
+                    else
+                        l = 2;
+                    while (read.Read())
+                    {
+                        if(l == 7 && temp == 7)
+                        {
+                            temp = 0;
+                            val = val + Convert.ToDouble(InputData.Input()[1]);
+                        }
+                        else if(l == 1)
+                        {
+                            long date = ((long)read["Date"])%100;
+                            if (date.ToString().Equals(InputData.Input()[3].Remove(3,4)))
+                                val = val + Convert.ToDouble(InputData.Input()[1]);
+                        }
+                        else if(l == 2)
+                        {
+                            val = val + Convert.ToDouble(InputData.Input()[1]);
+                        }
+                        comm = new SQLiteCommand("UPDATE [" + UserMail + "-balance] SET BALANCE='" 
+                            + ((double)read["Balance"] - val).ToString()+"' WHERE DATE='"+ ((long)read["Date"]).ToString() +"'", sqLiteConn);
+                        comm.ExecuteNonQuery();
+                        temp++;
+                    }
+                }
             }
         }
         #endregion
     }
 }
+
+//"IF EXISTS(select* from test where id= 30122) update test set name = 'john' where id = 3012 ELSE  \insert into test(name) values('john')";
