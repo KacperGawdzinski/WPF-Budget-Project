@@ -591,14 +591,14 @@ namespace WPF_Budget_Project
                         comm.ExecuteNonQuery();
                         break;
                 }
+                if (InputData.Sum() == 2 || InputData.Sum() == 3 || InputData.Sum() == 6 || InputData.Sum() == 7)
+                    Simulate(InputData, guid, sqLiteConn);
                 Window OK = new Notification("Transaction added!");
                 OK.Show();
-                if (InputData.Sum() == 2 || InputData.Sum() == 3 || InputData.Sum() == 6 || InputData.Sum() == 7)
-                    Simulate(InputData, sqLiteConn);
             }
         }
 
-        void Simulate(Pack InputData, SQLiteConnection sqLiteConn)
+        void Simulate(Pack InputData, Guid guid, SQLiteConnection sqLiteConn)
         {
             SQLiteCommand comm;
             if (InputData.Input().Count == 5)//expend
@@ -631,7 +631,7 @@ namespace WPF_Budget_Project
                     read = comm.ExecuteReader();
                     double val = Convert.ToDouble(InputData.Input()[1]);
                     int l, temp = 0;
-                    if (InputData.Input()[4].Equals("Mounthly"))
+                    if (InputData.Input()[4].Equals("Monthly"))
                         l = 1;
                     else if (InputData.Input()[4].Equals("Weekly"))
                         l = 7;
@@ -641,17 +641,29 @@ namespace WPF_Budget_Project
                     {
                         if(l == 7 && temp == 7)
                         {
+                            comm = new SQLiteCommand("INSERT INTO [" + UserMail + "-expend] (" + InputData.Input()[0] + ", DATE, REPEATABILITY, MAXVALUE, ID) " +
+                            "values('" + InputData.Input()[1] + "', '" + ((long)read["Date"]).ToString() + "', '" + InputData.Input()[4] + "', '" + InputData.Input()[2] + "', '" + guid.ToString() + "')", sqLiteConn);
+                            comm.ExecuteNonQuery();
                             temp = 0;
                             val = val + Convert.ToDouble(InputData.Input()[1]);
                         }
                         else if(l == 1)
                         {
                             long date = ((long)read["Date"])%100;
-                            if (date.ToString().Equals(InputData.Input()[3].Remove(3,4)))
+                            if (date == Convert.ToInt64(InputData.Input()[3].Remove(0,6)))
+                            {
+                                comm = new SQLiteCommand("INSERT INTO [" + UserMail + "-expend] (" + InputData.Input()[0] + ", DATE, REPEATABILITY, MAXVALUE, ID) " +
+                                "values('" + InputData.Input()[1] + "', '" + ((long)read["Date"]).ToString() + "', '" + InputData.Input()[4] + "', '" + InputData.Input()[2] + "', '" + guid.ToString() + "')", sqLiteConn);
+                                comm.ExecuteNonQuery();
                                 val = val + Convert.ToDouble(InputData.Input()[1]);
+                            }
+                                
                         }
                         else if(l == 2)
                         {
+                            comm = new SQLiteCommand("INSERT INTO [" + UserMail + "-expend] (" + InputData.Input()[0] + ", DATE, REPEATABILITY, MAXVALUE, ID) " +
+                                "values('" + InputData.Input()[1] + "', '" + ((long)read["Date"]).ToString() + "', '" + InputData.Input()[4] + "', '" + InputData.Input()[2] + "', '" + guid.ToString() + "')", sqLiteConn);
+                            comm.ExecuteNonQuery();
                             val = val + Convert.ToDouble(InputData.Input()[1]);
                         }
                         comm = new SQLiteCommand("UPDATE [" + UserMail + "-balance] SET BALANCE='" 
@@ -665,5 +677,3 @@ namespace WPF_Budget_Project
         #endregion
     }
 }
-
-//"IF EXISTS(select* from test where id= 30122) update test set name = 'john' where id = 3012 ELSE  \insert into test(name) values('john')";
