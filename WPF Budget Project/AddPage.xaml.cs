@@ -20,6 +20,8 @@ using System.Data.Entity.ModelConfiguration.Configuration;
 using System.Data.Entity.Core;
 using System.Net.Http.Headers;
 
+//TODO : ADD VALUE INPUT WITH DOTS EX 59.99
+
 namespace WPF_Budget_Project
 {
     public partial class Pack
@@ -41,7 +43,7 @@ namespace WPF_Budget_Project
         }
     };
 
-    //TODO : ADD VALUE INPUT WITH DOTS EX 59.99
+
     public partial class AddPage : Page
     {
         #region Contructor & Variables
@@ -555,14 +557,14 @@ namespace WPF_Budget_Project
                         comm.ExecuteNonQuery();
                         break;
                     case 2:
-                        comm = new SQLiteCommand("INSERT INTO [" + UserMail + "-income] (" + InputData.Input()[0] + ", DATE, REPEATABILITY, ID) " +
+                        comm = new SQLiteCommand("INSERT INTO [" + UserMail + "-income] ([" + InputData.Input()[0] + "], DATE, REPEATABILITY, ID) " +
                              "values('" + InputData.Input()[1] + "', '" + InputData.Input()[2] + "', '" + InputData.Input()[3] + "', '" + guid.ToString() + "')", sqLiteConn);
                         comm.ExecuteNonQuery();
                         break;
                     case 3:
                         comm = new SQLiteCommand("ALTER TABLE[" + UserMail + "-income] ADD[" + InputData.Input()[0] + "] REAL", sqLiteConn);
                         comm.ExecuteNonQuery();
-                        comm = new SQLiteCommand("INSERT INTO [" + UserMail + "-income] (" + InputData.Input()[0] + ", DATE, REPEATABILITY, ID) " +
+                        comm = new SQLiteCommand("INSERT INTO [" + UserMail + "-income] ([" + InputData.Input()[0] + "], DATE, REPEATABILITY, ID) " +
                              "values('" + InputData.Input()[1] + "', '" + InputData.Input()[2] + "', '" + InputData.Input()[3] + "', '" + guid.ToString() + "')", sqLiteConn);
                         comm.ExecuteNonQuery();
                         break;
@@ -648,10 +650,10 @@ namespace WPF_Budget_Project
                     if(l == 7 && temp == 7)
                     {
                         if(db.Equals("[" + UserMail + "-income]"))
-                            comm = new SQLiteCommand("INSERT INTO "+ db +" (" + InputData.Input()[0] + ", DATE, REPEATABILITY, ID) " +
+                            comm = new SQLiteCommand("INSERT INTO "+ db +" ([" + InputData.Input()[0] + "], DATE, REPEATABILITY, ID) " +
                         "values('" + InputData.Input()[1] + "', '" + ((long)read["Date"]).ToString() + "', '" + InputData.Input()[period] + "', '" + guid.ToString() + "')", sqLiteConn);
                         else
-                        comm = new SQLiteCommand("INSERT INTO " + db + " (" + InputData.Input()[0] + ", DATE, REPEATABILITY, MAXVALUE, ID) " +
+                        comm = new SQLiteCommand("INSERT INTO " + db + " ([" + InputData.Input()[0] + "], DATE, REPEATABILITY, MAXVALUE, ID) " +
                     "values('" + InputData.Input()[1] + "', '" + ((long)read["Date"]).ToString() + "', '" + InputData.Input()[period] + "', '" + InputData.Input()[2] + "', '"  + guid.ToString() + "')", sqLiteConn);
                     comm.ExecuteNonQuery();
                         temp = 0;

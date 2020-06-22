@@ -17,6 +17,7 @@ using LiveCharts.Defaults;
 using LiveCharts.Wpf;
 using System.Data.SQLite;
 using System.Globalization;
+using System.Diagnostics;
 using System.Data;
 using System.IO;
 
@@ -29,16 +30,17 @@ namespace WPF_Budget_Project
         public TextBlock val;
         public TextBlock cat;
         public TextBlock dat;
-        public bool income;
-        public ArrayOfPacked(string x, string y, long z, bool k)
+        public bool income = true;
+        public ArrayOfPacked(string v, string type, long date, string category)
         {
             val = new TextBlock();
-            val.Text = x;
+            val.Text = v;
             cat = new TextBlock();
-            cat.Text = y;
+            cat.Text = type;
             dat = new TextBlock();
-            dat.Text = z.ToString();
-            income = k;
+            dat.Text = date.ToString();
+            if (category.Equals("Expend"))
+                income = false;
         }
     };
 
@@ -48,38 +50,34 @@ namespace WPF_Budget_Project
         string UserMail;
         public Home(string mail)
         {
-
             UserMail = mail;
             InitializeComponent();
             Date.Text = "Today is: " + DateTime.Today.ToString("dd.MM.yyyy");
-
-            var sqLiteConn = new SQLiteConnection(@"Data Source=database.db;Version=3;");
+            SQLiteConnection sqLiteConn = new SQLiteConnection(@"Data Source=database.db;Version=3;");
             sqLiteConn.Open();
-            string IncomeDatabase = "[" + UserMail + "-income]";
-            string ExpendDatabase = "[" + UserMail + "-expend]";
+            string TransactionDatabase = "[" + UserMail + "-transactions]";
             string BalanceDatabase = "[" + UserMail + "-balance]";
-            List<string> IncomeColumns = new List<string>(ColumnNames(true,sqLiteConn,IncomeDatabase));
-            List<string> ExpendColumns = new List<string>(ColumnNames(false, sqLiteConn,ExpendDatabase));
-            int length = TableLength(sqLiteConn, ExpendDatabase);
-            int length2 = TableLength(sqLiteConn, IncomeDatabase);
-
-            ArrayOfPacked[] p1 = GetFiveLast(sqLiteConn, length, ExpendColumns, "select * from " + ExpendDatabase, false);
-            ArrayOfPacked[] p2 = GetFiveLast(sqLiteConn, length2, IncomeColumns, "select * from "+ IncomeDatabase, true);
-            SimulateBalance(sqLiteConn, BalanceDatabase, IncomeDatabase, ExpendDatabase);
-            BuildLastTransactions(sqLiteConn, length, length2, p1, p2);
+            BuildLastTransactions(sqLiteConn, TransactionDatabase);
+            //SimulateBalance(sqLiteConn, BalanceDatabase, IncomeDatabase, ExpendDatabase);
             BuildLineChart(sqLiteConn, BalanceDatabase);
-            BuildPieChart(ExpendColumns, sqLiteConn, ExpendDatabase);
+            BuildPieChart(sqLiteConn, TransactionDatabase);
             sqLiteConn.Close();
         }
         #endregion
         #region Charts
-        void BuildPieChart(List<string> ColumnNamesList, SQLiteConnection sqLiteConn, string db)
+        void BuildPieChart(SQLiteConnection sqLiteConn, string db)
         {
             Rounded = new SeriesCollection();
             double val;
-            for (int i = 0; i < ColumnNamesList.Count(); i++)
+
+            List<string> ExpendTypes = new List<string>();
+            SQLiteCommand comm = new SQLiteCommand("SELECT DISTINCT TYPE FROM " + db + "WHERE [CATEGORY]='Expend'", sqLiteConn);
+            SQLiteDataReader read = comm.ExecuteReader();
+            while (read.Read())
+                ExpendTypes.Add((string)read["Type"]);
+            for (int i = 0; i < ExpendTypes.Count(); i++)
             {
-                SQLiteCommand SumCommand = new SQLiteCommand("SELECT SUM(" + ColumnNamesList[i] + ") FROM "+ db + "WHERE DATE>=" + DateTime.Today.AddDays(-31).ToString("yyyMMdd"), sqLiteConn);
+                SQLiteCommand SumCommand = new SQLiteCommand("SELECT SUM('" + ExpendTypes[i] + "') FROM "+ db + "WHERE DATE>='" + DateTime.Today.AddDays(-31).ToString("yyyMMdd") + "' AND WHERE [CATEGORY]='Expend'", sqLiteConn);
                 try
                 {
                     val = (double)SumCommand.ExecuteScalar();
@@ -93,7 +91,7 @@ namespace WPF_Budget_Project
                 Rounded.Add(new PieSeries
                 {
                     Values = AddValue,
-                    Title = ColumnNamesList[i]
+                    Title = ExpendTypes[i]
                 });
             }
         }
@@ -146,128 +144,22 @@ namespace WPF_Budget_Project
         }
         #endregion
         #region LastTransactionList
-        void BuildLastTransactions(SQLiteConnection sqLiteConn, int length, int length2, ArrayOfPacked[] p1, ArrayOfPacked[] p2)
-        {//TODO - fix bug if dates aren't sorted 
-            length--; length2--;
-            if (length > 4)
-                length = 4;
-            if (length2 > 4)
-                length2 = 4;
-            int size = 5;
-
-            while (size != 0 && (length != -1 || length2 != -1))
-            {
-                if (length == -1)
-                {
-                    LatestTransactions.Children.Add(MakeGrid(p2[length2]));
-                    length2--; size--;
-                    continue;
-                }
-                if (length2 == -1)
-                {
-                    LatestTransactions.Children.Add(MakeGrid(p1[length]));
-                    length--; size--;
-                    continue;
-                }
-                int t = string.Compare(p1[length].dat.Text, p2[length2].dat.Text);
-                if (t == -1)
-                {
-                    LatestTransactions.Children.Add(MakeGrid(p2[length2]));
-                    length2--; size--;
-                }
-                else if (t == 1)
-                {
-                    LatestTransactions.Children.Add(MakeGrid(p1[length]));
-                    length--; size--;
-                }
-                else
-                {
-                    LatestTransactions.Children.Add(MakeGrid(p1[length]));
-                    length--; size--;
-                }
-            }
-        }
-
-        List<string> ColumnNames(bool income, SQLiteConnection sqLiteConn, string db)
+        void BuildLastTransactions(SQLiteConnection x, string db)
         {
-            List<string> ColumnNamesList = new List<string>();
-            SQLiteCommand conn;
-            if (income)
-                conn = new SQLiteCommand("CREATE TABLE IF NOT EXISTS " + db +" (NO INTEGER PRIMARY KEY AUTOINCREMENT, ID TEXT, DATE INTEGER, REPEATABILITY TEXT)", sqLiteConn);
-            else
-                conn = new SQLiteCommand("CREATE TABLE IF NOT EXISTS " + db + " (NO INTEGER PRIMARY KEY AUTOINCREMENT, ID TEXT, DATE INTEGER, REPEATABILITY TEXT, MAXVALUE REAL)", sqLiteConn);
-            conn.ExecuteNonQuery();
-            conn = new SQLiteCommand("select * from " + db, sqLiteConn);
-            conn.ExecuteNonQuery();
-            SQLiteDataReader read = conn.ExecuteReader();
-            for (int i = 0; i < read.FieldCount; i++)
+            SQLiteCommand comm = new SQLiteCommand("CREATE TABLE IF NOT EXISTS " + db + " (ID TEXT, DATE INTEGER, REPEATABILITY TEXT, CATEGORY TEXT, TYPE TEXT, VALUE REAL, MAXVALUE REAL)", x);
+            comm.ExecuteNonQuery();
+            comm = new SQLiteCommand("SELECT COUNT(*) FROM (SELECT * FROM " + db + "ORDER BY DATE DESC LIMIT 5)", x);
+            long length = (long)comm.ExecuteScalar();
+            comm = new SQLiteCommand("SELECT * FROM " + db + "ORDER BY DATE DESC LIMIT 5", x);
+            SQLiteDataReader read = comm.ExecuteReader();
+            ArrayOfPacked[] ArrayOfPacked = new ArrayOfPacked[length];
+            int k = 0;
+            while (read.Read())
             {
-                string temp = read.GetName(i);
-                if (income)
-                {
-                    if (temp == "DATE" || temp == "ID" || temp == "REPEATABILITY" || temp == "NO")
-                        continue;
-                }
-                else
-                {
-                    if (temp == "DATE" || temp == "ID" || temp == "REPEATABILITY" || temp == "NO" || temp == "MAXVALUE")
-                        continue;
-                }
-                ColumnNamesList.Add(temp);
+                ArrayOfPacked[k] = new ArrayOfPacked(((double)read["VALUE"]).ToString(), (string)read["TYPE"], (long)read["DATE"], (string)read["CATEGORY"]);
+                LatestTransactions.Children.Add(MakeGrid(ArrayOfPacked[k]));
+                k++;
             }
-            read.Close();
-            return ColumnNamesList;
-        }
-
-        int TableLength(SQLiteConnection sqLiteConn, string db)
-        { 
-            SQLiteCommand conn = new SQLiteCommand("select count(*) from "+db, sqLiteConn);
-            return Convert.ToInt32(conn.ExecuteScalar());
-        }
-
-        ArrayOfPacked[] GetFiveLast(SQLiteConnection x, int length, List<string> ColumnNames, string command, bool income)
-        {
-            if (length == 0)
-                return null;
-            SQLiteCommand conn = new SQLiteCommand(command, x);
-            BrushConverter bc = new BrushConverter();
-            conn.ExecuteNonQuery();
-            SQLiteDataReader read = conn.ExecuteReader();
-            ArrayOfPacked[] ArrayOfPacked;
-            int k = 0; double r; long d; string c;
-            if (length > 5)
-            {
-                ArrayOfPacked = new ArrayOfPacked[5];
-            }
-            else
-            {
-                ArrayOfPacked = new ArrayOfPacked[length];
-            }
-
-            if (length > 5)
-            {
-                for (int i = 0; i != length - 5; i++)
-                    read.Read();
-            }
-
-            while (read.Read()) //due to the lack of sql classes (next year) this code is kinda inefficient
-            {
-                d = (long)read["Date"];
-                for (int j = 0; j < ColumnNames.Count; j++)
-                {
-                    try
-                    {
-                        r = (double)read[ColumnNames[j]];
-                    }
-                    catch (InvalidCastException)
-                    {
-                        continue;
-                    }
-                    ArrayOfPacked[k] = new ArrayOfPacked(r.ToString(), ColumnNames[j], d, income);
-                    k++;
-                }
-            }
-            return ArrayOfPacked;
         }
 
         private Grid MakeGrid(ArrayOfPacked x)
