@@ -544,26 +544,26 @@ namespace WPF_Budget_Project
                 {
                     case 0:
                         comm = new SQLiteCommand("INSERT INTO [" + UserMail +"-income] ("+InputData.Input()[0]+", DATE, ID) " +
-                            "values('" + InputData.Input()[1] + "', '" + DateTime.Today.ToString("yyyyMMdd") + "', "+ guid.ToString() +")", sqLiteConn);
+                            "values('" + InputData.Input()[1] + "', '" + DateTime.Today.ToString("yyyyMMdd") + "', '"+ guid.ToString() +"')", sqLiteConn);
                         comm.ExecuteNonQuery();
                         break;
                     case 1:
                         comm = new SQLiteCommand("ALTER TABLE[" + UserMail + "-income] ADD[" + InputData.Input()[0] + "] REAL", sqLiteConn);
                         comm.ExecuteNonQuery();
                         comm = new SQLiteCommand("INSERT INTO [" + UserMail + "-income] (" + InputData.Input()[0] + ", DATE, ID) " +
-                            "values('" + InputData.Input()[1] + "', '" + DateTime.Today.ToString("yyyyMMdd") + "', '" + guid.ToString() + ")", sqLiteConn);
+                            "values('" + InputData.Input()[1] + "', '" + DateTime.Today.ToString("yyyyMMdd") + "', '" + guid.ToString() + "')", sqLiteConn);
                         comm.ExecuteNonQuery();
                         break;
                     case 2:
                         comm = new SQLiteCommand("INSERT INTO [" + UserMail + "-income] (" + InputData.Input()[0] + ", DATE, REPEATABILITY, ID) " +
-                             "values('" + InputData.Input()[1] + "', '" + InputData.Input()[2] + "', '" + InputData.Input()[3] + "', '" + guid.ToString() + ")", sqLiteConn);
+                             "values('" + InputData.Input()[1] + "', '" + InputData.Input()[2] + "', '" + InputData.Input()[3] + "', '" + guid.ToString() + "')", sqLiteConn);
                         comm.ExecuteNonQuery();
                         break;
                     case 3:
                         comm = new SQLiteCommand("ALTER TABLE[" + UserMail + "-income] ADD[" + InputData.Input()[0] + "] REAL", sqLiteConn);
                         comm.ExecuteNonQuery();
                         comm = new SQLiteCommand("INSERT INTO [" + UserMail + "-income] (" + InputData.Input()[0] + ", DATE, REPEATABILITY, ID) " +
-                             "values('" + InputData.Input()[1] + "', '" + InputData.Input()[2] + "', '" + InputData.Input()[3] + "', '" + guid.ToString() + ")", sqLiteConn);
+                             "values('" + InputData.Input()[1] + "', '" + InputData.Input()[2] + "', '" + InputData.Input()[3] + "', '" + guid.ToString() + "')", sqLiteConn);
                         comm.ExecuteNonQuery();
                         break;
                     case 4:
@@ -575,7 +575,7 @@ namespace WPF_Budget_Project
                         comm = new SQLiteCommand("ALTER TABLE[" + UserMail + "-expend] ADD[" + InputData.Input()[0] + "] REAL", sqLiteConn);
                         comm.ExecuteNonQuery();
                         comm = new SQLiteCommand("INSERT INTO [" + UserMail + "-expend] (" + InputData.Input()[0] + ", DATE, MAXVALUE, ID) " +
-                            "values('" + InputData.Input()[1] + "', '" + DateTime.Today.ToString("yyyyMMdd") + "', " + InputData.Input()[2] + "', '" + guid.ToString() + "')", sqLiteConn);
+                            "values('" + InputData.Input()[1] + "', '" + DateTime.Today.ToString("yyyyMMdd") + "', '" + InputData.Input()[2] + "', '" + guid.ToString() + "')", sqLiteConn);
                         comm.ExecuteNonQuery();
                         break;
                     case 6:
@@ -601,76 +601,97 @@ namespace WPF_Budget_Project
         void Simulate(Pack InputData, Guid guid, SQLiteConnection sqLiteConn)
         {
             SQLiteCommand comm;
+            int date = 2, period = 3;
+            string db = "[" + UserMail + "-income]";
             if (InputData.Input().Count == 5)//expend
             {
-                int t = string.Compare(InputData.Input()[3], DateTime.Today.ToString("yyyyMMdd"));  //if transaction date is smaller than today's date we need to simulate
-                if (t == -1 || t == 0)
+                date = 3;
+                period = 4;
+                db = "[" + UserMail + "-expend]";
+            }
+            int t = string.Compare(InputData.Input()[date], DateTime.Today.ToString("yyyyMMdd"));  //if transaction date is smaller than today's date we need to simulate
+            if (t == -1 || t == 0)
+            {
+                comm = new SQLiteCommand("SELECT* FROM [" + UserMail + "-balance] ORDER BY DATE LIMIT 1", sqLiteConn);  //check if we need to add new rows to balance history
+                SQLiteDataReader read = comm.ExecuteReader();
+                read.Read();
+                LongToDateTime x = new LongToDateTime();
+                DateTime t1 = x.ConvertToClass(Convert.ToInt64(InputData.Input()[date]));
+                DateTime t2 = x.ConvertToClass((long)read["Date"]);
+                TimeSpan y = t2.Subtract(t1);
+                if (Convert.ToInt64(InputData.Input()[date]) < (long)read["Date"]) //check if we need to add new rows in the history
                 {
-                    comm = new SQLiteCommand("SELECT* FROM [" + UserMail + "-balance] ORDER BY DATE LIMIT 1", sqLiteConn);  //check if we need to add new rows to balance history
-                    SQLiteDataReader read = comm.ExecuteReader();
-                    read.Read();
-                    LongToDateTime x = new LongToDateTime();
-                    DateTime t1 = x.ConvertToClass(Convert.ToInt64(InputData.Input()[3]));
-                    DateTime t2 = x.ConvertToClass((long)read["Date"]);
-                    TimeSpan y = t2.Subtract(t1);
-                    if (Convert.ToInt64(InputData.Input()[3]) < (long)read["Date"]) //check if we need to add new rows in the history
+                    double InsertBalance = (double)read["Balance"];
+                    double k = y.TotalDays;
+                    while(k > 0)
                     {
-                        double InsertBalance = (double)read["Balance"];
-                        double k = y.TotalDays;
-                        while(k > 0)
-                        {
-                            comm = new SQLiteCommand("INSERT INTO [" + UserMail + "-balance] (BALANCE, DATE) VALUES("+ InsertBalance + ", " + t1.ToString("yyyyMMdd") + ")", sqLiteConn);
-                            comm.ExecuteNonQuery();
-                            t1 = t1.AddDays(1);
-                            k--;
-                        }
-                        t1 = t1.AddDays(-y.TotalDays);
-                    }
-                    //now we're sure that balance days were added so we have to modify their values
-                    comm = new SQLiteCommand("SELECT* FROM [" + UserMail + "-balance] ORDER BY DATE", sqLiteConn);
-                    read = comm.ExecuteReader();
-                    double val = Convert.ToDouble(InputData.Input()[1]);
-                    int l, temp = 0;
-                    if (InputData.Input()[4].Equals("Monthly"))
-                        l = 1;
-                    else if (InputData.Input()[4].Equals("Weekly"))
-                        l = 7;
-                    else
-                        l = 2;
-                    while (read.Read())
-                    {
-                        if(l == 7 && temp == 7)
-                        {
-                            comm = new SQLiteCommand("INSERT INTO [" + UserMail + "-expend] (" + InputData.Input()[0] + ", DATE, REPEATABILITY, MAXVALUE, ID) " +
-                            "values('" + InputData.Input()[1] + "', '" + ((long)read["Date"]).ToString() + "', '" + InputData.Input()[4] + "', '" + InputData.Input()[2] + "', '" + guid.ToString() + "')", sqLiteConn);
-                            comm.ExecuteNonQuery();
-                            temp = 0;
-                            val = val + Convert.ToDouble(InputData.Input()[1]);
-                        }
-                        else if(l == 1)
-                        {
-                            long date = ((long)read["Date"])%100;
-                            if (date == Convert.ToInt64(InputData.Input()[3].Remove(0,6)))
-                            {
-                                comm = new SQLiteCommand("INSERT INTO [" + UserMail + "-expend] (" + InputData.Input()[0] + ", DATE, REPEATABILITY, MAXVALUE, ID) " +
-                                "values('" + InputData.Input()[1] + "', '" + ((long)read["Date"]).ToString() + "', '" + InputData.Input()[4] + "', '" + InputData.Input()[2] + "', '" + guid.ToString() + "')", sqLiteConn);
-                                comm.ExecuteNonQuery();
-                                val = val + Convert.ToDouble(InputData.Input()[1]);
-                            }
-                                
-                        }
-                        else if(l == 2)
-                        {
-                            comm = new SQLiteCommand("INSERT INTO [" + UserMail + "-expend] (" + InputData.Input()[0] + ", DATE, REPEATABILITY, MAXVALUE, ID) " +
-                                "values('" + InputData.Input()[1] + "', '" + ((long)read["Date"]).ToString() + "', '" + InputData.Input()[4] + "', '" + InputData.Input()[2] + "', '" + guid.ToString() + "')", sqLiteConn);
-                            comm.ExecuteNonQuery();
-                            val = val + Convert.ToDouble(InputData.Input()[1]);
-                        }
-                        comm = new SQLiteCommand("UPDATE [" + UserMail + "-balance] SET BALANCE='" 
-                            + ((double)read["Balance"] - val).ToString()+"' WHERE DATE='"+ ((long)read["Date"]).ToString() +"'", sqLiteConn);
+                        comm = new SQLiteCommand("INSERT INTO [" + UserMail + "-balance] (BALANCE, DATE) VALUES("+ InsertBalance + ", " + t1.ToString("yyyyMMdd") + ")", sqLiteConn);
                         comm.ExecuteNonQuery();
-                        temp++;
+                        t1 = t1.AddDays(1);
+                        k--;
                     }
+                    t1 = t1.AddDays(-y.TotalDays);
+                }
+                //now we're sure that balance days were added so we have to modify their values
+                comm = new SQLiteCommand("SELECT* FROM [" + UserMail + "-balance] ORDER BY DATE", sqLiteConn);
+                read = comm.ExecuteReader();
+                double val = Convert.ToDouble(InputData.Input()[1]);
+                int l, temp = 0;
+                if (InputData.Input()[period].Equals("Monthly"))
+                    l = 1;
+                else if (InputData.Input()[period].Equals("Weekly"))
+                    l = 7;
+                else
+                    l = 2;
+                while (read.Read())
+                {
+                    if(l == 7 && temp == 7)
+                    {
+                        if(db.Equals("[" + UserMail + "-income]"))
+                            comm = new SQLiteCommand("INSERT INTO "+ db +" (" + InputData.Input()[0] + ", DATE, REPEATABILITY, ID) " +
+                        "values('" + InputData.Input()[1] + "', '" + ((long)read["Date"]).ToString() + "', '" + InputData.Input()[period] + "', '" + guid.ToString() + "')", sqLiteConn);
+                        else
+                        comm = new SQLiteCommand("INSERT INTO " + db + " (" + InputData.Input()[0] + ", DATE, REPEATABILITY, MAXVALUE, ID) " +
+                    "values('" + InputData.Input()[1] + "', '" + ((long)read["Date"]).ToString() + "', '" + InputData.Input()[period] + "', '" + InputData.Input()[2] + "', '"  + guid.ToString() + "')", sqLiteConn);
+                    comm.ExecuteNonQuery();
+                        temp = 0;
+                        val = val + Convert.ToDouble(InputData.Input()[1]);
+                    }
+                    else if(l == 1)
+                    {
+                        long d = ((long)read["Date"])%100;
+                        if (d == Convert.ToInt64(InputData.Input()[date].Remove(0,6)))
+                        {
+                            if (db.Equals("[" + UserMail + "-income]"))
+                                comm = new SQLiteCommand("INSERT INTO " + db + " (" + InputData.Input()[0] + ", DATE, REPEATABILITY, ID) " +
+                            "values('" + InputData.Input()[1] + "', '" + ((long)read["Date"]).ToString() + "', '" + InputData.Input()[period] + "', '" + guid.ToString() + "')", sqLiteConn);
+                            else
+                            comm = new SQLiteCommand("INSERT INTO " + db + " (" + InputData.Input()[0] + ", DATE, REPEATABILITY, MAXVALUE, ID) " +
+                        "values('" + InputData.Input()[1] + "', '" + ((long)read["Date"]).ToString() + "', '" + InputData.Input()[period] + "', '" + InputData.Input()[2] + "', '" + guid.ToString() + "')", sqLiteConn);
+                        comm.ExecuteNonQuery();
+                            val = val + Convert.ToDouble(InputData.Input()[1]);
+                        }
+                                
+                    }
+                    else if(l == 2)
+                    {
+                        if (db.Equals("[" + UserMail + "-income]"))
+                            comm = new SQLiteCommand("INSERT INTO " + db + " (" + InputData.Input()[0] + ", DATE, REPEATABILITY, ID) " +
+                        "values('" + InputData.Input()[1] + "', '" + ((long)read["Date"]).ToString() + "', '" + InputData.Input()[period] + "', '" + guid.ToString() + "')", sqLiteConn);
+                        else
+                            comm = new SQLiteCommand("INSERT INTO " + db + " (" + InputData.Input()[0] + ", DATE, REPEATABILITY, MAXVALUE, ID) " +
+                        "values('" + InputData.Input()[1] + "', '" + ((long)read["Date"]).ToString() + "', '" + InputData.Input()[period] + "', '" + InputData.Input()[2] + "', '" + guid.ToString() + "')", sqLiteConn);
+                        comm.ExecuteNonQuery();
+                    val = val + Convert.ToDouble(InputData.Input()[1]);
+                    }
+                    if (db.Equals("[" + UserMail + "-income]"))
+                        comm = new SQLiteCommand("UPDATE [" + UserMail + "-balance] SET BALANCE='"
+                        + ((double)read["Balance"] + val).ToString() + "' WHERE DATE='" + ((long)read["Date"]).ToString() + "'", sqLiteConn);
+                    else
+                        comm = new SQLiteCommand("UPDATE [" + UserMail + "-balance] SET BALANCE='"
+                        + ((double)read["Balance"] - val).ToString() + "' WHERE DATE='" + ((long)read["Date"]).ToString() + "'", sqLiteConn);
+                    comm.ExecuteNonQuery();
+                    temp++;
                 }
             }
         }

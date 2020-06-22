@@ -79,7 +79,7 @@ namespace WPF_Budget_Project
             double val;
             for (int i = 0; i < ColumnNamesList.Count(); i++)
             {
-                SQLiteCommand SumCommand = new SQLiteCommand("SELECT SUM(" + ColumnNamesList[i] + ") FROM "+ db, sqLiteConn);
+                SQLiteCommand SumCommand = new SQLiteCommand("SELECT SUM(" + ColumnNamesList[i] + ") FROM "+ db + "WHERE DATE>=" + DateTime.Today.AddDays(-31).ToString("yyyMMdd"), sqLiteConn);
                 try
                 {
                     val = (double)SumCommand.ExecuteScalar();
@@ -101,7 +101,7 @@ namespace WPF_Budget_Project
         void BuildLineChart(SQLiteConnection sqLiteConn, string db)
         {
             Basic = new SeriesCollection();
-            SQLiteCommand conn = new SQLiteCommand("SELECT * FROM " + db + "ORDER BY DATE", sqLiteConn);
+            SQLiteCommand conn = new SQLiteCommand("SELECT * FROM " + db + "WHERE DATE>=" + DateTime.Today.AddDays(-31).ToString("yyyMMdd") + " ORDER BY DATE", sqLiteConn);
             conn.ExecuteNonQuery();
             SQLiteDataReader read = conn.ExecuteReader();
 
@@ -112,7 +112,7 @@ namespace WPF_Budget_Project
             {
                 AddNewValue.Add(new ObservableValue((double)read["Balance"]));
                 balance = (double)read["Balance"];
-                Data.Add(((long)read["Date"]).ToString());
+                Data.Add(((long)read["Date"]).ToString().Remove(0,4).Insert(2,"/"));
             }
             Balance.Text = balance.ToString() + "$";
             Basic.Add(new LineSeries
