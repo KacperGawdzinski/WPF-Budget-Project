@@ -69,7 +69,6 @@ namespace WPF_Budget_Project
         {
             Rounded = new SeriesCollection();
             double val;
-
             List<string> ExpendTypes = new List<string>();  //TODO: make class of next 3 lines
             SQLiteCommand comm = new SQLiteCommand("SELECT DISTINCT TYPE FROM " + db + "WHERE [CATEGORY]='Expend'", sqLiteConn);
             SQLiteDataReader read = comm.ExecuteReader();
@@ -77,15 +76,8 @@ namespace WPF_Budget_Project
                 ExpendTypes.Add((string)read["Type"]);
             for (int i = 0; i < ExpendTypes.Count(); i++)
             {
-                comm = new SQLiteCommand("SELECT SUM('" + ExpendTypes[i] + "') FROM " + db + " WHERE [DATE] >='" + DateTime.Today.AddDays(-31).ToString("yyyyMMdd") + "' AND [CATEGORY]='Expend'", sqLiteConn);
-               // try
-             //   {
-                    val = (double)comm.ExecuteScalar();
-             //   }
-              //  catch(InvalidCastException)
-             //   {
-             //       continue;
-              //  }
+                comm = new SQLiteCommand("SELECT SUM(VALUE) FROM " + db + " WHERE [DATE] >='" + DateTime.Today.AddDays(-31).ToString("yyyyMMdd") + "' AND [CATEGORY]='Expend' AND [TYPE]='"+ ExpendTypes[i]+"'", sqLiteConn);
+                val = (double)comm.ExecuteScalar();
                 var AddValue = new ChartValues<ObservableValue>();
                 AddValue.Add(new ObservableValue(val));
                 Rounded.Add(new PieSeries
