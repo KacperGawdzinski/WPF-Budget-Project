@@ -76,24 +76,37 @@ namespace WPF_Budget_Project
                 ExpendTypes.Add((string)read["Type"]);
             for (int i = 0; i < ExpendTypes.Count(); i++)
             {
-                comm = new SQLiteCommand("SELECT SUM(VALUE) FROM " + db + " WHERE [DATE] >='" + DateTime.Today.AddDays(-31).ToString("yyyyMMdd") + "' AND [CATEGORY]='Expend' AND [TYPE]='"+ ExpendTypes[i]+"'", sqLiteConn);
+                comm = new SQLiteCommand("SELECT COALESCE (SUM(VALUE),0.0) FROM " + db + " WHERE [DATE] >='" + DateTime.Today.AddDays(-31).ToString("yyyyMMdd") 
+                                          + "' AND [CATEGORY]='Expend' AND [TYPE]='"+ ExpendTypes[i]+"'", sqLiteConn);
                 val = (double)comm.ExecuteScalar();
                 var AddValue = new ChartValues<ObservableValue>();
-                AddValue.Add(new ObservableValue(val));
-                Rounded.Add(new PieSeries
+                if(val != 0)
                 {
-                    Values = AddValue,
-                    Title = ExpendTypes[i]
-                });
+                    AddValue.Add(new ObservableValue(val));
+                    Rounded.Add(new PieSeries
+                    {
+                        Values = AddValue,
+                        Title = ExpendTypes[i]
+                    });
+                }
             }
         }
 
         void BuildLineChart(SQLiteConnection sqLiteConn, string db)
         {
             Basic = new SeriesCollection();
-            SQLiteCommand conn = new SQLiteCommand("SELECT * FROM " + db + "WHERE DATE>=" + DateTime.Today.AddDays(-31).ToString("yyyMMdd") + " ORDER BY DATE", sqLiteConn);
-            conn.ExecuteNonQuery();
-            SQLiteDataReader read = conn.ExecuteReader();
+            SQLiteCommand comm = new SQLiteCommand("CREATE TABLE IF NOT EXISTS "+ db +" (NO INTEGER PRIMARY KEY AUTOINCREMENT, BALANCE REAL, DATE INTEGER)", sqLiteConn);
+            comm.ExecuteNonQuery();
+            comm = new SQLiteCommand("SELECT COUNT(*) FROM " + db , sqLiteConn);  //check how fast it will be with hundreds of rows
+            int row_sum = Convert.ToInt32(comm.ExecuteScalar());
+            if (row_sum == 0)
+            {
+                comm = new SQLiteCommand("INSERT INTO " + db + " (BALANCE,DATE) values('0','" + DateTime.Today.ToString("yyyyMMdd") + "')", sqLiteConn);
+                comm.ExecuteNonQuery();
+            }
+            comm = new SQLiteCommand("SELECT * FROM " + db + "WHERE DATE>=" + DateTime.Today.AddDays(-31).ToString("yyyMMdd") + " ORDER BY DATE", sqLiteConn);
+            comm.ExecuteNonQuery();
+            SQLiteDataReader read = comm.ExecuteReader();
 
             List<string> Data = new List<string>();
             var AddNewValue = new ChartValues<ObservableValue>();
@@ -111,11 +124,7 @@ namespace WPF_Budget_Project
                 Values = AddNewValue,
                 LineSmoothness = 1,
             });
-            Labels = Data.ToArray();/*
-            for (int i = 0; i < Labels.Length; i++)?????????
-            {
-                Labels[i] = Labels[i].Remove(5, 5);
-            }*/
+            Labels = Data.ToArray();
             YFormatter = value => value.ToString("C", CultureInfo.CreateSpecificCulture("en-US"));
             DataContext = this;
         }
@@ -196,20 +205,8 @@ namespace WPF_Budget_Project
         #region Simulation
         void SimulateBalance(SQLiteConnection sqLiteConn, string dbb, string dbi, string dbe)
         {
-            //table creator
-            SQLiteCommand comm = new SQLiteCommand("CREATE TABLE IF NOT EXISTS " + dbb + " (NO INTEGER PRIMARY KEY AUTOINCREMENT, BALANCE REAL, DATE INTEGER)", sqLiteConn);
-            comm.ExecuteNonQuery();
-            comm = new SQLiteCommand("SELECT count(*) FROM " + dbb, sqLiteConn);
-            int row_sum = Convert.ToInt32(comm.ExecuteScalar());
-            if(row_sum == 0)
-            {
-                comm = new SQLiteCommand("INSERT INTO " + dbb +" (BALANCE,DATE) values('0','" + DateTime.Today.ToString("yyyyMMdd") + "')", sqLiteConn);
-                comm.ExecuteNonQuery();
-                return;
-            }
-
             //checking latest date, if it's equal to today's return
-            comm = new SQLiteCommand("SELECT* FROM "+ dbb + "ORDER BY DATE DESC LIMIT 1", sqLiteConn);
+            SQLiteCommand comm = new SQLiteCommand("SELECT* FROM "+ dbb + "ORDER BY DATE DESC LIMIT 1", sqLiteConn);
             comm.ExecuteNonQuery();
             SQLiteDataReader read = comm.ExecuteReader();
             read.Read();
