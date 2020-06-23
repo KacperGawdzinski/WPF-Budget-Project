@@ -58,7 +58,7 @@ namespace WPF_Budget_Project
             string TransactionDatabase = "[" + UserMail + "-transactions]";
             string BalanceDatabase = "[" + UserMail + "-balance]";
             BuildLastTransactions(sqLiteConn, TransactionDatabase);
-            //SimulateBalance(sqLiteConn, BalanceDatabase, IncomeDatabase, ExpendDatabase);
+            //SimulateBalance(sqLiteConn, BalanceDatabase, TransactionDatabase);
             BuildLineChart(sqLiteConn, BalanceDatabase);
             BuildPieChart(sqLiteConn, TransactionDatabase);
             sqLiteConn.Close();
@@ -70,22 +70,22 @@ namespace WPF_Budget_Project
             Rounded = new SeriesCollection();
             double val;
 
-            List<string> ExpendTypes = new List<string>();
+            List<string> ExpendTypes = new List<string>();  //TODO: make class of next 3 lines
             SQLiteCommand comm = new SQLiteCommand("SELECT DISTINCT TYPE FROM " + db + "WHERE [CATEGORY]='Expend'", sqLiteConn);
             SQLiteDataReader read = comm.ExecuteReader();
             while (read.Read())
                 ExpendTypes.Add((string)read["Type"]);
             for (int i = 0; i < ExpendTypes.Count(); i++)
             {
-                SQLiteCommand SumCommand = new SQLiteCommand("SELECT SUM('" + ExpendTypes[i] + "') FROM "+ db + "WHERE DATE>='" + DateTime.Today.AddDays(-31).ToString("yyyMMdd") + "' AND WHERE [CATEGORY]='Expend'", sqLiteConn);
-                try
-                {
-                    val = (double)SumCommand.ExecuteScalar();
-                }
-                catch(InvalidCastException)
-                {
-                    continue;
-                }
+                comm = new SQLiteCommand("SELECT SUM('" + ExpendTypes[i] + "') FROM " + db + " WHERE [DATE] >='" + DateTime.Today.AddDays(-31).ToString("yyyyMMdd") + "' AND [CATEGORY]='Expend'", sqLiteConn);
+               // try
+             //   {
+                    val = (double)comm.ExecuteScalar();
+             //   }
+              //  catch(InvalidCastException)
+             //   {
+             //       continue;
+              //  }
                 var AddValue = new ChartValues<ObservableValue>();
                 AddValue.Add(new ObservableValue(val));
                 Rounded.Add(new PieSeries
