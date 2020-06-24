@@ -22,9 +22,8 @@ using System.Net.Http.Headers;
 
 //TODO : ADD VALUE INPUT WITH DOTS EX 59.99
 //TODO : MAKE UNIVERSAL FUNCTION FOR SQLITECOMMAND
-//TODO : FIX BUG THIS COLUMN EXITS
-//TODO : FIX BUG WITH LACK OF - SIGN IN LINECHART
 //TODO : TRANSACTIONS FROM THE SAME DAY ARE NOT SORTED PROPERLY EVERY TIME
+//TEST PERIODIC TRANSACTIONS IN FUTURE
 
 namespace WPF_Budget_Project
 {
@@ -339,7 +338,11 @@ namespace WPF_Budget_Project
                             ShowError("Insert new type!");
                             return null;
                         }
-                        string[] temp = ReadTypes(true);
+                        string[] temp;
+                        if(l[2].Equals("Income"))
+                            temp = ReadTypes(true);
+                        else
+                            temp = ReadTypes(false);
                         for (int i = 0; i < temp.Length; i++)
                             if (temp[i] == val.Text)
                             {
@@ -484,7 +487,7 @@ namespace WPF_Budget_Project
         void Simulate(string[] InputData, Guid guid, SQLiteConnection sqLiteConn)
         {
             SQLiteCommand comm;
-            int t = string.Compare(InputData[0], DateTime.Today.ToString("yyyyMMdd"));  //if transaction date is smaller than today's date we need to simulate
+            int t = string.Compare(InputData[0], DateTime.Today.ToString("yyyyMMdd"));  //if transaction date is smaller or equal to today's date we need to simulate
             if (t == -1 || t == 0)
             {
                 comm = new SQLiteCommand("SELECT * FROM [" + UserMail + "-balance] ORDER BY DATE LIMIT 1", sqLiteConn);  //check if we need to add new rows to balance history

@@ -58,7 +58,7 @@ namespace WPF_Budget_Project
             string TransactionDatabase = "[" + UserMail + "-transactions]";
             string BalanceDatabase = "[" + UserMail + "-balance]";
             BuildLastTransactions(sqLiteConn, TransactionDatabase);
-            //SimulateBalance(sqLiteConn, BalanceDatabase, TransactionDatabase);
+            SimulateBalance(sqLiteConn, BalanceDatabase, TransactionDatabase);
             BuildLineChart(sqLiteConn, BalanceDatabase);
             BuildPieChart(sqLiteConn, TransactionDatabase);
             sqLiteConn.Close();
@@ -203,10 +203,10 @@ namespace WPF_Budget_Project
         }
         #endregion
         #region Simulation
-        void SimulateBalance(SQLiteConnection sqLiteConn, string dbb, string dbi, string dbe)
+        void SimulateBalance(SQLiteConnection sqLiteConn, string dbb, string dbt)
         {
-            //checking latest date, if it's equal to today's return
-            SQLiteCommand comm = new SQLiteCommand("SELECT* FROM "+ dbb + "ORDER BY DATE DESC LIMIT 1", sqLiteConn);
+            //checking latest date, if it's equal to today's then return
+            SQLiteCommand comm = new SQLiteCommand("SELECT* FROM " + dbb + "ORDER BY DATE DESC LIMIT 1", sqLiteConn);
             comm.ExecuteNonQuery();
             SQLiteDataReader read = comm.ExecuteReader();
             read.Read();
@@ -216,53 +216,20 @@ namespace WPF_Budget_Project
                 return;
 
             //analysing periodic transactions
-            /*
-            List<double> vals = new List<double>();
-            DateTime x = ConvertToClass(LastDate);
-            DateTime LastDateClass = ConvertToClass(LastDate);
-            //temp = temp.AddDays(1);
-            TimeSpan number_between = DateTime.Today.Subtract(x);
-            for(int i=0;i<number_between.TotalDays;i++)
+            LongToDateTime x = new LongToDateTime();
+            DateTime t1 = x.ConvertToClass(LastDate);
+            DateTime t2 = x.ConvertToClass(Convert.ToInt64(DateTime.Today.ToString("yyyyMMdd")));
+            t1 = t1.AddDays(1);
+            TimeSpan y = t2.Subtract(t1);
+            double k = y.TotalDays;
+            while (k >= 0)
             {
-                vals.Add(v);
-               // comm = new SQLiteCommand("INSERT INTO " + dbb + " (BALANCE,DATE) values('"+ v +"','" + temp.ToString("yyyyMMdd") + "')", sqLiteConn);
-               // temp = temp.AddDays(1);
-               // comm.ExecuteNonQuery();
+                comm = new SQLiteCommand("INSERT INTO " + dbb + " (BALANCE, DATE) VALUES('" + v + "', '" + t1.ToString("yyyyMMdd") + "')", sqLiteConn);
+                comm.ExecuteNonQuery();
+                t1 = t1.AddDays(1);
+                k--;
             }
-
-            x = x.AddMonths(-1);
-            comm = new SQLiteCommand("SELECT * FROM "+ dbe +" WHERE DATE >= " + x.ToString("yyyyMMdd") + " AND REPEATABILITY IS NOT NULL ORDER BY DATE DESC", sqLiteConn);
-            read = comm.ExecuteReader();
-            List<string> id = new List<string>();
-            while(read.Read())
-            {
-                    //Console.WriteLine(x.ToString());//wieloktornosci teraa
-                    string code = (string)read["ID"];
-                if (id.Contains(code))
-                    continue;
-                id.Add(code);
-                vals = CountNewBalance((string)read["REPEATABILITY"], LastDateClass, ConvertToClass((long)read["DATE"]));
-
-            }
-        }
-
-        List<double> CountNewBalance(string period, DateTime actual, DateTime temp)
-        {
-            TimeSpan between = actual.Subtract(temp);
-            Console.WriteLine(between.TotalDays);
-            return (new List<double>());
-
-        }
-
-        DateTime ConvertToClass(long date)
-        {
-            int a, b, c;
-            a = (int)(date / 10000);
-            b = (int)((date - a * 10000) / 100);
-            c = (int)(date - a * 10000 - b * 100);
-            DateTime x = new DateTime(a, b, c);
-            return x;
-        }*/
+            //now find unique id's
         }
         #endregion
     }
