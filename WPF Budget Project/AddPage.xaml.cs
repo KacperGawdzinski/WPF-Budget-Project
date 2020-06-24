@@ -22,6 +22,9 @@ using System.Net.Http.Headers;
 
 //TODO : ADD VALUE INPUT WITH DOTS EX 59.99
 //TODO : MAKE UNIVERSAL FUNCTION FOR SQLITECOMMAND
+//TODO : FIX BUG THIS COLUMN EXITS
+//TODO : FIX BUG WITH LACK OF - SIGN IN LINECHART
+//TODO : TRANSACTIONS FROM THE SAME DAY ARE NOT SORTED PROPERLY EVERY TIME
 
 namespace WPF_Budget_Project
 {
@@ -454,6 +457,16 @@ namespace WPF_Budget_Project
                            "values('" + guid.ToString() + "', '" + InputData[0] + "', " + NullReturner(InputData[1]) + ", '" + InputData[2] + "', '" + InputData[3] + "', '" +
                            InputData[4] + "', " + NullReturner(InputData[5]) + ")", sqLiteConn);
                     comm.ExecuteNonQuery();
+                    comm = new SQLiteCommand("SELECT * FROM [" + UserMail + "-balance] ORDER BY DATE LIMIT 1", sqLiteConn);
+                    SQLiteDataReader read = comm.ExecuteReader();
+                    read.Read();
+                    if (InputData[2].Equals("Income"))
+                        comm = new SQLiteCommand("UPDATE [" + UserMail + "-balance] SET BALANCE='"
+                        + ((double)read["Balance"] + Convert.ToDouble(InputData[4])).ToString() + "' WHERE DATE = '" + ((long)read["Date"]).ToString() + "'", sqLiteConn);
+                    else
+                        comm = new SQLiteCommand("UPDATE [" + UserMail + "-balance] SET BALANCE='"
+                        + ((double)read["Balance"] - Convert.ToDouble(InputData[4])).ToString() + "' WHERE DATE = '" + ((long)read["Date"]).ToString() + "'", sqLiteConn);
+                    comm.ExecuteNonQuery();
                 }
                 Window OK = new Notification("Transaction added!");
                 OK.Show();
@@ -494,9 +507,9 @@ namespace WPF_Budget_Project
                     }
                 }
                 //now we're sure that balance days were added so we have to modify their values
-                comm = new SQLiteCommand("SELECT* FROM [" + UserMail + "-balance] ORDER BY DATE", sqLiteConn);
+                comm = new SQLiteCommand("SELECT* FROM [" + UserMail + "-balance] WHERE DATE >= '" + InputData[0] + "' ORDER BY DATE", sqLiteConn);
                 read = comm.ExecuteReader();
-                double val = Convert.ToDouble(InputData[4]);
+                double val = 0;
                 int l, temp = 7;
                 if (InputData[1].Equals("Monthly"))
                     l = 1;
@@ -536,7 +549,7 @@ namespace WPF_Budget_Project
                         val = val + Convert.ToDouble(InputData[4]);
                     }
 
-                    if (InputData[3].Equals("Income"))
+                    if (InputData[2].Equals("Income"))
                         comm = new SQLiteCommand("UPDATE [" + UserMail + "-balance] SET BALANCE='"
                         + ((double)read["Balance"] + val).ToString() + "' WHERE DATE='" + ((long)read["Date"]).ToString() + "'", sqLiteConn);
                     else

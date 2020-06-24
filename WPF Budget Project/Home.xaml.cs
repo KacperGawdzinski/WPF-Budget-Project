@@ -22,7 +22,7 @@ using System.Data;
 using System.IO;
 
 //TODO - MAXVALUE MUST APPEAR ONLY ONCE WHEN USER INSERTS NEW TYPE!
-//TODO - SIMULATION AT ADD
+
 namespace WPF_Budget_Project
 {
     public partial class ArrayOfPacked
@@ -95,7 +95,7 @@ namespace WPF_Budget_Project
         void BuildLineChart(SQLiteConnection sqLiteConn, string db)
         {
             Basic = new SeriesCollection();
-            SQLiteCommand comm = new SQLiteCommand("CREATE TABLE IF NOT EXISTS "+ db +" (NO INTEGER PRIMARY KEY AUTOINCREMENT, BALANCE REAL, DATE INTEGER)", sqLiteConn);
+            SQLiteCommand comm = new SQLiteCommand("CREATE TABLE IF NOT EXISTS "+ db +" (BALANCE REAL, DATE INTEGER)", sqLiteConn);
             comm.ExecuteNonQuery();
             comm = new SQLiteCommand("SELECT COUNT(*) FROM " + db , sqLiteConn);  //check how fast it will be with hundreds of rows
             int row_sum = Convert.ToInt32(comm.ExecuteScalar());
@@ -122,10 +122,10 @@ namespace WPF_Budget_Project
             {
                 Title = "Balance history",
                 Values = AddNewValue,
-                LineSmoothness = 1,
+                LineSmoothness = 0,
             });
             Labels = Data.ToArray();
-            YFormatter = value => value.ToString("C", CultureInfo.CreateSpecificCulture("en-US"));
+            YFormatter = value => value.ToString() + "$";
             DataContext = this;
         }
 
