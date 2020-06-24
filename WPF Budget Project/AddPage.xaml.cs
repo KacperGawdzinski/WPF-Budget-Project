@@ -475,13 +475,6 @@ namespace WPF_Budget_Project
                 OK.Show();
             }
         }
-
-        string NullReturner(string s)
-        {
-            if (s == null)
-                return "NULL";
-            return ("'" + s + "'");
-        }
         #endregion
         #region Simulation
         void Simulate(string[] InputData, Guid guid, SQLiteConnection sqLiteConn)
@@ -562,6 +555,13 @@ namespace WPF_Budget_Project
                     temp++;
                 }
             }
+        }
+
+        string NullReturner(string s)
+        {
+            if (s == null)
+                return "NULL";
+            return ("'" + s + "'");
         }
         #endregion
     }
