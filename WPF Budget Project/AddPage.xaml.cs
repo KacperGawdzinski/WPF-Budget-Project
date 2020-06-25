@@ -460,7 +460,7 @@ namespace WPF_Budget_Project
                            "values('" + guid.ToString() + "', '" + InputData[0] + "', " + NullReturner(InputData[1]) + ", '" + InputData[2] + "', '" + InputData[3] + "', '" +
                            InputData[4] + "', " + NullReturner(InputData[5]) + ")", sqLiteConn);
                     comm.ExecuteNonQuery();
-                    comm = new SQLiteCommand("SELECT * FROM [" + UserMail + "-balance] ORDER BY DATE LIMIT 1", sqLiteConn);
+                    comm = new SQLiteCommand("SELECT * FROM [" + UserMail + "-balance] ORDER BY DATE DESC LIMIT 1", sqLiteConn);
                     SQLiteDataReader read = comm.ExecuteReader();
                     read.Read();
                     if (InputData[2].Equals("Income"))

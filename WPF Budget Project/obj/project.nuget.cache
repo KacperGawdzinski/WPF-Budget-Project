@@ -1,10 +1,12 @@
 {
   "version": 2,
-  "dgSpecHash": "5cnzKJz2dp8kNQx7AqxRaEGQ+y/ZGvY2LY8qKOD1F8FwcArPMPQCB5eCNDqQUJWXeV9n5VrZ3ZXUCh7yflePYw==",
+  "dgSpecHash": "NAgnNWQOmaOpdfZQ9Z26ll/e4yoIKCE1ZoIOImtxeOFpH92tkJWTCEqOpIhKIBxmGLBU9I6EcdBpEAFkmk56Dg==",
   "success": true,
   "projectFilePath": "C:\\Users\\Kacper\\Desktop\\WPF-Budget_Project\\WPF Budget Project\\WPF Budget Project.csproj",
   "expectedPackageFiles": [
     "C:\\Users\\Kacper\\.nuget\\packages\\entityframework\\6.3.0\\entityframework.6.3.0.nupkg.sha512",
+    "C:\\Users\\Kacper\\.nuget\\packages\\fontawesome\\4.7.0\\fontawesome.4.7.0.nupkg.sha512",
+    "C:\\Users\\Kacper\\.nuget\\packages\\fontawesome.wpf\\4.7.0.9\\fontawesome.wpf.4.7.0.9.nupkg.sha512",
     "C:\\Users\\Kacper\\.nuget\\packages\\livecharts\\0.9.7\\livecharts.0.9.7.nupkg.sha512",
     "C:\\Users\\Kacper\\.nuget\\packages\\livecharts.wpf\\0.9.7\\livecharts.wpf.0.9.7.nupkg.sha512",
     "C:\\Users\\Kacper\\.nuget\\packages\\materialdesigncolors\\1.2.6\\materialdesigncolors.1.2.6.nupkg.sha512",

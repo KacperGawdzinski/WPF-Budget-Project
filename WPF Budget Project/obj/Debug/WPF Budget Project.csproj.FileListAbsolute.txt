@@ -30,11 +30,21 @@ C:\Users\Kacper\Desktop\WPF Budget Project\WPF Budget Project\bin\Debug\System.D
 C:\Users\Kacper\Desktop\WPF Budget Project\WPF Budget Project\bin\Debug\System.Data.SQLite.dll.config
 C:\Users\Kacper\Desktop\WPF Budget Project\WPF Budget Project\obj\Debug\LoginPage.g.cs
 C:\Users\Kacper\Desktop\WPF Budget Project\WPF Budget Project\obj\Debug\LoginPage.baml
+C:\Users\Kacper\Desktop\WPF-Budget_Project\WPF Budget Project\obj\Debug\AddPage.g.cs
+C:\Users\Kacper\Desktop\WPF-Budget_Project\WPF Budget Project\obj\Debug\LoginPage.g.cs
+C:\Users\Kacper\Desktop\WPF-Budget_Project\WPF Budget Project\obj\Debug\Notification.g.cs
+C:\Users\Kacper\Desktop\WPF-Budget_Project\WPF Budget Project\obj\Debug\ProgramWindow.g.cs
+C:\Users\Kacper\Desktop\WPF-Budget_Project\WPF Budget Project\obj\Debug\LoginWindow.g.cs
+C:\Users\Kacper\Desktop\WPF-Budget_Project\WPF Budget Project\obj\Debug\RegisterPage.g.cs
+C:\Users\Kacper\Desktop\WPF-Budget_Project\WPF Budget Project\obj\Debug\App.g.cs
+C:\Users\Kacper\Desktop\WPF-Budget_Project\WPF Budget Project\obj\Debug\WPF Budget Project_MarkupCompile.cache
+C:\Users\Kacper\Desktop\WPF-Budget_Project\WPF Budget Project\obj\Debug\WPF Budget Project_MarkupCompile.lref
 C:\Users\Kacper\Desktop\WPF-Budget_Project\WPF Budget Project\bin\Debug\WPF Budget Project.exe.config
 C:\Users\Kacper\Desktop\WPF-Budget_Project\WPF Budget Project\bin\Debug\WPF Budget Project.exe
 C:\Users\Kacper\Desktop\WPF-Budget_Project\WPF Budget Project\bin\Debug\WPF Budget Project.pdb
 C:\Users\Kacper\Desktop\WPF-Budget_Project\WPF Budget Project\bin\Debug\EntityFramework.SqlServer.dll
 C:\Users\Kacper\Desktop\WPF-Budget_Project\WPF Budget Project\bin\Debug\EntityFramework.dll
+C:\Users\Kacper\Desktop\WPF-Budget_Project\WPF Budget Project\bin\Debug\FontAwesome.WPF.dll
 C:\Users\Kacper\Desktop\WPF-Budget_Project\WPF Budget Project\bin\Debug\LiveCharts.dll
 C:\Users\Kacper\Desktop\WPF-Budget_Project\WPF Budget Project\bin\Debug\LiveCharts.pdb
 C:\Users\Kacper\Desktop\WPF-Budget_Project\WPF Budget Project\bin\Debug\LiveCharts.Wpf.dll
@@ -47,16 +57,7 @@ C:\Users\Kacper\Desktop\WPF-Budget_Project\WPF Budget Project\bin\Debug\System.D
 C:\Users\Kacper\Desktop\WPF-Budget_Project\WPF Budget Project\bin\Debug\System.Data.SQLite.EF6.dll
 C:\Users\Kacper\Desktop\WPF-Budget_Project\WPF Budget Project\bin\Debug\System.Data.SQLite.Linq.dll
 C:\Users\Kacper\Desktop\WPF-Budget_Project\WPF Budget Project\obj\Debug\WPF Budget Project.csprojAssemblyReference.cache
-C:\Users\Kacper\Desktop\WPF-Budget_Project\WPF Budget Project\obj\Debug\AddPage.g.cs
 C:\Users\Kacper\Desktop\WPF-Budget_Project\WPF Budget Project\obj\Debug\Home.g.cs
-C:\Users\Kacper\Desktop\WPF-Budget_Project\WPF Budget Project\obj\Debug\LoginPage.g.cs
-C:\Users\Kacper\Desktop\WPF-Budget_Project\WPF Budget Project\obj\Debug\Notification.g.cs
-C:\Users\Kacper\Desktop\WPF-Budget_Project\WPF Budget Project\obj\Debug\ProgramWindow.g.cs
-C:\Users\Kacper\Desktop\WPF-Budget_Project\WPF Budget Project\obj\Debug\LoginWindow.g.cs
-C:\Users\Kacper\Desktop\WPF-Budget_Project\WPF Budget Project\obj\Debug\RegisterPage.g.cs
-C:\Users\Kacper\Desktop\WPF-Budget_Project\WPF Budget Project\obj\Debug\App.g.cs
-C:\Users\Kacper\Desktop\WPF-Budget_Project\WPF Budget Project\obj\Debug\WPF Budget Project_MarkupCompile.cache
-C:\Users\Kacper\Desktop\WPF-Budget_Project\WPF Budget Project\obj\Debug\WPF Budget Project_MarkupCompile.lref
 C:\Users\Kacper\Desktop\WPF-Budget_Project\WPF Budget Project\obj\Debug\App.baml
 C:\Users\Kacper\Desktop\WPF-Budget_Project\WPF Budget Project\obj\Debug\AddPage.baml
 C:\Users\Kacper\Desktop\WPF-Budget_Project\WPF Budget Project\obj\Debug\ButtonStyles.baml
