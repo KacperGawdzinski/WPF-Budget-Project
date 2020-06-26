@@ -102,7 +102,7 @@ namespace WPF_Budget_Project
                                           + "' AND [CATEGORY]='Expend' AND [TYPE]='"+ ExpendTypes[i]+"'", sqLiteConn);
                 val = (double)comm.ExecuteScalar();
                 var AddValue = new ChartValues<ObservableValue>();
-                if(val != 0)
+                if (val != 0)
                 {
                     AddValue.Add(new ObservableValue(val));
                     Rounded.Add(new PieSeries

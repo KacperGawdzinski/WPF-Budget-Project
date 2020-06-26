@@ -14,23 +14,23 @@
       Foreground="White">
 
     <Grid>
-        <TextBlock x:Name="Date" HorizontalAlignment="Center" Margin="680 20 0 0"/>
-        <Grid Height="300" Width="450" VerticalAlignment="Top" HorizontalAlignment="Right" Margin="30 70 100 0">
-            <Grid Margin="160 0 0 0">
+        <TextBlock x:Name="Date" HorizontalAlignment="Center" Margin="950 20 0 0"/>
+        <Grid Height="300" Width="600" VerticalAlignment="Top" HorizontalAlignment="Right" Margin="0 50 0 0">
+            <Grid HorizontalAlignment="Left" Margin="60 0 0 0">
                 <Ellipse Width="240" Height="240" Fill="#a5d6a7"/>
-                <TextBlock x:Name="Balance" FontSize="34" HorizontalAlignment="Center" VerticalAlignment="Center" Margin="0 0 0 10"/>
+                <TextBlock x:Name="Balance" FontSize="34" HorizontalAlignment="Center" Text="XD" VerticalAlignment="Center" Margin="0 0 0 20"/>
                 <TextBlock x:Name="BalanceText" Text="Total Balance" HorizontalAlignment="Center" VerticalAlignment="Center" FontSize="18" Foreground="#424242" Margin="0 50 0 0"/>
             </Grid>
-            <lvc:PieChart Name="Chart" Series="{Binding Rounded}" 
-                          LegendLocation="Left" InnerRadius="100" DisableAnimations="True" Hoverable="False" DataTooltip="{x:Null}">
+            <lvc:PieChart Name="Chart" Series="{Binding Rounded}"
+                          LegendLocation="Right" InnerRadius="100" DisableAnimations="True" Hoverable="False" DataTooltip="{x:Null}">
                 <lvc:PieChart.ChartLegend>
-                    <lvc:DefaultLegend BulletSize="20"/>
+                    <lvc:DefaultLegend BulletSize="20" MinWidth="230"/>
                 </lvc:PieChart.ChartLegend>
             </lvc:PieChart>
         </Grid>
-        
-        <TextBlock Text="Latest Transactions" Margin="290 40 0 0"/>
-        <Grid MaxHeight="250" Width="400" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="160 70 0 0">
+
+        <TextBlock Text="Latest Transactions" Margin="290 50 0 0"/>
+        <Grid MaxHeight="250" Width="400" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="160 80 0 0">
             <Border BorderBrush="Black" BorderThickness="2" Background="#2e7d32">
                 <StackPanel Name="LatestTransactions" Height="300" Width="400" HorizontalAlignment="Left" VerticalAlignment="Top"/>
             </Border>

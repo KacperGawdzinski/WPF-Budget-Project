@@ -37,7 +37,7 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <PropertyGroup>
-    <ApplicationIcon>icon.ico</ApplicationIcon>
+    <ApplicationIcon>Images\icon.ico</ApplicationIcon>
   </PropertyGroup>
   <PropertyGroup>
     <StartupObject />
@@ -154,7 +154,7 @@
     <Resource Include="Images\LoginBackground.jpg" />
   </ItemGroup>
   <ItemGroup>
-    <Resource Include="icon.ico" />
+    <Resource Include="Images\icon.ico" />
   </ItemGroup>
   <ItemGroup>
     <Resource Include="Images\ProgramBackground.jpg" />

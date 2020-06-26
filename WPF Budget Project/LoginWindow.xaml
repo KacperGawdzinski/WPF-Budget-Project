@@ -11,7 +11,7 @@
       FontFamily="Comic Sans MS"
       FontSize="16"
       ResizeMode="NoResize"
-      Icon="icon.ico">
+      Icon="/Images/icon.ico">
 
     <Window.Background>
         <ImageBrush ImageSource="/Images/LoginBackground.jpg" Stretch="Fill" />
