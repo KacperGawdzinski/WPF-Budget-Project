@@ -24,7 +24,6 @@ using System.CodeDom;
 using System.Data.Entity.ModelConfiguration.Configuration;
 
 //TODO - MAXVALUE MUST APPEAR ONLY ONCE WHEN USER INSERTS NEW TYPE!
-
 namespace WPF_Budget_Project
 {
     public partial class ArrayOfPacked

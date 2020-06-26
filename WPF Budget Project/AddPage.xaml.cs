@@ -176,8 +176,8 @@ namespace WPF_Budget_Project
                 TypeInsertBuilt = true;
                 TextBox TypeInsert = new TextBox();
                 TextBlock TypeInsertText = new TextBlock();
-                TypeInsertText.Width = 200;
-                TypeInsertText.Text = "Insert new type";
+                TypeInsertText.Width = 300;
+                TypeInsertText.Text = "Insert new type (Max 20 signs)";
                 TypeInsertText.Margin = new Thickness(80, 20, 0, 0);
                 TypeInsertText.HorizontalAlignment = HorizontalAlignment.Center;
                 TypeInsert.MinWidth = 200;
@@ -336,6 +336,11 @@ namespace WPF_Budget_Project
                         if (val.Text.Length == 0)
                         {
                             ShowError("Insert new type!");
+                            return null;
+                        }
+                        if (val.Text.Length > 20)
+                        {
+                            ShowError("Type name is too long!");
                             return null;
                         }
                         string[] temp;
