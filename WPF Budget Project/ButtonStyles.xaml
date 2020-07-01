@@ -1,6 +1,8 @@
 ﻿<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
                     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-                    xmlns:local="clr-namespace:WPF_Budget_Project">
+                    xmlns:local="clr-namespace:WPF_Budget_Project"
+                    xmlns:materialDesign="clr-namespace:MaterialDesignThemes.Wpf;assembly=MaterialDesignThemes.Wpf">
+    
     <Style x:Key="PrettyButton" TargetType="Button">
         <Setter Property="Background" Value="DodgerBlue"/>
         <Setter Property="Foreground" Value="White"/>
@@ -58,5 +60,9 @@
                 </ControlTemplate>
             </Setter.Value>
         </Setter>
+    </Style>
+    <Style x:Key="MaterialDesignTextBoxBase" BasedOn="{StaticResource MaterialDesignTextBoxBase}" TargetType="{x:Type TextBox}">
+        <Setter Property="FontSize" Value="24" />
+        <Setter Property="Background" Value="Orange"/>
     </Style>
 </ResourceDictionary>

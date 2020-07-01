@@ -1,0 +1,112 @@
+<?xml version="1.0"?>
+<doc>
+    <assembly>
+        <name>WPF Budget Project</name>
+    </assembly>
+    <members>
+        <member name="T:WPF_Budget_Project.AddPage">
+            <summary>
+            AddPage
+            </summary>
+        </member>
+        <member name="M:WPF_Budget_Project.AddPage.InitializeComponent">
+            <summary>
+            InitializeComponent
+            </summary>
+        </member>
+        <member name="T:WPF_Budget_Project.Home">
+            <summary>
+            Home
+            </summary>
+        </member>
+        <member name="M:WPF_Budget_Project.Home.InitializeComponent">
+            <summary>
+            InitializeComponent
+            </summary>
+        </member>
+        <member name="T:WPF_Budget_Project.LoginPage">
+            <summary>
+            LoginPage
+            </summary>
+        </member>
+        <member name="M:WPF_Budget_Project.LoginPage.InitializeComponent">
+            <summary>
+            InitializeComponent
+            </summary>
+        </member>
+        <member name="T:WPF_Budget_Project.Notification">
+            <summary>
+            Notification
+            </summary>
+        </member>
+        <member name="M:WPF_Budget_Project.Notification.InitializeComponent">
+            <summary>
+            InitializeComponent
+            </summary>
+        </member>
+        <member name="T:WPF_Budget_Project.RegisterPage">
+            <summary>
+            RegisterPage
+            </summary>
+        </member>
+        <member name="M:WPF_Budget_Project.RegisterPage.InitializeComponent">
+            <summary>
+            InitializeComponent
+            </summary>
+        </member>
+        <member name="T:WPF_Budget_Project.App">
+            <summary>
+            Logika interakcji dla klasy App.xaml
+            </summary>
+            <summary>
+            App
+            </summary>
+        </member>
+        <member name="M:WPF_Budget_Project.App.InitializeComponent">
+            <summary>
+            InitializeComponent
+            </summary>
+        </member>
+        <member name="M:WPF_Budget_Project.App.Main">
+            <summary>
+            Application Entry Point.
+            </summary>
+        </member>
+        <member name="T:WPF_Budget_Project.ProgramWindow">
+            <summary>
+            ProgramWindow
+            </summary>
+        </member>
+        <member name="M:WPF_Budget_Project.ProgramWindow.InitializeComponent">
+            <summary>
+            InitializeComponent
+            </summary>
+        </member>
+        <member name="T:WPF_Budget_Project.LoginWindow">
+            <summary>
+            LoginWindow
+            </summary>
+        </member>
+        <member name="M:WPF_Budget_Project.LoginWindow.InitializeComponent">
+            <summary>
+            InitializeComponent
+            </summary>
+        </member>
+        <member name="T:WPF_Budget_Project.Properties.Resources">
+            <summary>
+              Silnie typizowana klasa zasobów do wyszukiwania zlokalizowanych ciągów itd.
+            </summary>
+        </member>
+        <member name="P:WPF_Budget_Project.Properties.Resources.ResourceManager">
+            <summary>
+              Zwraca buforowane wystąpienie składnika ResourceManager używane przez tę klasę.
+            </summary>
+        </member>
+        <member name="P:WPF_Budget_Project.Properties.Resources.Culture">
+            <summary>
+              Przesłania właściwość CurrentUICulture bieżącego wątku dla wszystkich
+              przypadków przeszukiwania zasobów za pomocą tej silnie typizowanej klasy zasobów.
+            </summary>
+        </member>
+    </members>
+</doc>
