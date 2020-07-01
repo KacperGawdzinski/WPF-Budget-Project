@@ -1,0 +1,112 @@
+<?xml version="1.0"?>
+<doc>
+    <assembly>
+        <name>Clerk</name>
+    </assembly>
+    <members>
+        <member name="T:Clerk.AddPage">
+            <summary>
+            AddPage
+            </summary>
+        </member>
+        <member name="M:Clerk.AddPage.InitializeComponent">
+            <summary>
+            InitializeComponent
+            </summary>
+        </member>
+        <member name="T:Clerk.Home">
+            <summary>
+            Home
+            </summary>
+        </member>
+        <member name="M:Clerk.Home.InitializeComponent">
+            <summary>
+            InitializeComponent
+            </summary>
+        </member>
+        <member name="T:Clerk.LoginPage">
+            <summary>
+            LoginPage
+            </summary>
+        </member>
+        <member name="M:Clerk.LoginPage.InitializeComponent">
+            <summary>
+            InitializeComponent
+            </summary>
+        </member>
+        <member name="T:Clerk.Notification">
+            <summary>
+            Notification
+            </summary>
+        </member>
+        <member name="M:Clerk.Notification.InitializeComponent">
+            <summary>
+            InitializeComponent
+            </summary>
+        </member>
+        <member name="T:Clerk.RegisterPage">
+            <summary>
+            RegisterPage
+            </summary>
+        </member>
+        <member name="M:Clerk.RegisterPage.InitializeComponent">
+            <summary>
+            InitializeComponent
+            </summary>
+        </member>
+        <member name="T:Clerk.App">
+            <summary>
+            Logika interakcji dla klasy App.xaml
+            </summary>
+            <summary>
+            App
+            </summary>
+        </member>
+        <member name="M:Clerk.App.InitializeComponent">
+            <summary>
+            InitializeComponent
+            </summary>
+        </member>
+        <member name="M:Clerk.App.Main">
+            <summary>
+            Application Entry Point.
+            </summary>
+        </member>
+        <member name="T:Clerk.ProgramWindow">
+            <summary>
+            ProgramWindow
+            </summary>
+        </member>
+        <member name="M:Clerk.ProgramWindow.InitializeComponent">
+            <summary>
+            InitializeComponent
+            </summary>
+        </member>
+        <member name="T:Clerk.LoginWindow">
+            <summary>
+            LoginWindow
+            </summary>
+        </member>
+        <member name="M:Clerk.LoginWindow.InitializeComponent">
+            <summary>
+            InitializeComponent
+            </summary>
+        </member>
+        <member name="T:Clerk.Properties.Resources">
+            <summary>
+              Klasa zasobu wymagająca zdefiniowania typu do wyszukiwania zlokalizowanych ciągów itd.
+            </summary>
+        </member>
+        <member name="P:Clerk.Properties.Resources.ResourceManager">
+            <summary>
+            Zwraca buforowane wystąpienie ResourceManager używane przez tę klasę.
+            </summary>
+        </member>
+        <member name="P:Clerk.Properties.Resources.Culture">
+            <summary>
+              Przesłania właściwość CurrentUICulture bieżącego wątku dla wszystkich
+              przypadków przeszukiwania zasobów za pomocą tej klasy zasobów wymagającej zdefiniowania typu.
+            </summary>
+        </member>
+    </members>
+</doc>

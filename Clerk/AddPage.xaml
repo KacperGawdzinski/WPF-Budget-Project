@@ -1,0 +1,44 @@
+﻿<Page x:Class="Clerk.AddPage"
+      xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+      xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+      xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
+      xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+      xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+      xmlns:local="clr-namespace:Clerk"
+      mc:Ignorable="d" 
+      d:DesignHeight="800" d:DesignWidth="1200"
+      FontFamily="Moon"
+      FontSize="16"
+      Foreground="White"
+      Title="AddPage">
+
+    <Grid HorizontalAlignment="Center" Width="600" Name="MainGrid">
+        <Rectangle RadiusX="40" RadiusY="40" Margin="35" Width="500" Height="680" Opacity="0.7" Fill="#a5d6a7"/>
+        <StackPanel x:Name="Stack">
+            <Grid Margin="0 80 0 0">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="*"/>
+                </Grid.ColumnDefinitions>
+                <CheckBox x:Name="IncomeCheck" Background="#2e7d32" Grid.Column="0" HorizontalAlignment="Center" Margin="100 0 0 0" Checked="IncomeChecked" >
+                    <TextBlock Text="Income"/>
+                </CheckBox>
+                <CheckBox x:Name="ExpendCheck" Background="#2e7d32" Grid.Column="1" HorizontalAlignment="Center" Margin="0 0 100 0" Checked="ExpendChecked" >
+                    <TextBlock Text="Expend"/>
+                </CheckBox>
+            </Grid>
+            <TextBlock x:Name="TypeText" Text="Type" HorizontalAlignment="Center"/>
+            <ComboBox x:Name="TypeCombo" MaxWidth="300" DropDownClosed ="TypeComboChanged"/>
+            <TextBlock Margin="0 20 0 0" Text="Insert value" HorizontalAlignment="Center"/>
+            <TextBox x:Name="ValueInsert" MinWidth="200" Margin="0 3 0 0" HorizontalAlignment="Center"/>
+            <CheckBox x:Name="PeriodicCheck" Margin="0 20 0 0" Content="Periodic" HorizontalAlignment="Center" Checked="PeriodicChecked" Unchecked="PeriodicUnchecked"/>
+            <Grid x:Name="PeriodicGrid"/>
+            <Button x:Name="SaveButton" BorderBrush="#2e7d32" Background="#2e7d32"  Width="100" Height="40" Margin="0 10 0 0" Click="SaveClick">
+                <StackPanel Orientation="Horizontal">
+                    <materialDesign:PackIcon Kind="ContentSave" VerticalAlignment="Center" HorizontalAlignment="Center"/>
+                    <TextBlock Text="Save" Margin="10 0 0 0"/>
+                </StackPanel>
+            </Button>
+        </StackPanel>
+    </Grid>
+</Page>
