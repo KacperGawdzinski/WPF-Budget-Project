@@ -32,14 +32,14 @@ namespace WPF_Budget_Project
         public TextBlock cat;
         public TextBlock dat;
         public bool income = true;
-        public ArrayOfPacked(string v, string type, long date, string category)
+        public ArrayOfPacked(string v, string type, string date, string category)
         {
             val = new TextBlock();
             val.Text = v;
             cat = new TextBlock();
             cat.Text = type;
             dat = new TextBlock();
-            dat.Text = date.ToString();
+            dat.Text = date;
             if (category.Equals("Expend"))
                 income = false;
         }
@@ -167,7 +167,7 @@ namespace WPF_Budget_Project
             int k = 0;
             while (read.Read())
             {
-                ArrayOfPacked[k] = new ArrayOfPacked(((double)read["VALUE"]).ToString(), (string)read["TYPE"], (long)read["DATE"], (string)read["CATEGORY"]);
+                ArrayOfPacked[k] = new ArrayOfPacked(((double)read["VALUE"]).ToString(), (string)read["TYPE"], DivideDate((long)read["DATE"]), (string)read["CATEGORY"]);
                 LatestTransactions.Children.Add(MakeGrid(ArrayOfPacked[k]));
                 k++;
             }
@@ -210,6 +210,13 @@ namespace WPF_Budget_Project
             make.Children.Add(dat);
             make.Height = 50;
             return make;
+        }
+
+        string DivideDate(long date)
+        {
+            string s = date.ToString();
+            s = s.Insert(4, "/");
+            return (s.Insert(7, "/"));
         }
         #endregion
         #region Simulation
