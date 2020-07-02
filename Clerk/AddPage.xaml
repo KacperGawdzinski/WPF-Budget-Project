@@ -28,9 +28,9 @@
                 </CheckBox>
             </Grid>
             <TextBlock x:Name="TypeText" Text="Type" HorizontalAlignment="Center"/>
-            <ComboBox x:Name="TypeCombo" MaxWidth="300" DropDownClosed ="TypeComboChanged"/>
+            <ComboBox x:Name="TypeCombo" MaxWidth="300" DropDownClosed ="TypeComboChanged" Margin="10 5 0 0" HorizontalContentAlignment="Center" />
             <TextBlock Margin="0 20 0 0" Text="Insert value" HorizontalAlignment="Center"/>
-            <TextBox x:Name="ValueInsert" MinWidth="200" Margin="0 3 0 0" HorizontalAlignment="Center"/>
+            <TextBox x:Name="ValueInsert" TextAlignment="Center" MinWidth="200" Margin="0 3 0 0" HorizontalAlignment="Center"/>
             <CheckBox x:Name="PeriodicCheck" Margin="0 20 0 0" Content="Periodic" HorizontalAlignment="Center" Checked="PeriodicChecked" Unchecked="PeriodicUnchecked"/>
             <Grid x:Name="PeriodicGrid"/>
             <Button x:Name="SaveButton" BorderBrush="#2e7d32" Background="#2e7d32"  Width="100" Height="40" Margin="0 10 0 0" Click="SaveClick">

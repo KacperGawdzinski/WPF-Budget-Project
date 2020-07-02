@@ -66,11 +66,8 @@ namespace Clerk
             SQLiteConnection sqLiteConn = new SQLiteConnection(@"Data Source=database.db;Version=3;");
             sqLiteConn.Open();
             List<string> Types = new List<string>();
-            SQLiteCommand comm;
-            if(income)
-                comm = new SQLiteCommand("SELECT DISTINCT TYPE FROM [" + UserMail + "-transactions] WHERE [CATEGORY]='Income'", sqLiteConn);
-            else
-                comm = new SQLiteCommand("SELECT DISTINCT TYPE FROM [" + UserMail + "-transactions] WHERE [CATEGORY]='Expend'", sqLiteConn);
+            SQLiteCommand comm = income ? new SQLiteCommand("SELECT DISTINCT TYPE FROM [" + UserMail + "-transactions] WHERE [CATEGORY]='Income'", sqLiteConn) :
+                new SQLiteCommand("SELECT DISTINCT TYPE FROM [" + UserMail + "-transactions] WHERE [CATEGORY]='Expend'", sqLiteConn);
             SQLiteDataReader read = comm.ExecuteReader();
             while (read.Read())
                 Types.Add((string)read["Type"]);
@@ -100,9 +97,11 @@ namespace Clerk
             if (TypeCombo.Text == "New type..." && TypeInsertBuilt == false)
             {
                 TypeInsertBuilt = true;
-                TextBox TypeInsert = new TextBox(){
+                TextBox TypeInsert = new TextBox() {
                     MinWidth = 200,
-                    HorizontalAlignment = HorizontalAlignment.Center
+                    HorizontalAlignment = HorizontalAlignment.Center,
+                    TextAlignment = TextAlignment.Center,
+                    Margin = new Thickness(0, 5, 0, 0)
                 };
                 TextBlock TypeInsertText = new TextBlock(){
                     Width = 300,
@@ -127,20 +126,22 @@ namespace Clerk
                     Stack.Children.RemoveAt(5);
                     TextBlock Value = new TextBlock(){
                         Text = "Insert value",
-                        Margin = new Thickness(130, 20, 0, 0)
+                        Margin = new Thickness(140, 20, 0, 0)
                     };
                     TextBlock MaxValue = new TextBlock(){
-                        Margin = new Thickness(20, 20, 0, 0),
+                        Margin = new Thickness(18, 20, 0, 0),
                         Text = "Insert max monthly value"
                     };
                     TextBox InMaxValue = new TextBox(){
-                        Margin = new Thickness(30, 50, 0, 0),
+                        Margin = new Thickness(30, 40, 0, 0),
                         HorizontalAlignment = HorizontalAlignment.Left,
-                        MinWidth = 150
+                        MinWidth = 150,
+                        TextAlignment = TextAlignment.Center
                     };
                     TextBox InValue = new TextBox(){
-                        Margin = new Thickness(60, 50, 0, 0),
-                        MaxWidth = 150
+                        Margin = new Thickness(60, 40, 0, 0),
+                        MaxWidth = 150,
+                        TextAlignment = TextAlignment.Center
                     };
                     Grid Insert = new Grid();
                     ColumnDefinition st = new ColumnDefinition();
@@ -180,13 +181,16 @@ namespace Clerk
         {
             MaxValueBuilt = false;
             Stack.Children.RemoveAt(3);
-            TextBlock Val = new TextBlock();
-            TextBox InsVal = new TextBox();
-            Val.Text = "Insert Value";
-            Val.Margin = new Thickness(0, 20, 0, 0);
-            Val.HorizontalAlignment = HorizontalAlignment.Center;
-            InsVal.HorizontalAlignment = HorizontalAlignment.Center;
-            InsVal.MinWidth = 200;
+            TextBlock Val = new TextBlock(){
+                Text = "Insert Value",
+                Margin = new Thickness(0, 20, 0, 0),
+                HorizontalAlignment = HorizontalAlignment.Center
+            };
+            TextBox InsVal = new TextBox(){
+                HorizontalAlignment = HorizontalAlignment.Center,
+                MinWidth = 200,
+                TextAlignment = TextAlignment.Center
+            };
             Stack.Children.Insert(3, Val);
             Stack.Children.Insert(4, InsVal);
         }
@@ -281,7 +285,6 @@ namespace Clerk
             Save.Click += SaveClick;
             return Save;
         }
-
         #endregion
         #region UtilityFunctions
         public IEnumerable<T> FindVisualChildren<T>(DependencyObject depObj) where T : DependencyObject
@@ -339,11 +342,7 @@ namespace Clerk
                             ShowError("Type name is too long!");
                             return null;
                         }
-                        string[] temp;
-                        if(l[2].Equals("Income"))
-                            temp = ReadTypes(true);
-                        else
-                            temp = ReadTypes(false);
+                        string[] temp = l[2].Equals("Income") ? ReadTypes(true) : ReadTypes(false);
                         for (int i = 0; i < temp.Length; i++)
                             if (temp[i] == val.Text)
                             {
@@ -380,7 +379,7 @@ namespace Clerk
                 l[3] = TypeCombo.Text;
                 foreach (var val in FindVisualChildren<TextBox>(this))
                 {
-                    if (k == 1 || (k == 2 && ExpendCheck.IsChecked == true))
+                    if (k == 1)
                     {
                         if (val.Text.Length == 0)
                         {
@@ -393,10 +392,7 @@ namespace Clerk
                                 ShowError("Value must be a number!");
                                 return null;
                             }
-                        if (k == 1)
-                            l[4] = val.Text;
-                        if (k == 2)
-                            l[5] = val.Text;
+                        l[4] = val.Text;
                     }
                     k++;
                 }

@@ -1,7 +1,7 @@
 ﻿## Clerk
 Clerk is a bugdet Windows desktop app that let's you control your expenses and incomes.
 You may ask why would someone create another budget app, well I needed one in real life so i decided to write my own from scratch ;)
-![](https://i.ibb.co/sbTgM30/clerk-screen.png)
+![](https://i.ibb.co/6JBmdGx/clerk-screen.png)
 ## Config
 App was created in WPF so it won't launch on Linux. To have it working simply open Clerk from /bin/Debug
 ## Features
