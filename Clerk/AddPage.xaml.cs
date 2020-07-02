@@ -38,8 +38,8 @@ namespace Clerk
         }
         #endregion
         #region GUIAdapt
+        bool IncomeChecked;
         bool MaxValueBuilt = false;
-        bool IncomeChecked = true;
         bool TypeInsertBuilt = false;
         bool SaveInsideGrid = false;
         void CategoryChecked(object sender, EventArgs e)
@@ -48,16 +48,14 @@ namespace Clerk
             RemoveOldCategories(IncomeChecked);
             ComboBoxItem x;
             string[] temp = ReadTypes(IncomeChecked);
-            for (int i=0;i<temp.Length;i++)
+            for (int i = 0; i < temp.Length; i++)
             {
-                x = new ComboBoxItem()
-                {
+                x = new ComboBoxItem(){
                     Content = temp[i]
                 };
                 TypeCombo.Items.Add(x);
             }
-            x = new ComboBoxItem()
-            {
+            x = new ComboBoxItem(){
                 Content = "New type..."
             };
             TypeCombo.Items.Add(x);
@@ -102,16 +100,20 @@ namespace Clerk
             if (TypeCombo.Text == "New type..." && TypeInsertBuilt == false)
             {
                 TypeInsertBuilt = true;
-                TextBox TypeInsert = new TextBox();
-                TextBlock TypeInsertText = new TextBlock();
-                TypeInsertText.Width = 300;
-                TypeInsertText.Text = "Insert new type (Max 20 signs)";
-                TypeInsertText.Margin = new Thickness(80, 20, 0, 0);
-                TypeInsertText.HorizontalAlignment = HorizontalAlignment.Center;
-                TypeInsert.MinWidth = 200;
-                TypeInsert.HorizontalAlignment = HorizontalAlignment.Center;
+                TextBox TypeInsert = new TextBox(){
+                    MinWidth = 200,
+                    HorizontalAlignment = HorizontalAlignment.Center
+                };
+                TextBlock TypeInsertText = new TextBlock(){
+                    Width = 300,
+                    Text = "Insert new type (Max 20 signs)",
+                    Margin = new Thickness(80, 20, 0, 0),
+                    HorizontalAlignment = HorizontalAlignment.Center
+                };
+
                 Stack.Children.Insert(3, TypeInsertText);
-                Stack.Children.Insert(4, TypeInsert);
+                Stack.Children.Insert(4, TypeInsert); 
+
                 if(PeriodicCheck.IsChecked == true && SaveInsideGrid == false)
                 {
                     Stack.Children.RemoveAt(Stack.Children.Count - 1);
@@ -123,10 +125,23 @@ namespace Clerk
                     MaxValueBuilt = true;
                     Stack.Children.RemoveAt(6);
                     Stack.Children.RemoveAt(5);
-                    TextBlock Value = new TextBlock();
-                    TextBlock MaxValue = new TextBlock();
-                    TextBox InMaxValue = new TextBox();
-                    TextBox InValue = new TextBox();
+                    TextBlock Value = new TextBlock(){
+                        Text = "Insert value",
+                        Margin = new Thickness(130, 20, 0, 0)
+                    };
+                    TextBlock MaxValue = new TextBlock(){
+                        Margin = new Thickness(20, 20, 0, 0),
+                        Text = "Insert max monthly value"
+                    };
+                    TextBox InMaxValue = new TextBox(){
+                        Margin = new Thickness(30, 50, 0, 0),
+                        HorizontalAlignment = HorizontalAlignment.Left,
+                        MinWidth = 150
+                    };
+                    TextBox InValue = new TextBox(){
+                        Margin = new Thickness(60, 50, 0, 0),
+                        MaxWidth = 150
+                    };
                     Grid Insert = new Grid();
                     ColumnDefinition st = new ColumnDefinition();
                     ColumnDefinition nd = new ColumnDefinition();
@@ -134,15 +149,6 @@ namespace Clerk
                     nd.Width = new GridLength(1, GridUnitType.Star);
                     Insert.ColumnDefinitions.Add(st);
                     Insert.ColumnDefinitions.Add(nd);
-                    Value.Text = "Insert value";
-                    Value.Margin = new Thickness(130, 20, 0, 0);
-                    InValue.Margin = new Thickness(60, 50, 0, 0);
-                    InValue.MaxWidth = 150;
-                    InMaxValue.Margin = new Thickness(30, 50, 0, 0);
-                    InMaxValue.HorizontalAlignment = HorizontalAlignment.Left;
-                    InMaxValue.MinWidth = 150;
-                    MaxValue.Margin = new Thickness(20, 20, 0, 0);
-                    MaxValue.Text = "Insert max monthly value";
                     Grid.SetColumn(MaxValue, 1);
                     Grid.SetColumn(InMaxValue, 1);
                     Grid.SetColumn(Value, 0);
@@ -187,42 +193,50 @@ namespace Clerk
 
         void PeriodicChecked(object sender, EventArgs e)
         {
-            TextBlock PeriodicText = new TextBlock();
-            PeriodicText.HorizontalAlignment = HorizontalAlignment.Right;
-            PeriodicText.Text = "Repeatability";
-            PeriodicText.Margin = new Thickness(0, 100, 130, 0);
-            ComboBox PeriodicBox = new ComboBox();
-            PeriodicBox.HorizontalAlignment = HorizontalAlignment.Right;
-            PeriodicBox.VerticalAlignment = VerticalAlignment.Top;
-            PeriodicBox.Margin = new Thickness(0, 130, 100, 0);
-            PeriodicBox.Width = 150;
-            ComboBoxItem Day = new ComboBoxItem();
-            ComboBoxItem Week = new ComboBoxItem();
-            ComboBoxItem Month = new ComboBoxItem();
-            Day.Content = "Daily";
-            Week.Content = "Weekly";
-            Month.Content = "Monthly";
+            TextBlock PeriodicText = new TextBlock(){
+                HorizontalAlignment = HorizontalAlignment.Right,
+                Text = "Repeatability",
+                Margin = new Thickness(0, 100, 130, 0)
+            };
+            ComboBox PeriodicBox = new ComboBox(){
+                HorizontalAlignment = HorizontalAlignment.Right,
+                VerticalAlignment = VerticalAlignment.Top,
+                Margin = new Thickness(0, 130, 100, 0),
+                Width = 150
+            };
+            ComboBoxItem Day = new ComboBoxItem(){
+                Content = "Daily"
+            };
+            ComboBoxItem Week = new ComboBoxItem(){
+                Content = "Weekly"
+            };
+            ComboBoxItem Month = new ComboBoxItem(){
+                Content = "Monthly"
+            };
             PeriodicBox.Items.Add(Day);
             PeriodicBox.Items.Add(Week);
             PeriodicBox.Items.Add(Month);
-            TextBlock StartDate = new TextBlock();
-            StartDate.Text = "Start Date";
-            StartDate.HorizontalAlignment = HorizontalAlignment.Left;
-            StartDate.Width = 200;
-            StartDate.Margin = new Thickness(155, 10, 0, 0);
-            Calendar Date = new Calendar();
-            Viewbox box = new Viewbox();
-            box.HorizontalAlignment = HorizontalAlignment.Left;
-            box.MaxWidth = 250;
-            box.MaxHeight = 300;
-            box.Margin = new Thickness(80, 35, 0, 0);
-            string d = DateTime.Today.ToString("dd.MM.yyyy");
+            TextBlock StartDateText = new TextBlock(){
+                Text = "Start Date",
+                HorizontalAlignment = HorizontalAlignment.Left,
+                Width = 200,
+                Margin = new Thickness(155, 10, 0, 0)
+            };
+            string d = DateTime.Today.ToString("yyyy.MM.dd");
             string[] t = d.Split('.');
-            Date.DisplayDate = new DateTime(Convert.ToInt32(t[2]), Convert.ToInt32(t[1]), Convert.ToInt32(t[0]));
-            box.Child = Date;
+            Calendar Date = new Calendar(){
+                DisplayDate = new DateTime(Convert.ToInt32(t[0]), Convert.ToInt32(t[1]), Convert.ToInt32(t[2]))
+            };
+            Viewbox box = new Viewbox(){
+                HorizontalAlignment = HorizontalAlignment.Left,
+                MaxWidth = 250,
+                MaxHeight = 300,
+                Margin = new Thickness(80, 35, 0, 0),
+                Child = Date
+            };
             PeriodicGrid.Children.Add(PeriodicText);
             PeriodicGrid.Children.Add(PeriodicBox);
-            PeriodicGrid.Children.Add(StartDate);
+            PeriodicGrid.Children.Add(StartDateText);
             PeriodicGrid.Children.Add(box);
             if(ExpendCheck.IsEnabled && TypeInsertBuilt)
             {
@@ -233,7 +247,7 @@ namespace Clerk
         }
         void PeriodicUnchecked(object sender, EventArgs e)
         {
-            for(int i=0;i<4;i++)
+            for(int i = 0; i < 4; i++)
                 PeriodicGrid.Children.RemoveAt(PeriodicGrid.Children.Count - 1);
 
             if(SaveInsideGrid)
@@ -243,29 +257,28 @@ namespace Clerk
                 Stack.Children.Add(MakeSaveButton(0, 20, 0, 0));
             }
         }
-
         Button MakeSaveButton(int a, int b, int c, int d)
         {
-            Button Save = new Button();
-            TextBlock Txt = new TextBlock();
-            StackPanel temp = new StackPanel();
-            Txt.Text = "Save";
-            Txt.Margin = new Thickness(10, 0, 0, 0);
-            temp.Orientation = Orientation.Horizontal;
-            temp.Children.Add(new MaterialDesignThemes.Wpf.PackIcon
-            { Kind = MaterialDesignThemes.Wpf.PackIconKind.ContentSave });
-            temp.Children.Add(Txt);
-            Save.Content = temp;
-            Save.Background = null;
-            Save.BorderBrush = null;
-            Save.Width = 100;
-            Save.Height = 40;
             BrushConverter bc = new BrushConverter();
-            Save.Background = (Brush)bc.ConvertFrom("#2e7d32");
-            Save.BorderBrush = (Brush)bc.ConvertFrom("#2e7d32");
-            Save.Margin = new Thickness(a, b, c, d);
+            TextBlock Txt = new TextBlock() {
+                Text = "Save",
+                Margin = new Thickness(10, 0, 0, 0)
+            };
+            StackPanel temp = new StackPanel(){
+                Orientation = Orientation.Horizontal,
+            };
+            temp.Children.Add(new MaterialDesignThemes.Wpf.PackIcon{ Kind = MaterialDesignThemes.Wpf.PackIconKind.ContentSave});
+            temp.Children.Add(Txt);
+            Button Save = new Button(){
+                Content = temp,
+                Width = 100,
+                Height = 40,
+                Background = (Brush)bc.ConvertFrom("#2e7d32"),
+                BorderBrush = (Brush)bc.ConvertFrom("#2e7d32"),
+                Margin = new Thickness(a, b, c, d),
+                Name = "SaveButton"
+            };
             Save.Click += SaveClick;
-            Save.Name = "SaveButton";
             return Save;
         }
 
