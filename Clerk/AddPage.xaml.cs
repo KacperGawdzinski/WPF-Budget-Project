@@ -29,12 +29,8 @@ namespace Clerk
 {
     public partial class AddPage : Page
     {
-        #region Contructor & Variables
+        #region Contructor
         string UserMail;
-        bool ExpendUsed = false;
-        bool IncomeUsed = true;
-        bool TypeInsertBuilt = false;
-        bool SaveInsideGrid = false;
         public AddPage(string x)
         {
             InitializeComponent();
@@ -42,96 +38,29 @@ namespace Clerk
         }
         #endregion
         #region GUIAdapt
-        void IncomeChecked(object sender, EventArgs e)
+        bool MaxValueBuilt = false;
+        bool IncomeChecked = true;
+        bool TypeInsertBuilt = false;
+        bool SaveInsideGrid = false;
+        void CategoryChecked(object sender, EventArgs e)
         {
-            RemoveOldCategories(true);                   //cleaning main combo box
+            IncomeChecked = ((CheckBox)sender).Name.Equals("IncomeCheck") ? true : false;
+            RemoveOldCategories(IncomeChecked);
             ComboBoxItem x;
-            string[] temp = ReadTypes(true);           //all columns from table
+            string[] temp = ReadTypes(IncomeChecked);
             for (int i=0;i<temp.Length;i++)
             {
-                x = new ComboBoxItem();
-                x.Content = temp[i];
+                x = new ComboBoxItem()
+                {
+                    Content = temp[i]
+                };
                 TypeCombo.Items.Add(x);
             }
-            x = new ComboBoxItem();
-            x.Content = "New type...";
+            x = new ComboBoxItem()
+            {
+                Content = "New type..."
+            };
             TypeCombo.Items.Add(x);
-            RebuildAfterExpend();                       //clean maxvalue button
-        }
-
-        void ExpendChecked(object sender, EventArgs e)
-        {
-            RemoveOldCategories(false); 
-            ComboBoxItem x;
-            string[] temp = ReadTypes(false);
-            for (int i = 0; i < temp.Length; i++)
-            {
-                x = new ComboBoxItem();
-                x.Content = temp[i];
-                TypeCombo.Items.Add(x);
-            }
-            x = new ComboBoxItem();
-            x.Content = "New type...";
-            TypeCombo.Items.Add(x);
-            RebuildAfterIncome();   
-        }
-
-        void RebuildAfterExpend()
-        {
-            if (ExpendUsed)
-            {
-                ExpendUsed = false;
-                Stack.Children.RemoveAt(3);
-                TextBlock Val = new TextBlock();
-                TextBox InsVal = new TextBox();
-                Val.Text = "Insert Value";
-                Val.Margin = new Thickness(0, 20, 0, 0);
-                Val.HorizontalAlignment = HorizontalAlignment.Center;
-                InsVal.HorizontalAlignment = HorizontalAlignment.Center;
-                InsVal.MinWidth = 200;
-                Stack.Children.Insert(3, Val);
-                Stack.Children.Insert(4, InsVal);
-            }
-        }
-
-        void RebuildAfterIncome()
-        {
-            if (IncomeUsed)
-            {
-                IncomeUsed = false;
-                Stack.Children.RemoveAt(4);
-                Stack.Children.RemoveAt(3);
-                TextBlock Value = new TextBlock();
-                TextBox InValue = new TextBox();
-                
-                Grid Insert = new Grid();
-                ColumnDefinition st = new ColumnDefinition();
-                ColumnDefinition nd = new ColumnDefinition();
-                st.Width = new GridLength(1, GridUnitType.Star);
-                nd.Width = new GridLength(1, GridUnitType.Star);
-                Insert.ColumnDefinitions.Add(st);
-                Insert.ColumnDefinitions.Add(nd);
-                Value.Text = "Insert value";
-                Value.Margin = new Thickness(130, 20, 0, 0);
-                InValue.Margin = new Thickness(60, 50, 0, 0);
-                InValue.MaxWidth = 150;
-                /*TextBlock MaxValue = new TextBlock();
-                TextBox InMaxValue = new TextBox();
-                InMaxValue.Margin = new Thickness(30, 50, 0, 0);
-                InMaxValue.HorizontalAlignment = HorizontalAlignment.Left;
-                InMaxValue.MinWidth = 150;
-                Grid.SetColumn(InMaxValue, 1);
-                Insert.Children.Add(InMaxValue);
-                MaxValue.Margin = new Thickness(20, 20, 0, 0);
-                MaxValue.Text = "Insert max monthly value";
-                Grid.SetColumn(MaxValue, 1);
-                Insert.Children.Add(MaxValue);*/
-                Grid.SetColumn(Value, 0);
-                Grid.SetColumn(InValue, 0);
-                Insert.Children.Add(Value);
-                Insert.Children.Add(InValue);
-                Stack.Children.Insert(3, Insert);
-            }
         }
 
         string[] ReadTypes(bool income)
@@ -153,10 +82,6 @@ namespace Clerk
 
         void RemoveOldCategories(bool income)
         {
-            if (income)
-                IncomeUsed = true;
-            else
-                ExpendUsed = true;
             if (ExpendCheck.IsChecked == true && income)
                 ExpendCheck.IsChecked = false;
             if (IncomeCheck.IsChecked == true && !income)
@@ -168,6 +93,8 @@ namespace Clerk
                 TypeInsertBuilt = false;
             }
             TypeCombo.Items.Clear();
+            if (MaxValueBuilt)
+                RemoveMaxValue();
         }
 
         void TypeComboChanged(object sender, EventArgs e)
@@ -191,6 +118,41 @@ namespace Clerk
                     PeriodicGrid.Children.Add(MakeSaveButton(250, 100, 0, 0));
                     SaveInsideGrid = true;
                 }
+                if(!IncomeChecked)
+                {
+                    MaxValueBuilt = true;
+                    Stack.Children.RemoveAt(6);
+                    Stack.Children.RemoveAt(5);
+                    TextBlock Value = new TextBlock();
+                    TextBlock MaxValue = new TextBlock();
+                    TextBox InMaxValue = new TextBox();
+                    TextBox InValue = new TextBox();
+                    Grid Insert = new Grid();
+                    ColumnDefinition st = new ColumnDefinition();
+                    ColumnDefinition nd = new ColumnDefinition();
+                    st.Width = new GridLength(1, GridUnitType.Star);
+                    nd.Width = new GridLength(1, GridUnitType.Star);
+                    Insert.ColumnDefinitions.Add(st);
+                    Insert.ColumnDefinitions.Add(nd);
+                    Value.Text = "Insert value";
+                    Value.Margin = new Thickness(130, 20, 0, 0);
+                    InValue.Margin = new Thickness(60, 50, 0, 0);
+                    InValue.MaxWidth = 150;
+                    InMaxValue.Margin = new Thickness(30, 50, 0, 0);
+                    InMaxValue.HorizontalAlignment = HorizontalAlignment.Left;
+                    InMaxValue.MinWidth = 150;
+                    MaxValue.Margin = new Thickness(20, 20, 0, 0);
+                    MaxValue.Text = "Insert max monthly value";
+                    Grid.SetColumn(MaxValue, 1);
+                    Grid.SetColumn(InMaxValue, 1);
+                    Grid.SetColumn(Value, 0);
+                    Grid.SetColumn(InValue, 0);
+                    Insert.Children.Add(MaxValue);
+                    Insert.Children.Add(InMaxValue);
+                    Insert.Children.Add(Value);
+                    Insert.Children.Add(InValue);
+                    Stack.Children.Insert(5, Insert);
+                }
             }
             else
             {
@@ -199,8 +161,28 @@ namespace Clerk
                     Stack.Children.RemoveAt(4);
                     Stack.Children.RemoveAt(3);
                     TypeInsertBuilt = false;
+                    if(MaxValueBuilt)
+                    {
+                        MaxValueBuilt = false;
+                        RemoveMaxValue();
+                    }
                 }
             }
+        }
+
+        void RemoveMaxValue()
+        {
+            MaxValueBuilt = false;
+            Stack.Children.RemoveAt(3);
+            TextBlock Val = new TextBlock();
+            TextBox InsVal = new TextBox();
+            Val.Text = "Insert Value";
+            Val.Margin = new Thickness(0, 20, 0, 0);
+            Val.HorizontalAlignment = HorizontalAlignment.Center;
+            InsVal.HorizontalAlignment = HorizontalAlignment.Center;
+            InsVal.MinWidth = 200;
+            Stack.Children.Insert(3, Val);
+            Stack.Children.Insert(4, InsVal);
         }
 
         void PeriodicChecked(object sender, EventArgs e)
