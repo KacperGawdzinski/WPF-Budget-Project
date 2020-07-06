@@ -23,6 +23,8 @@ using System.Net.Http.Headers;
 //TODO : MAKE UNIVERSAL FUNCTION FOR SQLITECOMMAND
 //TODO : TRANSACTIONS FROM THE SAME DAY ARE NOT SORTED PROPERLY EVERY TIME
 //TEST PERIODIC TRANSACTIONS IN FUTURE
+//TODO : NUMERATION OF TRANSACTIONS ON SPECIFIC DAY
+//TODO : FIND WHY BALANCE DOESNT COUNT ,9 VALUES
 
 namespace Clerk
 {
@@ -153,10 +155,10 @@ namespace Clerk
                     Grid.SetColumn(InMaxValue, 1);
                     Grid.SetColumn(Value, 0);
                     Grid.SetColumn(InValue, 0);
-                    Insert.Children.Add(MaxValue);
-                    Insert.Children.Add(InMaxValue);
                     Insert.Children.Add(Value);
                     Insert.Children.Add(InValue);
+                    Insert.Children.Add(MaxValue);
+                    Insert.Children.Add(InMaxValue);
                     Stack.Children.Insert(5, Insert);
                 }
             }
@@ -352,19 +354,23 @@ namespace Clerk
                     }
                     if (k == 2 || (k == 3 && ExpendCheck.IsChecked == true))
                     {
+                        bool en = false;
                         if (val.Text.Length == 0)
                         {
                             ShowError("Insert value!");
                             return null;
                         }
                         for (int i = 0; i < val.Text.Length; i++)
-                        {
-                            if (Char.IsLetter(val.Text[i]))
+                            if (!Char.IsDigit(val.Text[i]))
                             {
+                                if((val.Text[i] == ',' || val.Text[i] == '.') && en == false)
+                                {
+                                    en = true;
+                                    continue;
+                                }
                                 ShowError("Value must be a number!");
                                 return null;
                             }
-                        }
                         if(k == 2)
                             l[4]=val.Text;
                         if(k == 3)
@@ -380,14 +386,20 @@ namespace Clerk
                 {
                     if (k == 1)
                     {
+                        bool en = false;
                         if (val.Text.Length == 0)
                         {
                             ShowError("Insert value!");
                             return null;
                         }
                         for (int i = 0; i < val.Text.Length; i++)
-                            if (Char.IsLetter(val.Text[i]))
+                            if (!Char.IsDigit(val.Text[i]))
                             {
+                                if ((val.Text[i] == ',' || val.Text[i] == '.') && en == false)
+                                {
+                                    en = true;
+                                    continue;
+                                }
                                 ShowError("Value must be a number!");
                                 return null;
                             }
