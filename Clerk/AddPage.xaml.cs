@@ -466,17 +466,17 @@ namespace Clerk
                 {
                     comm = new SQLiteCommand("INSERT INTO [" + UserMail + "-transactions] (ID, DATE, REPEATABILITY, CATEGORY, TYPE, VALUE, MAXVALUE) " +
                            "values('" + guid.ToString() + "', '" + InputData[0] + "', " + NullReturner(InputData[1]) + ", '" + InputData[2] + "', '" + InputData[3] + "', '" +
-                           InputData[4].Replace('.',',') + "', " + NullReturner(InputData[5]) + ")", sqLiteConn);
+                           InputData[4].Replace(',','.') + "', " + NullReturner(InputData[5]) + ")", sqLiteConn);
                     comm.ExecuteNonQuery();
                     comm = new SQLiteCommand("SELECT * FROM [" + UserMail + "-balance] ORDER BY DATE DESC LIMIT 1", sqLiteConn);
                     SQLiteDataReader read = comm.ExecuteReader();
                     read.Read();
                     if (InputData[2].Equals("Income"))
                         comm = new SQLiteCommand("UPDATE [" + UserMail + "-balance] SET BALANCE='"
-                        + ((double)read["Balance"] + Convert.ToDouble(InputData[4].Replace('.', ','))).ToString() + "' WHERE DATE = '" + ((long)read["Date"]).ToString() + "'", sqLiteConn);
+                        + ((double)read["Balance"] + Convert.ToDouble(InputData[4].Replace('.', ','))).ToString().Replace(',', '.') + "' WHERE DATE = '" + ((long)read["Date"]).ToString() + "'", sqLiteConn);
                     else
                         comm = new SQLiteCommand("UPDATE [" + UserMail + "-balance] SET BALANCE='"
-                        + ((double)read["Balance"] - Convert.ToDouble(InputData[4].Replace('.', ','))).ToString() + "' WHERE DATE = '" + ((long)read["Date"]).ToString() + "'", sqLiteConn);
+                        + ((double)read["Balance"] - Convert.ToDouble(InputData[4].Replace('.', ','))).ToString().Replace(',', '.') + "' WHERE DATE = '" + ((long)read["Date"]).ToString() + "'", sqLiteConn);
                     comm.ExecuteNonQuery();
                 }
                 Window OK = new Notification("Transaction added!");
@@ -527,7 +527,7 @@ namespace Clerk
                     {
                         comm = new SQLiteCommand("INSERT INTO [" + UserMail + "-transactions] (ID, DATE, REPEATABILITY, CATEGORY, TYPE, VALUE, MAXVALUE) " +
                                "values('" + guid.ToString() + "', '" + ((long)read["Date"]).ToString() + "', " + NullReturner(InputData[1]) + ", '" + InputData[2] + "', '" + InputData[3] + "', '" +
-                               InputData[4].Replace('.', ',') + "', " + NullReturner(InputData[5]) + ")", sqLiteConn);
+                               InputData[4].Replace(',', '.') + "', " + NullReturner(InputData[5]) + ")", sqLiteConn);
                         comm.ExecuteNonQuery();
                         temp = 0;
                         val = val + Convert.ToDouble(InputData[4].Replace('.', ','));
@@ -539,7 +539,7 @@ namespace Clerk
                         {
                             comm = new SQLiteCommand("INSERT INTO [" + UserMail + "-transactions] (ID, DATE, REPEATABILITY, CATEGORY, TYPE, VALUE, MAXVALUE) " +
                                    "values('" + guid.ToString() + "', '" + ((long)read["Date"]).ToString() + "', " + NullReturner(InputData[1]) + ", '" + InputData[2] + "', '" + InputData[3] + "', '" +
-                                   InputData[4].Replace('.', ',') + "', " + NullReturner(InputData[5]) + ")", sqLiteConn);
+                                   InputData[4].Replace(',', '.') + "', " + NullReturner(InputData[5]) + ")", sqLiteConn);
                             comm.ExecuteNonQuery();
                             val = val + Convert.ToDouble(InputData[4].Replace('.', ','));
                         }
@@ -548,17 +548,17 @@ namespace Clerk
                     {
                         comm = new SQLiteCommand("INSERT INTO [" + UserMail + "-transactions] (ID, DATE, REPEATABILITY, CATEGORY, TYPE, VALUE, MAXVALUE) " +
                                    "values('" + guid.ToString() + "', '" + ((long)read["Date"]).ToString() + "', " + NullReturner(InputData[1]) + ", '" + InputData[2] + "', '" + InputData[3] + "', '" +
-                                   InputData[4].Replace('.', ',') + "', " + NullReturner(InputData[5]) + ")", sqLiteConn);
+                                   InputData[4].Replace(',', '.') + "', " + NullReturner(InputData[5]) + ")", sqLiteConn);
                         comm.ExecuteNonQuery();
                         val = val + Convert.ToDouble(InputData[4].Replace('.', ','));
                     }
 
                     if (InputData[2].Equals("Income"))
                         comm = new SQLiteCommand("UPDATE [" + UserMail + "-balance] SET BALANCE='"
-                        + ((double)read["Balance"] + val).ToString() + "' WHERE DATE='" + ((long)read["Date"]).ToString() + "'", sqLiteConn);
+                        + ((double)read["Balance"] + val).ToString().Replace(',', '.') + "' WHERE DATE='" + ((long)read["Date"]).ToString() + "'", sqLiteConn);
                     else
                         comm = new SQLiteCommand("UPDATE [" + UserMail + "-balance] SET BALANCE='"
-                        + ((double)read["Balance"] - val).ToString() + "' WHERE DATE='" + ((long)read["Date"]).ToString() + "'", sqLiteConn);
+                        + ((double)read["Balance"] - val).ToString().Replace(',', '.') + "' WHERE DATE='" + ((long)read["Date"]).ToString() + "'", sqLiteConn);
                     comm.ExecuteNonQuery();
                     temp++;
                 }

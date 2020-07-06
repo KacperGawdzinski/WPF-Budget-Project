@@ -128,7 +128,7 @@ namespace Clerk
                 balance = (double)read["Balance"];
                 Data.Add(((long)read["Date"]).ToString().Remove(0,4).Insert(2,"/"));
             }
-            Balance.Text = balance.ToString() + "$";
+            AdjustBalanceFont(balance);
             Basic.Add(new LineSeries
             {
                 Title = "Balance history",
@@ -154,11 +154,35 @@ namespace Clerk
         {
             Chart.Update(true, true);
         }
+
+        void AdjustBalanceFont(double balance)
+        {
+            Balance.Text = balance.ToString() + "$";
+            int x = Balance.Text.Length;
+            if (x > 11)
+            {
+                Balance.FontSize = 26;
+                Balance.Margin = new Thickness(0, 0, 0, 10);
+                return;
+            }
+            if (x > 10)
+            {
+                Balance.FontSize = 28;
+                Balance.Margin = new Thickness(0,0,0,10);
+                return;
+            }
+            if (x > 9)
+            {
+                Balance.FontSize = 30;
+                Balance.Margin = new Thickness(0, 0, 0, 15);
+                return;
+            }
+        }
         #endregion
         #region LastTransactionList
         void BuildLastTransactions(SQLiteConnection x, string db)
         {
-            SQLiteCommand comm = new SQLiteCommand("SELECT COUNT(*) FROM (SELECT * FROM " + db + "ORDER BY DATE DESC LIMIT 5)", x);
+            SQLiteCommand comm = new SQLiteCommand("SELECT COUNT(*) FROM (SELECT * FROM " + db + " LIMIT 5)", x);
             long length = (long)comm.ExecuteScalar();
             comm = new SQLiteCommand("SELECT * FROM " + db + "ORDER BY DATE DESC LIMIT 5", x);
             SQLiteDataReader read = comm.ExecuteReader();
