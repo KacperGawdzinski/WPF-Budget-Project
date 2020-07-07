@@ -6,16 +6,19 @@ using System.Threading.Tasks;
 
 namespace Clerk
 {
-    class LongToDateTime
+    public static class ConvertX
     {
-        public DateTime ConvertToClass(long date)
+        public static DateTime ToDateTime(long date)
         {
             int a, b, c;
             a = (int)(date / 10000);
             b = (int)((date - a * 10000) / 100);
             c = (int)(date - a * 10000 - b * 100);
-            DateTime x = new DateTime(a, b, c);
-            return x;
+            return new DateTime(a, b, c);
+        }
+        public static DateTime ToDateTime(string date)
+        {
+
         }
     };
 }

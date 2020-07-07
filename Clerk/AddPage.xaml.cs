@@ -24,7 +24,6 @@ using System.Net.Http.Headers;
 //TODO : TRANSACTIONS FROM THE SAME DAY ARE NOT SORTED PROPERLY EVERY TIME
 //TEST PERIODIC TRANSACTIONS IN FUTURE
 //TODO : NUMERATION OF TRANSACTIONS ON SPECIFIC DAY
-//TODO : FIND WHY BALANCE DOESNT COUNT ,9 VALUES
 
 namespace Clerk
 {
@@ -420,7 +419,7 @@ namespace Clerk
                 {
                     try
                     {
-                        l[0] = val.SelectedDate.Value.ToString("yyyyMMdd");
+                        l[0] = val.SelectedDate.Value.ToString("yyyy-MM-dd HH:mm:ss");
                     }
                     catch (InvalidOperationException)
                     {
@@ -446,7 +445,7 @@ namespace Clerk
                 }
             }
             else
-                l[0] = DateTime.Today.ToString("yyyyMMdd");
+                l[0] = DateTime.Today.ToString("yyyy-MM-dd " + DateTime.Now.ToString("HH:mm:ss"));
             return l;
         }
         #endregion
@@ -487,16 +486,14 @@ namespace Clerk
         #region Simulation
         void Simulate(string[] InputData, Guid guid, SQLiteConnection sqLiteConn)
         {
-            SQLiteCommand comm;
             int t = string.Compare(InputData[0], DateTime.Today.ToString("yyyyMMdd"));  //if transaction date is smaller or equal to today's date we need to simulate
             if (t == -1 || t == 0)
             {
-                comm = new SQLiteCommand("SELECT * FROM [" + UserMail + "-balance] ORDER BY DATE LIMIT 1", sqLiteConn);  //check if we need to add new rows to balance history
+                SQLiteCommand comm = new SQLiteCommand("SELECT * FROM [" + UserMail + "-balance] ORDER BY DATETIME(DATE) LIMIT 1", sqLiteConn);  //check if we need to add new rows to balance history
                 SQLiteDataReader read = comm.ExecuteReader();
                 read.Read();
-                LongToDateTime x = new LongToDateTime();
-                DateTime t1 = x.ConvertToClass(Convert.ToInt64(InputData[0]));
-                DateTime t2 = x.ConvertToClass((long)read["Date"]);
+                DateTime t1 = ConvertX.ToDateTime(Convert.ToInt64(InputData[0]));
+                DateTime t2 = ConvertX.ToDateTime((long)read["Date"]);
                 TimeSpan y = t2.Subtract(t1);
                 if (Convert.ToInt64(InputData[0]) < (long)read["Date"]) //check if we need to add new rows in the history
                 {

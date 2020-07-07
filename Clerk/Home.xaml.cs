@@ -237,6 +237,7 @@ namespace Clerk
 
         string DivideDate(long date)
         {
+            return "";
             string s = date.ToString();
             s = s.Insert(4, "/");
             return (s.Insert(7, "/"));
