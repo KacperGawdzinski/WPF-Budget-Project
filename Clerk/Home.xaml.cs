@@ -69,18 +69,18 @@ namespace Clerk
         void BuildTables(SQLiteConnection x, string dbb, string dbt)
         {
             //check if balance table exists
-            SQLiteCommand comm = new SQLiteCommand("CREATE TABLE IF NOT EXISTS " + dbb + " (BALANCE REAL, DATE INTEGER)", x);
+            SQLiteCommand comm = new SQLiteCommand("CREATE TABLE IF NOT EXISTS " + dbb + " (BALANCE REAL, DATE TEXT)", x);
             comm.ExecuteNonQuery();
             comm = new SQLiteCommand("SELECT COUNT(*) FROM " + dbb, x);  //check how fast it will be with hundreds of rows
             int row_sum = Convert.ToInt32(comm.ExecuteScalar());
             if (row_sum == 0)
             {
-                comm = new SQLiteCommand("INSERT INTO " + dbb + " (BALANCE,DATE) values('0','" + DateTime.Today.ToString("yyyyMMdd") + "')",x);
+                comm = new SQLiteCommand("INSERT INTO " + dbb + " (BALANCE,DATE) values('0.0','" + DateTime.Today.ToString("yyyy-MM-dd") + "')",x);
                 comm.ExecuteNonQuery();
             }
 
             //check if transaction table exists
-            comm = new SQLiteCommand("CREATE TABLE IF NOT EXISTS " + dbt + " (ID TEXT, DATE INTEGER, REPEATABILITY TEXT, CATEGORY TEXT, TYPE TEXT, VALUE REAL, MAXVALUE REAL)", x);
+            comm = new SQLiteCommand("CREATE TABLE IF NOT EXISTS " + dbt + " (ID TEXT, DATE TEXT, REPEATABILITY TEXT, CATEGORY TEXT, TYPE TEXT, VALUE REAL, MAXVALUE REAL)", x);
             comm.ExecuteNonQuery();
         }
         #endregion
@@ -96,8 +96,8 @@ namespace Clerk
                 ExpendTypes.Add((string)read["Type"]);
             for (int i = 0; i < ExpendTypes.Count(); i++)
             {
-                comm = new SQLiteCommand("SELECT COALESCE (SUM(VALUE),0.0) FROM " + db + " WHERE [DATE] >='" + DateTime.Today.AddDays(-31).ToString("yyyyMMdd") 
-                                          + "' AND [CATEGORY]='Expend' AND [TYPE]='"+ ExpendTypes[i]+"'", sqLiteConn);
+                comm = new SQLiteCommand("SELECT COALESCE (SUM(VALUE), 0.0) FROM " + db + " WHERE DATE([DATE]) >='" + DateTime.Today.AddMonths(-1).ToString("yyyy-MM-dd") 
+                                          + "' AND [CATEGORY] = 'Expend' AND [TYPE] = '"+ ExpendTypes[i]+"'", sqLiteConn);
                 val = (double)comm.ExecuteScalar();
                 var AddValue = new ChartValues<ObservableValue>();
                 if (val != 0)
@@ -115,7 +115,7 @@ namespace Clerk
         void BuildLineChart(SQLiteConnection sqLiteConn, string db)
         {
             Basic = new SeriesCollection();
-            SQLiteCommand comm = new SQLiteCommand("SELECT * FROM " + db + "WHERE DATE>=" + DateTime.Today.AddDays(-31).ToString("yyyMMdd") + " ORDER BY DATE", sqLiteConn);
+            SQLiteCommand comm = new SQLiteCommand("SELECT * FROM " + db + "WHERE DATE([DATE]) >= '" + DateTime.Today.AddMonths(-1).ToString("yyyy-MM-dd") + "' ORDER BY DATE([DATE])", sqLiteConn);
             comm.ExecuteNonQuery();
             SQLiteDataReader read = comm.ExecuteReader();
 
@@ -126,7 +126,7 @@ namespace Clerk
             {
                 AddNewValue.Add(new ObservableValue((double)read["Balance"]));
                 balance = (double)read["Balance"];
-                Data.Add(((long)read["Date"]).ToString().Remove(0,4).Insert(2,"/"));
+                Data.Add(((string)read["Date"]).Remove(0,5));
             }
             AdjustBalanceFont(balance);
             Basic.Add(new LineSeries
@@ -182,15 +182,15 @@ namespace Clerk
         #region LastTransactionList
         void BuildLastTransactions(SQLiteConnection x, string db)
         {
-            SQLiteCommand comm = new SQLiteCommand("SELECT COUNT(*) FROM (SELECT * FROM " + db + " LIMIT 5)", x);
+            SQLiteCommand comm = new SQLiteCommand("SELECT COUNT (*) FROM (SELECT * FROM " + db + " LIMIT 5)", x);
             long length = (long)comm.ExecuteScalar();
-            comm = new SQLiteCommand("SELECT * FROM " + db + "ORDER BY DATE DESC LIMIT 5", x);
+            comm = new SQLiteCommand("SELECT * FROM " + db + "ORDER BY DATE([DATE]) DESC LIMIT 5", x);
             SQLiteDataReader read = comm.ExecuteReader();
             ArrayOfPacked[] ArrayOfPacked = new ArrayOfPacked[length];
             int k = 0;
             while (read.Read())
             {
-                ArrayOfPacked[k] = new ArrayOfPacked(((double)read["VALUE"]).ToString(), (string)read["TYPE"], DivideDate((long)read["DATE"]), (string)read["CATEGORY"]);
+                ArrayOfPacked[k] = new ArrayOfPacked(((double)read["VALUE"]).ToString(), (string)read["TYPE"], ((string)read["DATE"]).Remove(9,9), (string)read["CATEGORY"]);
                 LatestTransactions.Children.Add(MakeGrid(ArrayOfPacked[k]));
                 k++;
             }
@@ -235,44 +235,36 @@ namespace Clerk
             return make;
         }
 
-        string DivideDate(long date)
-        {
-            return "";
-            string s = date.ToString();
-            s = s.Insert(4, "/");
-            return (s.Insert(7, "/"));
-        }
         #endregion
         #region Simulation
         void SimulateBalance(SQLiteConnection sqLiteConn, string dbb, string dbt)
         {
-            //checking latest date, if it's equal to today's then return
-            SQLiteCommand comm = new SQLiteCommand("SELECT * FROM " + dbb + "ORDER BY DATE DESC LIMIT 1", sqLiteConn);
+            //checking latest balance's date, if it's equal to today's then return
+            SQLiteCommand comm = new SQLiteCommand("SELECT * FROM " + dbb + "ORDER BY DATE([DATE]) DESC LIMIT 1", sqLiteConn);
             comm.ExecuteNonQuery();
             SQLiteDataReader read = comm.ExecuteReader();
             read.Read();
-            long LastDate = (long)read["DATE"];
+            string LastDate = ((string)read["DATE"]);
             double v = (double)read["BALANCE"];
-            if (Convert.ToInt64(DateTime.Today.ToString("yyyyMMdd")) == LastDate)
+            if (DateTime.Today.ToString("yyyy-MM-dd").Equals(LastDate))
                 return;
 
-            //analysing periodic transactions
-            LongToDateTime x = new LongToDateTime();
-            DateTime t1 = x.ConvertToClass(LastDate);
-            DateTime t2 = x.ConvertToClass(Convert.ToInt64(DateTime.Today.ToString("yyyyMMdd")));
-            t1 = t1.AddDays(1);
+            //add days between today's login and last record
+            DateTime t1 = Convert.ToDateTime(LastDate).AddDays(1);
+            DateTime t2 = Convert.ToDateTime(DateTime.Today.ToString("yyyy-MM-dd"));
             TimeSpan y = t2.Subtract(t1);
             double k = y.TotalDays;
             while (k >= 0)
             {
-                comm = new SQLiteCommand("INSERT INTO " + dbb + " (BALANCE, DATE) VALUES('" + v + "', '" + t1.ToString("yyyyMMdd") + "')", sqLiteConn);
+                comm = new SQLiteCommand("INSERT INTO " + dbb + " (BALANCE, DATE) VALUES('" + v + "', '" + t1.ToString("yyyy-MM-dd") + "')", sqLiteConn);
                 comm.ExecuteNonQuery();
                 t1 = t1.AddDays(1);
                 k--;
             }
-            List<string> codes = new List<string>();
             //find last month's periodic transactions
-            comm = new SQLiteCommand("SELECT * FROM " + dbt + " WHERE DATE >= '" + x.ConvertToClass(LastDate).AddMonths(-1).ToString("yyyyMMdd") + "' AND [REPEATABILITY] IS NOT NULL ORDER BY DATE DESC", sqLiteConn);
+            List<string> codes = new List<string>(); 
+            comm = new SQLiteCommand("SELECT * FROM " + dbt + " WHERE DATE([DATE]) >= '" + Convert.ToDateTime(LastDate).AddMonths(-1).ToString("yyyy-MM-dd") 
+                + "' AND [REPEATABILITY] IS NOT NULL ORDER BY DATE([DATE]) DESC", sqLiteConn);
             read = comm.ExecuteReader();
             while(read.Read())
             {
@@ -280,7 +272,7 @@ namespace Clerk
                 if (!codes.Contains(s))
                 {
                     string[] p = new string[6];
-                    p[0] = ((long)read["DATE"]).ToString();
+                    p[0] = (string)read["DATE"];
                     if (DBNull.Value.Equals(read["REPEATABILITY"]))
                         p[1] = null;
                     else
@@ -293,14 +285,14 @@ namespace Clerk
                     else
                         p[5] = ((double)read["MAXVALUE"]).ToString();
                     codes.Add(s);
-                    SimulateTransaction(sqLiteConn, p, s, dbb);
+                    SimulateTransactions(sqLiteConn, p, s, dbb);
                 }
             }
         }
 
-        void SimulateTransaction(SQLiteConnection sqLiteConn, string[] InputData, string guid, string dbb)    //make a class of it - redef
+        void SimulateTransactions(SQLiteConnection sqLiteConn, string[] InputData, string guid, string dbb)    //make a class of it - redef
         {
-            SQLiteCommand comm = new SQLiteCommand("SELECT* FROM " + dbb + " WHERE DATE > '" + InputData[0] + "' ORDER BY DATE", sqLiteConn);
+            SQLiteCommand comm = new SQLiteCommand("SELECT * FROM " + dbb + " WHERE DATE([DATE]) > '" + InputData[0] + "' ORDER BY DATE([DATE])", sqLiteConn);
             SQLiteDataReader read = comm.ExecuteReader();
             double val = 0;
             int l, temp = 1;
@@ -315,19 +307,18 @@ namespace Clerk
                 if (l == 7 && temp == 7)
                 {
                     comm = new SQLiteCommand("INSERT INTO [" + UserMail + "-transactions] (ID, DATE, REPEATABILITY, CATEGORY, TYPE, VALUE, MAXVALUE) " +
-                           "values('" + guid + "', '" + ((long)read["Date"]).ToString() + "', " + NullReturner(InputData[1]) + ", '" + InputData[2] + "', '" + InputData[3] + "', '" +
+                           "VALUES('" + guid + "', '" + ((string)read["Date"]).Insert(9," 00:00:00") + "', " + NullReturner(InputData[1]) + ", '" + InputData[2] + "', '" + InputData[3] + "', '" +
                            InputData[4] + "', " + NullReturner(InputData[5]) + ")", sqLiteConn);
                     comm.ExecuteNonQuery();
                     temp = 0;
-                    val = val + Convert.ToDouble(InputData[4]);
+                    val += Convert.ToDouble(InputData[4]);
                 }
                 if (l == 1)
                 {
-                    long d = ((long)read["Date"]) % 100;
-                    if (d == Convert.ToInt64(InputData[0].Remove(0, 6)))
+                    if (((string)read["Date"]).Remove(0,8).Equals(InputData[0].Remove(0, 8)))
                     {
                         comm = new SQLiteCommand("INSERT INTO [" + UserMail + "-transactions] (ID, DATE, REPEATABILITY, CATEGORY, TYPE, VALUE, MAXVALUE) " +
-                               "values('" + guid + "', '" + ((long)read["Date"]).ToString() + "', " + NullReturner(InputData[1]) + ", '" + InputData[2] + "', '" + InputData[3] + "', '" +
+                               "VALUES('" + guid + "', '" + ((string)read["Date"]).Insert(9, " 00:00:00") + "', " + NullReturner(InputData[1]) + ", '" + InputData[2] + "', '" + InputData[3] + "', '" +
                                InputData[4] + "', " + NullReturner(InputData[5]) + ")", sqLiteConn);
                         comm.ExecuteNonQuery();
                         val = val + Convert.ToDouble(InputData[4]);
@@ -336,18 +327,18 @@ namespace Clerk
                 if (l == 2)
                 {
                     comm = new SQLiteCommand("INSERT INTO [" + UserMail + "-transactions] (ID, DATE, REPEATABILITY, CATEGORY, TYPE, VALUE, MAXVALUE) " +
-                               "values('" + guid + "', '" + ((long)read["Date"]).ToString() + "', " + NullReturner(InputData[1]) + ", '" + InputData[2] + "', '" + InputData[3] + "', '" +
+                               "VALUES('" + guid + "', '" + ((string)read["Date"]).Insert(9, " 00:00:00") + "', " + NullReturner(InputData[1]) + ", '" + InputData[2] + "', '" + InputData[3] + "', '" +
                                InputData[4] + "', " + NullReturner(InputData[5]) + ")", sqLiteConn);
                     comm.ExecuteNonQuery();
                     val = val + Convert.ToDouble(InputData[4]);
                 }
 
-                if (InputData[2].Equals("Income"))
-                    comm = new SQLiteCommand("UPDATE [" + UserMail + "-balance] SET BALANCE='"
-                    + ((double)read["Balance"] + val).ToString() + "' WHERE DATE='" + ((long)read["Date"]).ToString() + "'", sqLiteConn);
+                if (InputData[2].Equals("Income"))  //use lambda
+                    comm = new SQLiteCommand("UPDATE [" + UserMail + "-balance] SET BALANCE = '"
+                    + ((double)read["Balance"] + val).ToString() + "' WHERE DATE([DATE]) = '" + (string)read["Date"] + "'", sqLiteConn);
                 else
                     comm = new SQLiteCommand("UPDATE [" + UserMail + "-balance] SET BALANCE='"
-                    + ((double)read["Balance"] - val).ToString() + "' WHERE DATE='" + ((long)read["Date"]).ToString() + "'", sqLiteConn);
+                    + ((double)read["Balance"] - val).ToString() + "' WHERE DATE([DATE]) = '" + (string)read["Date"] + "'", sqLiteConn);
                 comm.ExecuteNonQuery();
                 temp++;
             }

@@ -16,9 +16,5 @@ namespace Clerk
             c = (int)(date - a * 10000 - b * 100);
             return new DateTime(a, b, c);
         }
-        public static DateTime ToDateTime(string date)
-        {
-
-        }
     };
 }
