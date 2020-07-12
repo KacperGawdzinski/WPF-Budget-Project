@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace Clerk
 {
-    public static class ConvertX
+    /*public static class ConvertX
     {
         public static DateTime ToDateTime(long date)
         {
@@ -16,5 +16,5 @@ namespace Clerk
             c = (int)(date - a * 10000 - b * 100);
             return new DateTime(a, b, c);
         }
-    };
+    };*/
 }

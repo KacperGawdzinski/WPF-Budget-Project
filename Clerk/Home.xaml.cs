@@ -184,13 +184,13 @@ namespace Clerk
         {
             SQLiteCommand comm = new SQLiteCommand("SELECT COUNT (*) FROM (SELECT * FROM " + db + " LIMIT 5)", x);
             long length = (long)comm.ExecuteScalar();
-            comm = new SQLiteCommand("SELECT * FROM " + db + "ORDER BY DATE([DATE]) DESC LIMIT 5", x);
+            comm = new SQLiteCommand("SELECT * FROM " + db + "ORDER BY DATETIME([DATE]) DESC LIMIT 5", x);
             SQLiteDataReader read = comm.ExecuteReader();
             ArrayOfPacked[] ArrayOfPacked = new ArrayOfPacked[length];
             int k = 0;
             while (read.Read())
             {
-                ArrayOfPacked[k] = new ArrayOfPacked(((double)read["VALUE"]).ToString(), (string)read["TYPE"], ((string)read["DATE"]).Remove(9,9), (string)read["CATEGORY"]);
+                ArrayOfPacked[k] = new ArrayOfPacked(((double)read["VALUE"]).ToString(), (string)read["TYPE"], ((string)read["DATE"]).Remove(10,9), (string)read["CATEGORY"]);
                 LatestTransactions.Children.Add(MakeGrid(ArrayOfPacked[k]));
                 k++;
             }
@@ -234,7 +234,6 @@ namespace Clerk
             make.Height = 50;
             return make;
         }
-
         #endregion
         #region Simulation
         void SimulateBalance(SQLiteConnection sqLiteConn, string dbb, string dbt)
@@ -307,7 +306,7 @@ namespace Clerk
                 if (l == 7 && temp == 7)
                 {
                     comm = new SQLiteCommand("INSERT INTO [" + UserMail + "-transactions] (ID, DATE, REPEATABILITY, CATEGORY, TYPE, VALUE, MAXVALUE) " +
-                           "VALUES('" + guid + "', '" + ((string)read["Date"]).Insert(9," 00:00:00") + "', " + NullReturner(InputData[1]) + ", '" + InputData[2] + "', '" + InputData[3] + "', '" +
+                           "VALUES('" + guid + "', '" + ((string)read["Date"]).Insert(10, " 00:00:00") + "', " + NullReturner(InputData[1]) + ", '" + InputData[2] + "', '" + InputData[3] + "', '" +
                            InputData[4] + "', " + NullReturner(InputData[5]) + ")", sqLiteConn);
                     comm.ExecuteNonQuery();
                     temp = 0;
@@ -315,10 +314,10 @@ namespace Clerk
                 }
                 if (l == 1)
                 {
-                    if (((string)read["Date"]).Remove(0,8).Equals(InputData[0].Remove(0, 8)))
+                    if (((string)read["Date"]).Remove(0,8).Equals(InputData[0].Remove(0, 8).Remove(2, 9)))
                     {
                         comm = new SQLiteCommand("INSERT INTO [" + UserMail + "-transactions] (ID, DATE, REPEATABILITY, CATEGORY, TYPE, VALUE, MAXVALUE) " +
-                               "VALUES('" + guid + "', '" + ((string)read["Date"]).Insert(9, " 00:00:00") + "', " + NullReturner(InputData[1]) + ", '" + InputData[2] + "', '" + InputData[3] + "', '" +
+                               "VALUES('" + guid + "', '" + ((string)read["Date"]).Insert(10, " 00:00:00") + "', " + NullReturner(InputData[1]) + ", '" + InputData[2] + "', '" + InputData[3] + "', '" +
                                InputData[4] + "', " + NullReturner(InputData[5]) + ")", sqLiteConn);
                         comm.ExecuteNonQuery();
                         val = val + Convert.ToDouble(InputData[4]);
@@ -327,7 +326,7 @@ namespace Clerk
                 if (l == 2)
                 {
                     comm = new SQLiteCommand("INSERT INTO [" + UserMail + "-transactions] (ID, DATE, REPEATABILITY, CATEGORY, TYPE, VALUE, MAXVALUE) " +
-                               "VALUES('" + guid + "', '" + ((string)read["Date"]).Insert(9, " 00:00:00") + "', " + NullReturner(InputData[1]) + ", '" + InputData[2] + "', '" + InputData[3] + "', '" +
+                               "VALUES('" + guid + "', '" + ((string)read["Date"]).Insert(10, " 00:00:00") + "', " + NullReturner(InputData[1]) + ", '" + InputData[2] + "', '" + InputData[3] + "', '" +
                                InputData[4] + "', " + NullReturner(InputData[5]) + ")", sqLiteConn);
                     comm.ExecuteNonQuery();
                     val = val + Convert.ToDouble(InputData[4]);
