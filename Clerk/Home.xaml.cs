@@ -198,40 +198,35 @@ namespace Clerk
 
         private Grid MakeGrid(ArrayOfPacked x)
         {
-            string c;
+            TextBlock val = new TextBlock()
+            {
+                Text = (x.income ? "+ " : "- ") + x.val.Text + "$",
+                HorizontalAlignment = HorizontalAlignment.Left,
+                VerticalAlignment = VerticalAlignment.Center,
+                Margin = new Thickness(10, 0, 0, 0)
+            };
+            TextBlock cat = new TextBlock()
+            {
+                Text = x.cat.Text,
+                HorizontalAlignment = HorizontalAlignment.Center,
+                VerticalAlignment = VerticalAlignment.Center
+            };
+            TextBlock dat = new TextBlock()
+            {
+                Text = x.dat.Text,
+                HorizontalAlignment = HorizontalAlignment.Right,
+                VerticalAlignment = VerticalAlignment.Center,
+                Margin = new Thickness(0, 0, 10, 0)
+            };
             BrushConverter bc = new BrushConverter();
-            if (x.income)
-                c = "#0fd628";
-            else
-                c = "#ff3445";
+            string c = x.income ? "#0fd628" : "#ff3445";
             Grid make = new Grid
             {
                 Background = (Brush)bc.ConvertFrom(c),
             };
-            
-            TextBlock val = new TextBlock();
-            TextBlock cat = new TextBlock();
-            TextBlock dat = new TextBlock();
-            if (x.income)
-                val.Text = "+ ";
-            else
-                val.Text = "- ";
-            val.Text += x.val.Text;
-            val.Text += "$";
-            val.HorizontalAlignment = HorizontalAlignment.Left;
-            val.VerticalAlignment = VerticalAlignment.Center;
-            val.Margin = new Thickness(10, 0, 0, 0);
-            cat.Text = x.cat.Text;
-            cat.HorizontalAlignment = HorizontalAlignment.Center;
-            cat.VerticalAlignment = VerticalAlignment.Center;
-            dat.Text = x.dat.Text;
-            dat.HorizontalAlignment = HorizontalAlignment.Right;
-            dat.VerticalAlignment = VerticalAlignment.Center;
-            dat.Margin = new Thickness(0, 0, 10, 0);
             make.Children.Add(val);
             make.Children.Add(cat);
             make.Children.Add(dat);
-            make.Height = 50;
             return make;
         }
         #endregion
@@ -347,6 +342,25 @@ namespace Clerk
             if (s == null)
                 return "NULL";
             return ("'" + s + "'");
+        }
+        #endregion
+        #region ResizeControls
+        private void OnLoaded(object sender, RoutedEventArgs e)
+        {
+            LatestTransactions.Width = TransactionGrid.ActualWidth;
+            foreach (Grid child in LatestTransactions.Children)
+            {
+                child.Height = TransactionGrid.ActualHeight / 5;
+            }
+        }
+
+        private void OnSizeChanged(object sender, RoutedEventArgs e)
+        {
+            LatestTransactions.Width = TransactionGrid.ActualWidth;
+            foreach (Grid child in LatestTransactions.Children)
+            {
+                child.Height = TransactionGrid.ActualHeight / 5;
+            }
         }
         #endregion
     }

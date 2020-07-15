@@ -14,7 +14,8 @@
         ResizeMode="CanResize"
         SizeChanged="MainWindow_SizeChanged"
         Height="800" Width="1200"
-        Title="Clerk" MinHeight="800" MinWidth="1200">
+        MinHeight="800" MinWidth="1200"
+        Title="Clerk" >
 
     <Window.Resources>
         <Storyboard x:Key="MenuOpen">

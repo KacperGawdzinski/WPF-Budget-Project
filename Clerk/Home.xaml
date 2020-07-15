@@ -11,39 +11,41 @@
       FontFamily="Moon"
       FontSize="16"
       Foreground="White"
-      Height="Auto"
-      Width="Auto">
+      Height="Auto" Width="Auto" 
+      Loaded="OnLoaded"
+      SizeChanged="OnSizeChanged">
 
     <Grid>
         <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="40*"/>
                 <ColumnDefinition Width="*"/>
-                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="600"/>
             </Grid.ColumnDefinitions>
         <Grid.RowDefinitions>
             <RowDefinition Height="*"/>
             <RowDefinition Height="*"/>
         </Grid.RowDefinitions>
 
-        <TextBlock Text="Latest Transactions" Grid.Column="0" Grid.Row="0" Margin="290 20 0 0"/>
-        <Grid Grid.Column="0" Grid.Row="0" Margin="150 50 30 20">
+        <TextBlock Text="Latest Transactions" Grid.Column="0" Grid.Row="0" Margin="130 20 0 0" HorizontalAlignment="Center"/>
+        <Grid x:Name="TransactionGrid" Grid.Column="0" Grid.Row="0" Margin="150 50 30 20">
             <Border BorderBrush="Black" BorderThickness="2" Background="#2e7d32">
                 <StackPanel Name="LatestTransactions" HorizontalAlignment="Left" VerticalAlignment="Top"/>
             </Border>
         </Grid>
 
-        <TextBlock x:Name="Date" HorizontalAlignment="Right" Margin="0 30 30 0" Grid.Column="1" Grid.Row="0"/>
-        <Grid HorizontalAlignment="Left" Grid.Column="1" Margin="53 0 0 0">
+        <TextBlock x:Name="Date" HorizontalAlignment="Right" Margin="0 20 30 0" Grid.Column="2" Grid.Row="0"/>
+        <Grid HorizontalAlignment="Left" Grid.Column="2" Margin="53 0 0 0">
             <Ellipse Fill="#a5d6a7" Width="240" Height="240"/>
             <TextBlock x:Name="Balance" FontSize="34" HorizontalAlignment="Center" FontWeight="Bold" VerticalAlignment="Center" Margin="0 0 0 20"/>
             <TextBlock x:Name="BalanceText" FontWeight="Bold" Text="Total Balance" HorizontalAlignment="Center" VerticalAlignment="Center" FontSize="18" Foreground="#424242" Margin="0 50 0 0"/>
         </Grid>
-        <lvc:PieChart x:Name="Chart" Series="{Binding Rounded}" HorizontalAlignment="Center" LegendLocation="Right" InnerRadius="100" Hoverable="False" DataTooltip="{x:Null}" Grid.Column="1" Margin="0 30 0 0"  DisableAnimations="True">
+        <lvc:PieChart x:Name="Chart" Series="{Binding Rounded}" LegendLocation="Right" InnerRadius="100" Hoverable="False" DataTooltip="{x:Null}" Grid.Column="2" Height="300" >
             <lvc:PieChart.ChartLegend>
                 <lvc:DefaultLegend BulletSize="20" MinWidth="240"/>
             </lvc:PieChart.ChartLegend>
         </lvc:PieChart>
 
-        <Grid x:Name="Table"  Grid.Row="1" Grid.ColumnSpan="2" Margin="130 20 40 30">
+        <Grid x:Name="Table"  Grid.Row="1" Grid.ColumnSpan="3" Margin="130 20 40 30">
             <lvc:CartesianChart Series="{Binding Basic}" LegendLocation="Right"  DataTooltip="{x:Null}" Hoverable="False" DisableAnimations="True">
                 <lvc:CartesianChart.AxisY>
                     <lvc:Axis FontFamily="Moon" Foreground="White" LabelFormatter="{Binding YFormatter}"></lvc:Axis>
