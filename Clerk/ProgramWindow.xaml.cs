@@ -13,6 +13,7 @@ using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
 using System.Data.SQLite;
+using LiveCharts.Wpf.Charts.Base;
 
 namespace Clerk
 {
@@ -42,7 +43,8 @@ namespace Clerk
         }
 
         private void MainWindow_SizeChanged(object sender, SizeChangedEventArgs e)
-        {/*
+        {
+            /*
             myCanvas.Width = e.NewSize.Width;
             myCanvas.Height = e.NewSize.Height;
 
