@@ -11,31 +11,45 @@
       FontFamily="Moon"
       FontSize="16"
       d:DesignHeight="800" d:DesignWidth="1200"
+      Height="770" Width="1200"
       Foreground="White">
 
     <Grid>
-        <TextBlock x:Name="Date" HorizontalAlignment="Center" Margin="950 20 0 0"/>
-        <Grid Height="300" Width="600" VerticalAlignment="Top" HorizontalAlignment="Right" Margin="0 50 0 0">
-            <Grid HorizontalAlignment="Left" Margin="53 0 0 0">
-                <Ellipse Width="240" Height="240" Fill="#a5d6a7"/>
-                <TextBlock x:Name="Balance" FontSize="34" HorizontalAlignment="Center" FontWeight="Bold" VerticalAlignment="Center" Margin="0 0 0 20"/>
-                <TextBlock x:Name="BalanceText" FontWeight="Bold" Text="Total Balance" HorizontalAlignment="Center" VerticalAlignment="Center" FontSize="18" Foreground="#424242" Margin="0 50 0 0"/>
+        <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="*"/>
+            </Grid.ColumnDefinitions>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="*"/>
+        </Grid.RowDefinitions>
+        
+        <Grid Grid.Row="0">
+            <TextBlock Text="Latest Transactions"  HorizontalAlignment="Center"/>
+            <Grid MaxHeight="250" Width="400" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="160 80 0 0">
+                <Border BorderBrush="Black" BorderThickness="2" Background="#2e7d32">
+                    <StackPanel Name="LatestTransactions" Height="300" Width="400" HorizontalAlignment="Left" VerticalAlignment="Top"/>
+                </Border>
             </Grid>
-            <lvc:PieChart Name="Chart" Series="{Binding Rounded}"
-                          LegendLocation="Right" InnerRadius="100" Hoverable="False" DataTooltip="{x:Null}">
-                <lvc:PieChart.ChartLegend>
-                    <lvc:DefaultLegend BulletSize="20" MinWidth="240"/>
-                </lvc:PieChart.ChartLegend>
-            </lvc:PieChart>
         </Grid>
-
-        <TextBlock Text="Latest Transactions" Margin="290 50 0 0"/>
-        <Grid MaxHeight="250" Width="400" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="160 80 0 0">
-            <Border BorderBrush="Black" BorderThickness="2" Background="#2e7d32">
-                <StackPanel Name="LatestTransactions" Height="300" Width="400" HorizontalAlignment="Left" VerticalAlignment="Top"/>
-            </Border>
+        
+        <Grid Grid.Column="1">
+            <TextBlock x:Name="Date" HorizontalAlignment="Center" Margin="950 20 0 0"/>
+            <Grid Height="300" Width="600" VerticalAlignment="Top" HorizontalAlignment="Right" Margin="0 50 0 0">
+                <Grid HorizontalAlignment="Left" Margin="53 0 0 0">
+                    <Ellipse Width="240" Height="240" Fill="#a5d6a7"/>
+                    <TextBlock x:Name="Balance" FontSize="34" HorizontalAlignment="Center" FontWeight="Bold" VerticalAlignment="Center" Margin="0 0 0 20"/>
+                    <TextBlock x:Name="BalanceText" FontWeight="Bold" Text="Total Balance" HorizontalAlignment="Center" VerticalAlignment="Center" FontSize="18" Foreground="#424242" Margin="0 50 0 0"/>
+                </Grid>
+                <lvc:PieChart Name="Chart" Series="{Binding Rounded}"
+                                  LegendLocation="Right" InnerRadius="100" Hoverable="False" DataTooltip="{x:Null}">
+                    <lvc:PieChart.ChartLegend>
+                        <lvc:DefaultLegend BulletSize="20" MinWidth="240"/>
+                    </lvc:PieChart.ChartLegend>
+                </lvc:PieChart>
+            </Grid>
         </Grid>
-        <Grid x:Name="Table" HorizontalAlignment="Center" VerticalAlignment="Bottom" Margin="50 0 0 20">
+        <Grid x:Name="Table" HorizontalAlignment="Center" VerticalAlignment="Bottom" Margin="50 0 0 20" Grid.Row="1" Grid.ColumnSpan="2">
             <lvc:CartesianChart Series="{Binding Basic}" LegendLocation="Right" Width="900" Height="350" DataTooltip="{x:Null}" Hoverable="False" DisableAnimations="True">
                 <lvc:CartesianChart.AxisY>
                     <lvc:Axis FontFamily="Comic Sans MS" Foreground="White" LabelFormatter="{Binding YFormatter}"></lvc:Axis>

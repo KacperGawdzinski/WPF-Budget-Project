@@ -11,14 +11,18 @@
         Foreground="White"
         Icon="/Images/icon.ico"
         WindowStartupLocation="CenterScreen"
-        ResizeMode="NoResize"
-        Title="Clerk" Height="800" Width="1200">
-    
+        ResizeMode="CanResize"
+        SizeChanged="MainWindow_SizeChanged"
+        Height="800" Width="1200"
+        Title="Clerk" MinHeight="800" MinWidth="1200">
+
     <Window.Resources>
         <Storyboard x:Key="MenuOpen">
             <DoubleAnimationUsingKeyFrames Storyboard.TargetProperty="(FrameworkElement.Width)" Storyboard.TargetName="SidePanel">
-                <EasingDoubleKeyFrame KeyTime="0" Value="65"/> <!--expected width when starting animation-->
-                <EasingDoubleKeyFrame KeyTime="0:0:0:0.2" Value="200"/> <!--expected width after animation-->
+                <EasingDoubleKeyFrame KeyTime="0" Value="65"/>
+                <!--expected width when starting animation-->
+                <EasingDoubleKeyFrame KeyTime="0:0:0:0.2" Value="200"/>
+                <!--expected width after animation-->
             </DoubleAnimationUsingKeyFrames>
         </Storyboard>
         <Storyboard x:Key="MenuClose">
@@ -28,7 +32,7 @@
             </DoubleAnimationUsingKeyFrames>
         </Storyboard>
     </Window.Resources>
-    
+
     <Window.Triggers>
         <EventTrigger RoutedEvent="Grid.MouseEnter" SourceName="SidePanel">
             <BeginStoryboard Storyboard="{StaticResource MenuOpen}"/>
@@ -40,8 +44,12 @@
 
     <Grid>
         <Frame x:Name="Main" NavigationUIVisibility="Hidden" Navigated="Main_Navigated" Background="#66bb6a"/>
-        <Grid x:Name="SidePanel" Width="65" HorizontalAlignment="Left" Background="#2e7d32" Focusable="True">
-            <StackPanel>
+        <Grid x:Name="SidePanel" Width="65" HorizontalAlignment="Left" Background="#2e7d32" Focusable="True" >
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="10*"/>
+                <ColumnDefinition Width="3*"/>
+            </Grid.ColumnDefinitions>
+            <StackPanel Grid.ColumnSpan="2">
                 <Button x:Name="HomeButton" Foreground="White" BorderBrush="{x:Null}" Background="{x:Null}" Click="Home_Button_Click" Margin="0 20 0 0">
                     <Grid HorizontalAlignment="Left" Width="135">
                         <materialDesign:PackIcon Kind="Home" Width="30" Height="30" HorizontalAlignment="Left" VerticalAlignment="Center"/>
@@ -61,17 +69,17 @@
                     </Grid>
                 </Button>
                 <Button x:Name="HistoryButton" BorderBrush="{x:Null}" Background="{x:Null}" Margin="0 20 0 0">
-                <Grid HorizontalAlignment="Left" Width="135">
-                    <materialDesign:PackIcon Kind="History" Width="30" Height="30" HorizontalAlignment="Left" VerticalAlignment="Center"/>
-                    <TextBlock Text="History" Margin="50 0 0 0" VerticalAlignment="Center"/>
-                </Grid>
-            </Button>
+                    <Grid HorizontalAlignment="Left" Width="135">
+                        <materialDesign:PackIcon Kind="History" Width="30" Height="30" HorizontalAlignment="Left" VerticalAlignment="Center"/>
+                        <TextBlock Text="History" Margin="50 0 0 0" VerticalAlignment="Center"/>
+                    </Grid>
+                </Button>
                 <Button x:Name="AnalysisButton" BorderBrush="{x:Null}" Background="{x:Null}" Margin="0 20 0 0">
-                <Grid HorizontalAlignment="Left" Width="135">
-                    <materialDesign:PackIcon Kind="Analog" Width="30" Height="30" HorizontalAlignment="Left" VerticalAlignment="Center"/>
-                    <TextBlock Text="Analysis" Margin="50 0 0 0" VerticalAlignment="Center"/>
-                </Grid>
-            </Button>
+                    <Grid HorizontalAlignment="Left" Width="135">
+                        <materialDesign:PackIcon Kind="Analog" Width="30" Height="30" HorizontalAlignment="Left" VerticalAlignment="Center"/>
+                        <TextBlock Text="Analysis" Margin="50 0 0 0" VerticalAlignment="Center"/>
+                    </Grid>
+                </Button>
             </StackPanel>
         </Grid>
     </Grid>
