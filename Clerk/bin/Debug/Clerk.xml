@@ -56,9 +56,6 @@
         </member>
         <member name="T:Clerk.RemovePage">
             <summary>
-            Logika interakcji dla klasy RemovePage.xaml
-            </summary>
-            <summary>
             RemovePage
             </summary>
         </member>

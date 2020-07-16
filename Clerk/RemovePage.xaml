@@ -19,21 +19,23 @@
 
         <Rectangle RadiusX="40" RadiusY="40" MinWidth="300" MinHeight="680" Opacity="0.7" Fill="#a5d6a7" Grid.Column="0" Margin="110 35 35 35"/>
         <Rectangle RadiusX="40" RadiusY="40" Margin="35" MinWidth="300" MinHeight="680" Opacity="0.7" Fill="#a5d6a7" Grid.Column="1"/>
-        <ListView x:Name="IncomeList" Margin="110 50 0 0" Grid.Column="0">
+        <TextBlock Text="INCOME" Grid.Column="0" VerticalAlignment="Top" HorizontalAlignment="Center" Margin="70 50 0 0" FontSize="50"/>
+        <TextBlock Text="EXPEND" Grid.Column="1" VerticalAlignment="Top" HorizontalAlignment="Center" Margin="5 50 0 0" FontSize="50"/>
+        <ListView x:Name="IncomeList" Margin="130 100 55 70" Grid.Column="0" HorizontalAlignment="Center">
             <ListView.View>
                 <GridView>
-                    <GridViewColumn Header="Type"/>
-                    <GridViewColumn Header="Value" />
-                    <GridViewColumn Header="Date"/>
+                    <GridViewColumn Header="Type" Width="130" DisplayMemberBinding="{Binding Type}"/>
+                    <GridViewColumn Header="Value" Width="100" DisplayMemberBinding="{Binding Value}"/>
+                    <GridViewColumn Header="Date" Width="130" DisplayMemberBinding="{Binding Date}"/>
                 </GridView>
             </ListView.View>
         </ListView>
-        <ListView x:Name="ExpendList" Margin="40 50 0 0" Grid.Column="1">
+        <ListView x:Name="ExpendList" Margin="60 100 55 70" Grid.Column="1" HorizontalAlignment="Center">
             <ListView.View>
                 <GridView>
-                    <GridViewColumn Header="Type"/>
-                    <GridViewColumn Header="Value"/>
-                    <GridViewColumn Header="Date"/>
+                    <GridViewColumn Header="Type" Width="130" DisplayMemberBinding="{Binding Type}"/>
+                    <GridViewColumn Header="Value" Width="100" DisplayMemberBinding="{Binding Value}"/>
+                    <GridViewColumn Header="Date" Width="130" DisplayMemberBinding="{Binding Date}"/>
                 </GridView>
             </ListView.View>
         </ListView>

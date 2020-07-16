@@ -39,7 +39,7 @@ namespace Clerk
 
         void RemoveButton_Click(object sender, EventArgs e)
         {
-            Main.Navigate(new RemovePage());
+            Main.Navigate(new RemovePage(UserMail));
         }
 
         private void Main_Navigated(object sender, EventArgs e)
