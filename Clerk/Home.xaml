@@ -26,7 +26,7 @@
             <RowDefinition Height="*"/>
         </Grid.RowDefinitions>
 
-        <TextBlock Text="Latest Transactions" Grid.Column="0" Grid.Row="0" Margin="130 20 0 0" HorizontalAlignment="Center"/>
+        <TextBlock Text="Latest Transactions" Grid.Column="0" Grid.Row="0" VerticalAlignment="Top" HorizontalAlignment="Center" Margin="120 20 0 0"/>
         <Grid x:Name="TransactionGrid" Grid.Column="0" Grid.Row="0" Margin="150 50 30 20">
             <Border BorderBrush="Black" BorderThickness="2" Background="#2e7d32">
                 <StackPanel Name="LatestTransactions" HorizontalAlignment="Left" VerticalAlignment="Top"/>
@@ -45,7 +45,7 @@
             </lvc:PieChart.ChartLegend>
         </lvc:PieChart>
 
-        <Grid x:Name="Table"  Grid.Row="1" Grid.ColumnSpan="3" Margin="130 20 40 30">
+        <Grid x:Name="Table" Grid.Row="1" Grid.ColumnSpan="3" Margin="130 20 40 30">
             <lvc:CartesianChart Series="{Binding Basic}" LegendLocation="Right"  DataTooltip="{x:Null}" Hoverable="False" DisableAnimations="True">
                 <lvc:CartesianChart.AxisY>
                     <lvc:Axis FontFamily="Moon" Foreground="White" LabelFormatter="{Binding YFormatter}"></lvc:Axis>

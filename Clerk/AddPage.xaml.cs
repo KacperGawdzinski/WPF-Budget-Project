@@ -114,7 +114,7 @@ namespace Clerk
                 if(PeriodicCheck.IsChecked == true && SaveInsideGrid == false)
                 {
                     Stack.Children.RemoveAt(Stack.Children.Count - 1);
-                    PeriodicGrid.Children.Add(MakeSaveButton(250, 100, 0, 0));
+                    PeriodicGrid.Children.Add(MakeSaveButton(0, 150, 30, 0, 1));
                     SaveInsideGrid = true;
                 }
                 if(!IncomeChecked)
@@ -122,23 +122,26 @@ namespace Clerk
                     MaxValueBuilt = true;
                     Stack.Children.RemoveAt(6);
                     Stack.Children.RemoveAt(5);
-                    TextBlock Value = new TextBlock(){
+                    TextBlock Value = new TextBlock() {
+                        HorizontalAlignment = HorizontalAlignment.Center,
                         Text = "Insert value",
-                        Margin = new Thickness(140, 20, 0, 0)
+                        Margin = new Thickness(50, 20, 0, 0)
                     };
                     TextBlock MaxValue = new TextBlock(){
-                        Margin = new Thickness(18, 20, 0, 0),
+                        HorizontalAlignment = HorizontalAlignment.Center,
+                        Margin = new Thickness(0, 20, 60, 0),
                         Text = "Insert max monthly value"
                     };
                     TextBox InMaxValue = new TextBox(){
-                        Margin = new Thickness(30, 40, 0, 0),
-                        HorizontalAlignment = HorizontalAlignment.Left,
+                        Margin = new Thickness(0, 40, 60, 0),
+                        HorizontalAlignment = HorizontalAlignment.Center,
                         MinWidth = 150,
                         TextAlignment = TextAlignment.Center
                     };
                     TextBox InValue = new TextBox(){
-                        Margin = new Thickness(60, 40, 0, 0),
-                        MaxWidth = 150,
+                        HorizontalAlignment = HorizontalAlignment.Center,
+                        Margin = new Thickness(50, 40, 0, 0),
+                        MinWidth = 150,
                         TextAlignment = TextAlignment.Center
                     };
                     Grid Insert = new Grid();
@@ -196,15 +199,14 @@ namespace Clerk
         void PeriodicChecked(object sender, EventArgs e)
         {
             TextBlock PeriodicText = new TextBlock(){
-                HorizontalAlignment = HorizontalAlignment.Right,
+                HorizontalAlignment = HorizontalAlignment.Center,
                 Text = "Repeatability",
-                Margin = new Thickness(0, 100, 130, 0)
+                Margin = new Thickness(0, 130, 30, 0)
             };
             ComboBox PeriodicBox = new ComboBox(){
-                HorizontalAlignment = HorizontalAlignment.Right,
-                VerticalAlignment = VerticalAlignment.Top,
-                Margin = new Thickness(0, 130, 100, 0),
-                Width = 150
+                HorizontalAlignment = HorizontalAlignment.Center,
+                Margin = new Thickness(0, 30, 30, 0),
+                MinWidth = 150
             };
             ComboBoxItem Day = new ComboBoxItem(){
                 Content = "Daily"
@@ -219,10 +221,9 @@ namespace Clerk
             PeriodicBox.Items.Add(Week);
             PeriodicBox.Items.Add(Month);
             TextBlock StartDateText = new TextBlock(){
+                HorizontalAlignment = HorizontalAlignment.Center,
                 Text = "Start Date",
-                HorizontalAlignment = HorizontalAlignment.Left,
-                Width = 200,
-                Margin = new Thickness(155, 10, 0, 0)
+                Margin = new Thickness(80, 10, 0, 0),
             };
             string d = DateTime.Today.ToString("yyyy.MM.dd");
             string[] t = d.Split('.');
@@ -230,20 +231,24 @@ namespace Clerk
                 DisplayDate = new DateTime(Convert.ToInt32(t[0]), Convert.ToInt32(t[1]), Convert.ToInt32(t[2]))
             };
             Viewbox box = new Viewbox(){
-                HorizontalAlignment = HorizontalAlignment.Left,
+                HorizontalAlignment = HorizontalAlignment.Center,
                 MaxWidth = 250,
                 MaxHeight = 300,
                 Margin = new Thickness(80, 35, 0, 0),
-                Child = Date
+                Child = Date,
             };
-            PeriodicGrid.Children.Add(PeriodicText);
-            PeriodicGrid.Children.Add(PeriodicBox);
+            Grid.SetColumn(box, 0);
+            Grid.SetColumn(StartDateText, 0);
+            Grid.SetColumn(PeriodicText, 1);
+            Grid.SetColumn(PeriodicBox, 1);
             PeriodicGrid.Children.Add(StartDateText);
             PeriodicGrid.Children.Add(box);
+            PeriodicGrid.Children.Add(PeriodicText);
+            PeriodicGrid.Children.Add(PeriodicBox);
             if(ExpendCheck.IsEnabled && TypeInsertBuilt)
             {
                 Stack.Children.RemoveAt(Stack.Children.Count - 1);
-                PeriodicGrid.Children.Add(MakeSaveButton(250,100,0,0));
+                PeriodicGrid.Children.Add(MakeSaveButton(0, 150, 30, 0, 1));
                 SaveInsideGrid = true;
             }
         }
@@ -256,10 +261,10 @@ namespace Clerk
             {
                 SaveInsideGrid = false;
                 PeriodicGrid.Children.RemoveAt(PeriodicGrid.Children.Count - 1);
-                Stack.Children.Add(MakeSaveButton(0, 20, 0, 0));
+                Stack.Children.Add(MakeSaveButton(0, 20, 0, 0, 2));
             }
         }
-        Button MakeSaveButton(int a, int b, int c, int d)
+        Button MakeSaveButton(int a, int b, int c, int d, int column)
         {
             BrushConverter bc = new BrushConverter();
             TextBlock Txt = new TextBlock() {
@@ -271,16 +276,19 @@ namespace Clerk
             };
             temp.Children.Add(new MaterialDesignThemes.Wpf.PackIcon{ Kind = MaterialDesignThemes.Wpf.PackIconKind.ContentSave});
             temp.Children.Add(Txt);
-            Button Save = new Button(){
+            Button Save = new Button() {
                 Content = temp,
                 Width = 100,
                 Height = 40,
                 Background = (Brush)bc.ConvertFrom("#2e7d32"),
                 BorderBrush = (Brush)bc.ConvertFrom("#2e7d32"),
+                HorizontalAlignment = HorizontalAlignment.Center,
                 Margin = new Thickness(a, b, c, d),
-                Name = "SaveButton"
+                Name = "SaveButton",
             };
             Save.Click += SaveClick;
+            Grid.SetColumn(Save, 1);
+            Grid.SetColumnSpan(Save,column);
             return Save;
         }
         #endregion
