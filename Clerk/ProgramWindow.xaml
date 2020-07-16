@@ -12,7 +12,6 @@
         Icon="/Images/icon.ico"
         WindowStartupLocation="CenterScreen"
         ResizeMode="CanResize"
-        SizeChanged="MainWindow_SizeChanged"
         Height="800" Width="1200"
         MinHeight="800" MinWidth="1200"
         Title="Clerk" >
@@ -63,7 +62,7 @@
                         <TextBlock Text="Add entry" Margin="50 0 0 0" VerticalAlignment="Center"/>
                     </Grid>
                 </Button>
-                <Button x:Name="SubstractButton" BorderBrush="{x:Null}" Background="{x:Null}" Margin="0 20 0 0">
+                <Button x:Name="SubstractButton" BorderBrush="{x:Null}" Background="{x:Null}" Margin="0 20 0 0" Click="RemoveButton_Click">
                     <Grid HorizontalAlignment="Left" Width="135">
                         <materialDesign:PackIcon Kind="Minus" Width="30" Height="30" HorizontalAlignment="Left" VerticalAlignment="Center"/>
                         <TextBlock Text="Delete entry" Margin="50 0 0 0" VerticalAlignment="Center"/>

@@ -54,6 +54,19 @@
             InitializeComponent
             </summary>
         </member>
+        <member name="T:Clerk.RemovePage">
+            <summary>
+            Logika interakcji dla klasy RemovePage.xaml
+            </summary>
+            <summary>
+            RemovePage
+            </summary>
+        </member>
+        <member name="M:Clerk.RemovePage.InitializeComponent">
+            <summary>
+            InitializeComponent
+            </summary>
+        </member>
         <member name="T:Clerk.App">
             <summary>
             Logika interakcji dla klasy App.xaml

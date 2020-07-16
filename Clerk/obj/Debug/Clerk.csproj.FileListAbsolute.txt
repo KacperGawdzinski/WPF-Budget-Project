@@ -42,3 +42,5 @@ C:\Users\Kacper\Desktop\Clerk\Clerk\obj\Debug\Clerk.csproj.CoreCompileInputs.cac
 C:\Users\Kacper\Desktop\Clerk\Clerk\obj\Debug\Clerk.csproj.CopyComplete
 C:\Users\Kacper\Desktop\Clerk\Clerk\obj\Debug\Clerk.exe
 C:\Users\Kacper\Desktop\Clerk\Clerk\obj\Debug\Clerk.pdb
+C:\Users\Kacper\Desktop\Clerk\Clerk\obj\Debug\RemovePage.g.cs
+C:\Users\Kacper\Desktop\Clerk\Clerk\obj\Debug\RemovePage.baml

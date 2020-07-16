@@ -1,0 +1,41 @@
+﻿<Page x:Class="Clerk.RemovePage"
+      xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+      xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+      xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+      xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+      xmlns:local="clr-namespace:Clerk"
+      mc:Ignorable="d" 
+      Height="Auto" Width="Auto" 
+      FontFamily="Moon"
+      FontSize="16"
+      Foreground="White"
+      Title="RemovePage">
+
+    <Grid>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="112*"/>
+            <ColumnDefinition Width="100*"/>
+        </Grid.ColumnDefinitions>
+
+        <Rectangle RadiusX="40" RadiusY="40" MinWidth="300" MinHeight="680" Opacity="0.7" Fill="#a5d6a7" Grid.Column="0" Margin="110 35 35 35"/>
+        <Rectangle RadiusX="40" RadiusY="40" Margin="35" MinWidth="300" MinHeight="680" Opacity="0.7" Fill="#a5d6a7" Grid.Column="1"/>
+        <ListView x:Name="IncomeList" Margin="110 50 0 0" Grid.Column="0">
+            <ListView.View>
+                <GridView>
+                    <GridViewColumn Header="Type"/>
+                    <GridViewColumn Header="Value" />
+                    <GridViewColumn Header="Date"/>
+                </GridView>
+            </ListView.View>
+        </ListView>
+        <ListView x:Name="ExpendList" Margin="40 50 0 0" Grid.Column="1">
+            <ListView.View>
+                <GridView>
+                    <GridViewColumn Header="Type"/>
+                    <GridViewColumn Header="Value"/>
+                    <GridViewColumn Header="Date"/>
+                </GridView>
+            </ListView.View>
+        </ListView>
+    </Grid>
+</Page>
