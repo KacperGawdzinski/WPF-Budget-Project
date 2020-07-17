@@ -1,8 +1,8 @@
 {
   "version": 2,
-  "dgSpecHash": "V6CEhuTWOGst94etUOrLLuTKzplV/WPJWoc3h06iAxUQWe/qvWmFYifQU+LTEUbBHtZasAt0eQ2OYFxngkHjCA==",
+  "dgSpecHash": "Cw+tuS/QJcneOs0zc86kVdEThNzNxdZu/y74s7s4N4TXKprZBQIGwwjmrJ54crFDVYyxOccLBVE6yMaQ/vADrA==",
   "success": true,
-  "projectFilePath": "C:\\Users\\Kacper\\Desktop\\Clerk\\Clerk\\Clerk.csproj",
+  "projectFilePath": "C:\\Users\\Kacper\\Desktop\\clerk\\Clerk\\Clerk.csproj",
   "expectedPackageFiles": [
     "C:\\Users\\Kacper\\.nuget\\packages\\entityframework\\6.3.0\\entityframework.6.3.0.nupkg.sha512",
     "C:\\Users\\Kacper\\.nuget\\packages\\livecharts\\0.9.7\\livecharts.0.9.7.nupkg.sha512",

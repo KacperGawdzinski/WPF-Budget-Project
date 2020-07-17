@@ -19,8 +19,10 @@ namespace Clerk
     public class MyItem
     {
         public string Type { get; set; }
-        public double Value { get; set; }
+        public string Value { get; set; }
         public string Date { get; set; }
+        public string Period { get; set; }
+        public string ID { get; set; }
     }
 
     public partial class RemovePage : Page
@@ -37,16 +39,30 @@ namespace Clerk
         #region ReadTransactions
         private void ReadTransactions(SQLiteConnection sqLiteConn)
         {
-            SQLiteCommand command = new SQLiteCommand("SELECT * FROM [" + Mail + "-transactions] ORDER BY DATE([DATE]) DESC",sqLiteConn);
+            SQLiteCommand command = new SQLiteCommand("SELECT * FROM [" + Mail + "-transactions] ORDER BY DATETIME([DATE]) DESC",sqLiteConn);
             SQLiteDataReader read = command.ExecuteReader();
             while(read.Read())
             {
                 string temp = (string)read["CATEGORY"];
-                if(temp.Equals("Income"))
-                    IncomeList.Items.Add(new MyItem { Type = (string)read["TYPE"], Value = (double)read["VALUE"], Date = (string)read["DATE"] });
+                if (temp.Equals("Income"))
+                    IncomeList.Items.Add(new MyItem { Type = (string)read["TYPE"], Value = ((double)read["VALUE"]).ToString() + "$",
+                        Date = (string)read["DATE"], ID = (string)read["ID"], Period = DBNull.Value.Equals(read["REPEATABILITY"]) ? "None" : (string)read["REPEATABILITY"] });
                 else
-                    ExpendList.Items.Add(new MyItem { Type = (string)read["TYPE"], Value = (double)read["VALUE"], Date = (string)read["DATE"] });
+                    ExpendList.Items.Add(new MyItem { Type = (string)read["TYPE"], Value = ((double)read["VALUE"]).ToString() + "$",
+                        Date = (string)read["DATE"], ID = (string)read["ID"], Period = DBNull.Value.Equals(read["REPEATABILITY"]) ? "None" : (string)read["REPEATABILITY"] });
             }
+        }
+        #endregion
+        #region SelectedItem
+        private void SelectedItem(object sender, EventArgs e)
+        {
+            ListViewItem item = (ListViewItem)sender;
+            ListView x = ItemsControl.ItemsControlFromItemContainer(item) as ListView;
+            if (x.Name.Equals("IncomeList"))
+                ExpendList.SelectedItem = null;
+            else
+                IncomeList.SelectedItem = null;
+            Console.WriteLine((((MyItem)((ListViewItem)sender).DataContext)).Date);
         }
         #endregion
     }

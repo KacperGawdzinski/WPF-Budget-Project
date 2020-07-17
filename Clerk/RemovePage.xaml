@@ -21,23 +21,40 @@
         <Rectangle RadiusX="40" RadiusY="40" Margin="35" MinWidth="300" MinHeight="680" Opacity="0.7" Fill="#a5d6a7" Grid.Column="1"/>
         <TextBlock Text="INCOME" Grid.Column="0" VerticalAlignment="Top" HorizontalAlignment="Center" Margin="70 50 0 0" FontSize="50"/>
         <TextBlock Text="EXPEND" Grid.Column="1" VerticalAlignment="Top" HorizontalAlignment="Center" Margin="5 50 0 0" FontSize="50"/>
-        <ListView x:Name="IncomeList" Margin="130 100 55 70" Grid.Column="0" HorizontalAlignment="Center">
+        <ListView x:Name="IncomeList" Margin="130 100 55 70" Grid.Column="0" HorizontalAlignment="Center" SelectedItem="SelectedItem">
             <ListView.View>
                 <GridView>
-                    <GridViewColumn Header="Type" Width="130" DisplayMemberBinding="{Binding Type}"/>
-                    <GridViewColumn Header="Value" Width="100" DisplayMemberBinding="{Binding Value}"/>
-                    <GridViewColumn Header="Date" Width="130" DisplayMemberBinding="{Binding Date}"/>
+                    <GridViewColumn Header="ID" Width="0" DisplayMemberBinding="{Binding ID}"/>
+                    <GridViewColumn Header="Type" DisplayMemberBinding="{Binding Type}"/>
+                    <GridViewColumn Header="Value" DisplayMemberBinding="{Binding Value}"/>
+                    <GridViewColumn Header="Period" DisplayMemberBinding="{Binding Period}"/>
+                    <GridViewColumn Header="Date" DisplayMemberBinding="{Binding Date}"/>
                 </GridView>
             </ListView.View>
+            <ListView.ItemContainerStyle>
+                <Style TargetType="ListViewItem">
+                    <EventSetter Event="PreviewMouseLeftButtonDown" Handler="SelectedItem" />
+                    <Setter Property="Height" Value="50" />
+                </Style>
+                
+            </ListView.ItemContainerStyle>
         </ListView>
         <ListView x:Name="ExpendList" Margin="60 100 55 70" Grid.Column="1" HorizontalAlignment="Center">
             <ListView.View>
                 <GridView>
-                    <GridViewColumn Header="Type" Width="130" DisplayMemberBinding="{Binding Type}"/>
-                    <GridViewColumn Header="Value" Width="100" DisplayMemberBinding="{Binding Value}"/>
-                    <GridViewColumn Header="Date" Width="130" DisplayMemberBinding="{Binding Date}"/>
+                    <GridViewColumn Header="ID" Width="0" DisplayMemberBinding="{Binding ID}"/>
+                    <GridViewColumn Header="Type" DisplayMemberBinding="{Binding Type}"/>
+                    <GridViewColumn Header="Value" DisplayMemberBinding="{Binding Value}"/>
+                    <GridViewColumn Header="Period" DisplayMemberBinding="{Binding Period}"/>
+                    <GridViewColumn Header="Date" DisplayMemberBinding="{Binding Date}"/>
                 </GridView>
             </ListView.View>
+            <ListView.ItemContainerStyle>
+                <Style TargetType="ListViewItem">
+                    <EventSetter Event="PreviewMouseLeftButtonDown" Handler="SelectedItem" />
+                    <Setter Property="Height" Value="50" />
+                </Style>
+            </ListView.ItemContainerStyle>
         </ListView>
     </Grid>
 </Page>
