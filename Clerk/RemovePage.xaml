@@ -4,6 +4,7 @@
       xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
       xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
       xmlns:local="clr-namespace:Clerk"
+      xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
       mc:Ignorable="d" 
       Height="Auto" Width="Auto" 
       FontFamily="Moon"
@@ -13,18 +14,34 @@
 
     <Grid>
         <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="112*"/>
+            <ColumnDefinition Width="110*"/>
+            <ColumnDefinition Width="25*"/>
             <ColumnDefinition Width="100*"/>
         </Grid.ColumnDefinitions>
 
-        <Rectangle RadiusX="40" RadiusY="40" MinWidth="300" MinHeight="680" Opacity="0.7" Fill="#a5d6a7" Grid.Column="0" Margin="110 35 35 35"/>
-        <Rectangle RadiusX="40" RadiusY="40" Margin="35" MinWidth="300" MinHeight="680" Opacity="0.7" Fill="#a5d6a7" Grid.Column="1"/>
+        <Rectangle RadiusX="40" RadiusY="40" MinWidth="300" MinHeight="680" Opacity="0.7" Fill="#a5d6a7" Grid.Column="0" Margin="110 35 0 35"/>
+        <Rectangle RadiusX="40" RadiusY="40" Margin="0 35 35 35" MinWidth="300" MinHeight="680" Opacity="0.7" Fill="#a5d6a7" Grid.Column="2"/>
         <TextBlock Text="INCOME" Grid.Column="0" VerticalAlignment="Top" HorizontalAlignment="Center" Margin="70 50 0 0" FontSize="50"/>
-        <TextBlock Text="EXPEND" Grid.Column="1" VerticalAlignment="Top" HorizontalAlignment="Center" Margin="5 50 0 0" FontSize="50"/>
+        <TextBlock Text="EXPEND" Grid.Column="2" VerticalAlignment="Top" HorizontalAlignment="Center" Margin="5 50 0 0" FontSize="50"/>
+        <Button MinHeight="100" MinWidth="100" Grid.Column="1" x:Name="RemoveSingleButton" BorderBrush="{x:Null}" Background="{x:Null}" IsEnabled="False" Click="RemoveSingleButton_Click" VerticalAlignment="Top" Margin="0 200 0 0" HorizontalAlignment="Center">
+            <Grid>
+                <materialDesign:PackIcon Kind="Delete" MinWidth="30" MinHeight="30" HorizontalAlignment="Center" VerticalAlignment="Top"/>
+                <TextBlock Text="Delete single entry" TextWrapping="Wrap" TextAlignment="Center" Margin="0 40 0 0" VerticalAlignment="Center"/>
+            </Grid>
+        </Button>
+        <Button HorizontalAlignment="Center" MinHeight="100" MinWidth="100" Grid.Column="1" x:Name="RemoveAllButton" BorderBrush="{x:Null}" Background="{x:Null}" IsEnabled="False" Click="RemoveAllButton_Click" Margin="0 0 0 200" VerticalAlignment="Bottom">
+            <Grid>
+                <materialDesign:PackIcon Kind="Delete" MinWidth="30" MinHeight="30" HorizontalAlignment="Center" VerticalAlignment="Top"/>
+                <TextBlock TextWrapping="Wrap" TextAlignment="Center" Text="Delete whole transaction" Margin="0 40 0 0" VerticalAlignment="Center"/>
+            </Grid>
+        </Button>
+        
         <ListView x:Name="IncomeList" Margin="130 100 55 70" Grid.Column="0" HorizontalAlignment="Center" SelectedItem="SelectedItem">
             <ListView.View>
                 <GridView>
-                    <GridViewColumn Header="ID" Width="0" DisplayMemberBinding="{Binding ID}"/>
+                    <GridViewColumn Width="0" DisplayMemberBinding="{Binding ID}">
+                        <GridViewColumnHeader Content="ID" IsHitTestVisible="False"/>
+                    </GridViewColumn>
                     <GridViewColumn Header="Type" DisplayMemberBinding="{Binding Type}"/>
                     <GridViewColumn Header="Value" DisplayMemberBinding="{Binding Value}"/>
                     <GridViewColumn Header="Period" DisplayMemberBinding="{Binding Period}"/>
@@ -36,13 +53,14 @@
                     <EventSetter Event="PreviewMouseLeftButtonDown" Handler="SelectedItem" />
                     <Setter Property="Height" Value="50" />
                 </Style>
-                
             </ListView.ItemContainerStyle>
         </ListView>
-        <ListView x:Name="ExpendList" Margin="60 100 55 70" Grid.Column="1" HorizontalAlignment="Center">
+        <ListView x:Name="ExpendList" Margin="60 100 55 70" Grid.Column="2" HorizontalAlignment="Center">
             <ListView.View>
                 <GridView>
-                    <GridViewColumn Header="ID" Width="0" DisplayMemberBinding="{Binding ID}"/>
+                    <GridViewColumn Width="0" DisplayMemberBinding="{Binding ID}">
+                        <GridViewColumnHeader Content="ID" IsHitTestVisible="False"/>
+                    </GridViewColumn>
                     <GridViewColumn Header="Type" DisplayMemberBinding="{Binding Type}"/>
                     <GridViewColumn Header="Value" DisplayMemberBinding="{Binding Value}"/>
                     <GridViewColumn Header="Period" DisplayMemberBinding="{Binding Period}"/>

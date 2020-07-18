@@ -24,7 +24,7 @@ namespace Clerk
         public string Period { get; set; }
         public string ID { get; set; }
     }
-
+    //TODO: fix problem with adding removed transaction in simulation
     public partial class RemovePage : Page
     {
         string Mail;
@@ -62,7 +62,26 @@ namespace Clerk
                 ExpendList.SelectedItem = null;
             else
                 IncomeList.SelectedItem = null;
-            Console.WriteLine((((MyItem)((ListViewItem)sender).DataContext)).Date);
+            if((((MyItem)((ListViewItem)sender).DataContext)).Period.Equals("None"))
+            {
+                RemoveSingleButton.IsEnabled = true;
+                RemoveAllButton.IsEnabled = false;
+            }
+            else
+            {
+                RemoveAllButton.IsEnabled = true;
+                RemoveSingleButton.IsEnabled = true;
+            }
+        }
+        #endregion
+        #region Remove
+        private void RemoveSingleButton_Click(object sender, EventArgs e)
+        {
+
+        }
+        private void RemoveAllButton_Click(object sender, EventArgs e)
+        {
+
         }
         #endregion
     }
