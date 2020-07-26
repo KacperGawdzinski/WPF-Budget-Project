@@ -77,6 +77,17 @@ namespace Clerk
         #region Remove
         private void RemoveSingleButton_Click(object sender, EventArgs e)
         {
+            SQLiteConnection sqLiteConn = new SQLiteConnection(@"Data Source=database.db;Version=3;");
+            sqLiteConn.Open();
+            MyItem source = IncomeList.SelectedItem == null ? ExpendList.SelectedItem as MyItem : IncomeList.SelectedItem as MyItem;
+            SQLiteCommand command = new SQLiteCommand("DELETE FROM [" + Mail + "-transactions] WHERE [ID] = '" + source.ID.ToString() + "' AND [DATE] = '" + source.Date.ToString() + "'", sqLiteConn);
+            command.ExecuteNonQuery();
+            Window OK = new Notification("Transaction removed");
+            OK.Show();
+            IncomeList.Items.Clear();
+            ExpendList.Items.Clear();
+            ReadTransactions(sqLiteConn);
+            return;
 
         }
         private void RemoveAllButton_Click(object sender, EventArgs e)

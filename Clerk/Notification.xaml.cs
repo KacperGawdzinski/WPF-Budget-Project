@@ -18,6 +18,7 @@ namespace Clerk
     {
         public Notification(string x)
         {
+            Owner = Application.Current.MainWindow;
             InitializeComponent();
             Notification_Text.Text = x;
             if(x.Length <= 30)
