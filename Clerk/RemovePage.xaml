@@ -21,22 +21,22 @@
 
         <Rectangle RadiusX="40" RadiusY="40" MinWidth="300" MinHeight="680" Opacity="0.7" Fill="#a5d6a7" Grid.Column="0" Margin="110 35 0 35"/>
         <Rectangle RadiusX="40" RadiusY="40" Margin="0 35 35 35" MinWidth="300" MinHeight="680" Opacity="0.7" Fill="#a5d6a7" Grid.Column="2"/>
-        <TextBlock Text="INCOME" Grid.Column="0" VerticalAlignment="Top" HorizontalAlignment="Center" Margin="70 50 0 0" FontSize="50"/>
-        <TextBlock Text="EXPEND" Grid.Column="2" VerticalAlignment="Top" HorizontalAlignment="Center" Margin="5 50 0 0" FontSize="50"/>
-        <Button MinHeight="100" MinWidth="100" Grid.Column="1" x:Name="RemoveSingleButton" BorderBrush="{x:Null}" Background="{x:Null}" IsEnabled="False" Click="RemoveSingleButton_Click" VerticalAlignment="Top" Margin="0 200 0 0" HorizontalAlignment="Center">
+        <TextBlock Text="INCOME" Grid.Column="0" VerticalAlignment="Top" HorizontalAlignment="Center" Margin="100 50 0 0" FontSize="50"/>
+        <TextBlock Text="EXPEND" Grid.Column="2" VerticalAlignment="Top" HorizontalAlignment="Center" Margin="0 50 30 0" FontSize="50"/>
+        <Button Tag="Single" MinHeight="100" MinWidth="100" Grid.Column="1" x:Name="RemoveSingleButton" BorderBrush="{x:Null}" Background="{x:Null}" IsEnabled="False" Click="RemoveButton_Click" VerticalAlignment="Top" Margin="0 200 0 0" HorizontalAlignment="Center">
             <Grid>
                 <materialDesign:PackIcon Kind="Delete" MinWidth="30" MinHeight="30" HorizontalAlignment="Center" VerticalAlignment="Top"/>
-                <TextBlock Text="Delete single entry" TextWrapping="Wrap" TextAlignment="Center" Margin="0 40 0 0" VerticalAlignment="Center"/>
+                <TextBlock Text="Delete single transaction" TextWrapping="Wrap" TextAlignment="Center" Margin="0 40 0 0" VerticalAlignment="Center"/>
             </Grid>
         </Button>
-        <Button HorizontalAlignment="Center" MinHeight="100" MinWidth="100" Grid.Column="1" x:Name="RemoveAllButton" BorderBrush="{x:Null}" Background="{x:Null}" IsEnabled="False" Click="RemoveAllButton_Click" Margin="0 0 0 200" VerticalAlignment="Bottom">
+        <Button Tag="All" HorizontalAlignment="Center" MinHeight="100" MinWidth="100" Grid.Column="1" x:Name="RemoveAllButton" BorderBrush="{x:Null}" Background="{x:Null}" IsEnabled="False" Click="RemoveButton_Click" Margin="0 0 0 200" VerticalAlignment="Bottom">
             <Grid>
                 <materialDesign:PackIcon Kind="Delete" MinWidth="30" MinHeight="30" HorizontalAlignment="Center" VerticalAlignment="Top"/>
-                <TextBlock TextWrapping="Wrap" TextAlignment="Center" Text="Delete whole transaction" Margin="0 40 0 0" VerticalAlignment="Center"/>
+                <TextBlock TextWrapping="Wrap" TextAlignment="Center" Text="Delete all transactions" Margin="0 40 0 0" VerticalAlignment="Center"/>
             </Grid>
         </Button>
-        
-        <ListView x:Name="IncomeList" Margin="130 100 55 70" Grid.Column="0" HorizontalAlignment="Center" SelectedItem="SelectedItem">
+
+        <ListView x:Name="IncomeList" Margin="140 100 45 70" Grid.Column="0" SelectedItem="SelectedItem" SizeChanged="ListView_SizeChanged">
             <ListView.View>
                 <GridView>
                     <GridViewColumn Width="0" DisplayMemberBinding="{Binding ID}">
@@ -55,7 +55,8 @@
                 </Style>
             </ListView.ItemContainerStyle>
         </ListView>
-        <ListView x:Name="ExpendList" Margin="60 100 55 70" Grid.Column="2" HorizontalAlignment="Center">
+
+        <ListView x:Name="ExpendList" Margin="30 100 55 70" Grid.Column="2" SelectedItem="SelectedItem" SizeChanged="ListView_SizeChanged">
             <ListView.View>
                 <GridView>
                     <GridViewColumn Width="0" DisplayMemberBinding="{Binding ID}">
@@ -67,12 +68,12 @@
                     <GridViewColumn Header="Date" DisplayMemberBinding="{Binding Date}"/>
                 </GridView>
             </ListView.View>
-            <ListView.ItemContainerStyle>
+            <ListBox.ItemContainerStyle>
                 <Style TargetType="ListViewItem">
                     <EventSetter Event="PreviewMouseLeftButtonDown" Handler="SelectedItem" />
                     <Setter Property="Height" Value="50" />
                 </Style>
-            </ListView.ItemContainerStyle>
+            </ListBox.ItemContainerStyle>
         </ListView>
     </Grid>
 </Page>

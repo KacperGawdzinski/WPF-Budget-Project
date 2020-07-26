@@ -36,7 +36,7 @@ namespace Clerk
             InitializeComponent();
             ReadTransactions(sqLiteConn);
         }
-        #region ReadTransactions
+        #region Read Transactions
         private void ReadTransactions(SQLiteConnection sqLiteConn)
         {
             SQLiteCommand command = new SQLiteCommand("SELECT * FROM [" + Mail + "-transactions] ORDER BY DATETIME([DATE]) DESC",sqLiteConn);
@@ -53,7 +53,7 @@ namespace Clerk
             }
         }
         #endregion
-        #region SelectedItem
+        #region Selected Item
         private void SelectedItem(object sender, EventArgs e)
         {
             ListViewItem item = (ListViewItem)sender;
@@ -74,25 +74,32 @@ namespace Clerk
             }
         }
         #endregion
-        #region Remove
-        private void RemoveSingleButton_Click(object sender, EventArgs e)
+        #region Remove Transaction
+        private void RemoveButton_Click(object sender, EventArgs e)
         {
             SQLiteConnection sqLiteConn = new SQLiteConnection(@"Data Source=database.db;Version=3;");
             sqLiteConn.Open();
             MyItem source = IncomeList.SelectedItem == null ? ExpendList.SelectedItem as MyItem : IncomeList.SelectedItem as MyItem;
-            SQLiteCommand command = new SQLiteCommand("DELETE FROM [" + Mail + "-transactions] WHERE [ID] = '" + source.ID.ToString() + "' AND [DATE] = '" + source.Date.ToString() + "'", sqLiteConn);
+            SQLiteCommand command = ((Button)sender).Tag.Equals("Single") ? 
+                new SQLiteCommand("DELETE FROM [" + Mail + "-transactions] WHERE [ID] = '" + source.ID.ToString() + "' AND [DATE] = '" + source.Date.ToString() + "'", sqLiteConn) :
+                new SQLiteCommand("DELETE FROM [" + Mail + "-transactions] WHERE [ID] = '" + source.ID.ToString() + "'", sqLiteConn);
             command.ExecuteNonQuery();
             Window OK = new Notification("Transaction removed");
             OK.Show();
             IncomeList.Items.Clear();
             ExpendList.Items.Clear();
             ReadTransactions(sqLiteConn);
-            return;
-
         }
-        private void RemoveAllButton_Click(object sender, EventArgs e)
+        #endregion 
+        #region Resize ListView
+        private void ListView_SizeChanged(object sender, SizeChangedEventArgs e)
         {
-
+            ListView listView = sender as ListView;
+            GridView gridView = listView.View as GridView;
+            var width = listView.ActualWidth - SystemParameters.VerticalScrollBarWidth;
+            gridView.Columns[1].Width = width * 0.22;
+            gridView.Columns[2].Width = width * 0.22;
+            gridView.Columns[3].Width = width * 0.22;
         }
         #endregion
     }
