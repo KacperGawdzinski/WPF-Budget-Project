@@ -16,14 +16,6 @@ using System.Windows.Shapes;
 
 namespace Clerk
 {
-    public class MyItem
-    {
-        public string Type { get; set; }
-        public string Value { get; set; }
-        public string Date { get; set; }
-        public string Period { get; set; }
-        public string ID { get; set; }
-    }
     //TODO: fix problem with adding removed transaction in simulation
     public partial class RemovePage : Page
     {
@@ -88,6 +80,8 @@ namespace Clerk
             OK.Show();
             IncomeList.Items.Clear();
             ExpendList.Items.Clear();
+            RemoveAllButton.IsEnabled = false;
+            RemoveSingleButton.IsEnabled = false;
             ReadTransactions(sqLiteConn);
         }
         #endregion 

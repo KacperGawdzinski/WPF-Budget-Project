@@ -1,0 +1,44 @@
+﻿<Page x:Class="Clerk.History"
+      xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+      xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+      xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
+      xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+      xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+      xmlns:local="clr-namespace:Clerk"
+      mc:Ignorable="d" 
+      Height="Auto" Width="Auto" 
+      FontFamily="Moon"
+      FontSize="16"
+      Foreground="White"
+      Title="HistoryPage">
+
+    <Grid>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="*"/>
+            <ColumnDefinition Width="5*"/>
+            <ColumnDefinition Width="*"/>
+        </Grid.ColumnDefinitions>
+
+        <Grid MinWidth="600" Name="MainGrid" Grid.Column="1">
+            <Rectangle RadiusX="40" RadiusY="40" Margin="35" MinWidth="500" MinHeight="680" Opacity="0.7" Fill="#a5d6a7"/>
+            <TextBlock Text="HISTORY" Grid.Column="1" HorizontalAlignment="Center" Margin="0 50 0 0" FontSize="50"/>
+            <ListView x:Name="List" Margin="0 100 0 70" Grid.Column="1" HorizontalAlignment="Center">
+                <ListView.View>
+                    <GridView>
+                        <GridViewColumn Header="Category" DisplayMemberBinding="{Binding Category}"/>
+                        <GridViewColumn Header="Type" DisplayMemberBinding="{Binding Type}"/>
+                        <GridViewColumn Header="Value" DisplayMemberBinding="{Binding Value}"/>
+                        <GridViewColumn Header="Period" DisplayMemberBinding="{Binding Period}"/>
+                        <GridViewColumn Header="Date" DisplayMemberBinding="{Binding Date}"/>
+                        <GridViewColumn Header="Max Value" DisplayMemberBinding="{Binding MaxValue}"/>
+                    </GridView>
+                </ListView.View>
+                <ListView.ItemContainerStyle>
+                    <Style TargetType="ListViewItem">
+                        <Setter Property="Height" Value="50" />
+                    </Style>
+                </ListView.ItemContainerStyle>
+            </ListView>
+        </Grid>
+    </Grid>
+</Page>

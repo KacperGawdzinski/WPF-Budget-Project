@@ -44,3 +44,5 @@ C:\Users\Kacper\Desktop\Clerk\Clerk\obj\Debug\Clerk.exe
 C:\Users\Kacper\Desktop\Clerk\Clerk\obj\Debug\Clerk.pdb
 C:\Users\Kacper\Desktop\Clerk\Clerk\obj\Debug\RemovePage.g.cs
 C:\Users\Kacper\Desktop\Clerk\Clerk\obj\Debug\RemovePage.baml
+C:\Users\Kacper\Desktop\Clerk\Clerk\obj\Debug\History.g.cs
+C:\Users\Kacper\Desktop\Clerk\Clerk\obj\Debug\History.baml

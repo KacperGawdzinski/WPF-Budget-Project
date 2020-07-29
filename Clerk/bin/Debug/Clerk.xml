@@ -14,6 +14,16 @@
             InitializeComponent
             </summary>
         </member>
+        <member name="T:Clerk.History">
+            <summary>
+            History
+            </summary>
+        </member>
+        <member name="M:Clerk.History.InitializeComponent">
+            <summary>
+            InitializeComponent
+            </summary>
+        </member>
         <member name="T:Clerk.Home">
             <summary>
             Home

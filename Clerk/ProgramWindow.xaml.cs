@@ -46,5 +46,10 @@ namespace Clerk
         {
 
         }
+
+        private void HistoryButton_Click(object sender, EventArgs e)
+        {
+            Main.Navigate(new History(UserMail));
+        }
     }
 }
