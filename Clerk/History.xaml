@@ -15,22 +15,21 @@
     <Grid>
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="*"/>
-            <ColumnDefinition Width="5*"/>
+            <ColumnDefinition Width="3*"/>
             <ColumnDefinition Width="*"/>
         </Grid.ColumnDefinitions>
 
         <Grid MinWidth="600" Name="MainGrid" Grid.Column="1">
             <Rectangle RadiusX="40" RadiusY="40" Margin="35" MinWidth="500" MinHeight="680" Opacity="0.7" Fill="#a5d6a7"/>
             <TextBlock Text="HISTORY" Grid.Column="1" HorizontalAlignment="Center" Margin="0 50 0 0" FontSize="50"/>
-            <ListView x:Name="List" Margin="0 100 0 70" Grid.Column="1" HorizontalAlignment="Center">
+            <ListView x:Name="List" Margin="0 100 0 70" Grid.Column="1" HorizontalAlignment="Center" SizeChanged="ListView_SizeChanged" MinWidth="500">
                 <ListView.View>
                     <GridView>
-                        <GridViewColumn Header="Category" DisplayMemberBinding="{Binding Category}"/>
-                        <GridViewColumn Header="Type" DisplayMemberBinding="{Binding Type}"/>
-                        <GridViewColumn Header="Value" DisplayMemberBinding="{Binding Value}"/>
-                        <GridViewColumn Header="Period" DisplayMemberBinding="{Binding Period}"/>
-                        <GridViewColumn Header="Date" DisplayMemberBinding="{Binding Date}"/>
-                        <GridViewColumn Header="Max Value" DisplayMemberBinding="{Binding MaxValue}"/>
+                        <GridViewColumn Header="Category" DisplayMemberBinding="{Binding Category}" Width="Auto"/>
+                        <GridViewColumn Header="Type" DisplayMemberBinding="{Binding Type}" Width="Auto"/>
+                        <GridViewColumn Header="Value" DisplayMemberBinding="{Binding Value}" Width="Auto"/>
+                        <GridViewColumn Header="Period" DisplayMemberBinding="{Binding Period}" Width="Auto"/>
+                        <GridViewColumn Header="Date" DisplayMemberBinding="{Binding Date}" Width="Auto"/>
                     </GridView>
                 </ListView.View>
                 <ListView.ItemContainerStyle>
