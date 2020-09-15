@@ -88,12 +88,12 @@ namespace Clerk
         #region Resize ListView
         private void ListView_SizeChanged(object sender, SizeChangedEventArgs e)
         {
-            ListView listView = sender as ListView;
+            /*ListView listView = sender as ListView;
             GridView gridView = listView.View as GridView;
             var width = listView.ActualWidth - SystemParameters.VerticalScrollBarWidth;
             gridView.Columns[1].Width = width * 0.22;
             gridView.Columns[2].Width = width * 0.22;
-            gridView.Columns[3].Width = width * 0.22;
+            gridView.Columns[3].Width = width * 0.22;*/
         }
         #endregion
     }

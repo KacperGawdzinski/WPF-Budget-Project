@@ -18,8 +18,6 @@ namespace Clerk
 {
     public partial class History : Page
     {
-        bool isloaded = false;
-        bool xd = true;
         public History(string Mail)
         {
             InitializeComponent();
@@ -37,24 +35,20 @@ namespace Clerk
                     Date = (string)read["DATE"],
                     ID = (string)read["ID"],
                     Period = DBNull.Value.Equals(read["REPEATABILITY"]) ? "None" : (string)read["REPEATABILITY"],
+                    MaxValue = DBNull.Value.Equals(read["MAXVALUE"]) ? "None" : ((double)read["MAXVALUE"]).ToString() + "$"
                 });
             }
-            isloaded = true;
         }
         private void ListView_SizeChanged(object sender, SizeChangedEventArgs e)
         {
             ListView listView = sender as ListView;
             GridView gridView = listView.View as GridView;
             double width = listView.ActualWidth - SystemParameters.VerticalScrollBarWidth;
-            if (isloaded)
-            {
-                Console.WriteLine(listView.ActualWidth);
-                /*gridView.Columns[0].Width = width * 0.18;
-                gridView.Columns[1].Width = width * 0.18;
-                gridView.Columns[2].Width = width * 0.18;
-                gridView.Columns[3].Width = width * 0.18;
-                gridView.Columns[4].Width = width * 0.18;*/
-            }
+            gridView.Columns[0].Width = width * 0.16;
+            gridView.Columns[1].Width = width * 0.16;
+            gridView.Columns[2].Width = width * 0.16;
+            gridView.Columns[3].Width = width * 0.16;
+            gridView.Columns[4].Width = width * 0.17;
         }
     }
 }

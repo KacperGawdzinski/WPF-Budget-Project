@@ -10,25 +10,48 @@
       FontSize="18">
 
     <Grid>
-        <Rectangle RadiusX="40" RadiusY="40" Margin="35" Width="300" Height="300" Opacity="0.7" Fill="White">
+        <Rectangle RadiusX="40" RadiusY="40" Margin="10" Width="330" Height="340" Opacity="0.7" Fill="White">
             <Rectangle.Effect>
                 <DropShadowEffect Color="green" Direction="270" BlurRadius="15" RenderingBias="Quality" ShadowDepth="1"/>
             </Rectangle.Effect>
         </Rectangle>
         <StackPanel Width="300" Height="300">
-            <TextBlock Text="REGISTER" FontWeight="Bold" HorizontalAlignment="Center" Margin="20" FontSize="24"/>
+            <TextBlock Text="REGISTER" FontWeight="Bold" HorizontalAlignment="Center" FontSize="24"/>
             <Separator/>
             <TextBlock Text="E-Mail" FontWeight="Bold" HorizontalAlignment="Center" Margin="0 15 0 2"/>
             <TextBox x:Name="Mail" MaxWidth="260"/>
             <TextBlock Text="Password" FontWeight="Bold" HorizontalAlignment="Center" Margin="0 15 0 0"/>
             <PasswordBox x:Name="Password" MaxWidth="260" Margin="0 3 0 2"/>
-            <Grid Margin="20">
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="1.8*"/>
+                    <ColumnDefinition Width="0.1*"/>
+                    <ColumnDefinition Width="*"/>
+                </Grid.ColumnDefinitions>
+                <TextBlock Text="Username" Grid.Column="0" FontWeight="Bold" Margin="60 15 0 0"/>
+                <TextBox x:Name="Username" Grid.Column="0" MaxWidth="180" Margin="15 35 0 0"/>
+                <TextBlock Text="Currency" Grid.Column="2" FontWeight="Bold" Margin="0 15 0 0"/>
+                <ComboBox x:Name="Currency" Grid.Column="2" MaxWidth="180" Margin="0 35 20 0" HorizontalContentAlignment="Center" MaxDropDownHeight="150">
+                    <ComboBoxItem Content="USD" HorizontalAlignment="Center"/>
+                    <ComboBoxItem Content="EUR" HorizontalAlignment="Center"/>
+                    <ComboBoxItem Content="JPY" HorizontalAlignment="Center"/>
+                    <ComboBoxItem Content="GBP" HorizontalAlignment="Center"/>
+                    <ComboBoxItem Content="AUD" HorizontalAlignment="Center"/>
+                    <ComboBoxItem Content="CAD" HorizontalAlignment="Center"/>
+                    <ComboBoxItem Content="CHF" HorizontalAlignment="Center"/>
+                    <ComboBoxItem Content="CNH" HorizontalAlignment="Center"/>
+                    <ComboBoxItem Content="SEK" HorizontalAlignment="Center"/>
+                    <ComboBoxItem Content="NZD" HorizontalAlignment="Center"/>
+                    <ComboBoxItem Content="PLN" HorizontalAlignment="Center"/>
+                </ComboBox>
+            </Grid>
+            <Grid Margin="15 15 15 0">
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="*"/>
                     <ColumnDefinition Width="*"/>
                 </Grid.ColumnDefinitions>
-                <Button Grid.Column="0" Content="Return" MaxWidth="120" Margin="0 0 0 0" Style="{StaticResource LoginButton}"  Click="Return_Click" MinHeight="35"/>
-                <Button Grid.Column="1" Content="Sign up" MaxWidth="120" Margin="0 0 0 0" Style="{StaticResource LoginButton}" Click="Register_Click" MinHeight="35" />
+                <Button Grid.Column="0" Content="Return" MaxWidth="120" Style="{StaticResource LoginButton}"  Click="Return_Click" MinHeight="35"/>
+                <Button Grid.Column="1" Content="Sign up" MaxWidth="120" Style="{StaticResource LoginButton}" Click="Register_Click" MinHeight="35" />
             </Grid>
         </StackPanel>
     </Grid>

@@ -234,11 +234,11 @@ namespace Clerk
         void SimulateBalance(SQLiteConnection sqLiteConn, string dbb, string dbt)
         {
             //checking latest balance's date, if it's equal to today's then return
-            SQLiteCommand comm = new SQLiteCommand("SELECT * FROM " + dbb + "ORDER BY DATE([DATE]) DESC LIMIT 1", sqLiteConn);
+            SQLiteCommand comm = new SQLiteCommand("SELECT * FROM USERINFO WHERE MAIL = '" + UserMail + "'", sqLiteConn);
             comm.ExecuteNonQuery();
             SQLiteDataReader read = comm.ExecuteReader();
             read.Read();
-            string LastDate = ((string)read["DATE"]);
+            string LastDate = ((string)read["LATEST SIMULATION DATE"]);
             double v = (double)read["BALANCE"];
             if (DateTime.Today.ToString("yyyy-MM-dd").Equals(LastDate))
                 return;
