@@ -29,7 +29,7 @@
                     <ColumnDefinition Width="*"/>
                 </Grid.ColumnDefinitions>
                 <TextBlock Text="Username" Grid.Column="0" FontWeight="Bold" Margin="60 15 0 0"/>
-                <TextBox x:Name="Username" Grid.Column="0" MaxWidth="180" Margin="15 35 0 0"/>
+                <TextBox x:Name="Username" Grid.Column="0" MaxWidth="180" Margin="18 35 0 0"/>
                 <TextBlock Text="Currency" Grid.Column="2" FontWeight="Bold" Margin="0 15 0 0"/>
                 <ComboBox x:Name="Currency" Grid.Column="2" MaxWidth="180" Margin="0 35 20 0" HorizontalContentAlignment="Center" MaxDropDownHeight="150">
                     <ComboBoxItem Content="USD" HorizontalAlignment="Center"/>

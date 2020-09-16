@@ -22,7 +22,7 @@ using System.Data;
 using System.IO;
 using System.CodeDom;
 using System.Data.Entity.ModelConfiguration.Configuration;
-
+//ADD HOUR TO BALANCE
 namespace Clerk
 {
     public partial class ArrayOfPacked
@@ -75,7 +75,7 @@ namespace Clerk
             int row_sum = Convert.ToInt32(comm.ExecuteScalar());
             if (row_sum == 0)
             {
-                comm = new SQLiteCommand("INSERT INTO " + dbb + " (BALANCE,DATE) values('0.0','" + DateTime.Today.ToString("yyyy-MM-dd") + "')",x);
+                comm = new SQLiteCommand("INSERT INTO " + dbb + " (BALANCE,DATE) values('0.0','" + DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss") + "')",x);
                 comm.ExecuteNonQuery();
             }
 
@@ -115,7 +115,7 @@ namespace Clerk
         void BuildLineChart(SQLiteConnection sqLiteConn, string db)
         {
             Basic = new SeriesCollection();
-            SQLiteCommand comm = new SQLiteCommand("SELECT * FROM " + db + "WHERE DATE([DATE]) >= '" + DateTime.Today.AddMonths(-1).ToString("yyyy-MM-dd") + "' ORDER BY DATE([DATE])", sqLiteConn);
+            SQLiteCommand comm = new SQLiteCommand("SELECT * FROM " + db + "WHERE DATETIME([DATE]) >= '" + DateTime.Today.AddMonths(-1).ToString("yyyy-MM-dd") + "' ORDER BY DATE([DATE])", sqLiteConn);
             comm.ExecuteNonQuery();
             SQLiteDataReader read = comm.ExecuteReader();
 
@@ -126,7 +126,7 @@ namespace Clerk
             {
                 AddNewValue.Add(new ObservableValue((double)read["Balance"]));
                 balance = (double)read["Balance"];
-                Data.Add(((string)read["Date"]).Remove(0,5));
+                Data.Add(((string)read["Date"]).Remove(0,5).Remove(5,9));
             }
             AdjustBalanceFont(balance);
             Basic.Add(new LineSeries
@@ -233,32 +233,36 @@ namespace Clerk
         #region Simulation
         void SimulateBalance(SQLiteConnection sqLiteConn, string dbb, string dbt)
         {
-            //checking latest balance's date, if it's equal to today's then return
-            SQLiteCommand comm = new SQLiteCommand("SELECT * FROM USERINFO WHERE MAIL = '" + UserMail + "'", sqLiteConn);
+            //take latest known balance and date to simulate period between then and now
+            SQLiteCommand comm = new SQLiteCommand("SELECT * FROM " + dbb + "ORDER BY DATETIME([DATE]) DESC LIMIT 1", sqLiteConn);
             comm.ExecuteNonQuery();
             SQLiteDataReader read = comm.ExecuteReader();
             read.Read();
-            string LastDate = ((string)read["LATEST SIMULATION DATE"]);
+            string LastDate = ((string)read["DATE"]);
             double v = (double)read["BALANCE"];
-            if (DateTime.Today.ToString("yyyy-MM-dd").Equals(LastDate))
-                return;
-
-            //add days between today's login and last record
-            DateTime t1 = Convert.ToDateTime(LastDate).AddDays(1);
-            DateTime t2 = Convert.ToDateTime(DateTime.Today.ToString("yyyy-MM-dd"));
+            DateTime t1 = Convert.ToDateTime(LastDate.Remove(10,9));
+            DateTime t2 = Convert.ToDateTime(DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss"));
             TimeSpan y = t2.Subtract(t1);
-            double k = y.TotalDays;
-            while (k >= 0)
+            int k = (int)y.TotalDays;
+            while (k > 0)
             {
-                comm = new SQLiteCommand("INSERT INTO " + dbb + " (BALANCE, DATE) VALUES('" + v + "', '" + t1.ToString("yyyy-MM-dd") + "')", sqLiteConn);
-                comm.ExecuteNonQuery();
                 t1 = t1.AddDays(1);
+                if(k!=1)
+                {
+                    comm = new SQLiteCommand("INSERT INTO " + dbb + " (BALANCE, DATE) VALUES('" + v + "', '" + t1.ToString("yyyy-MM-dd") + " 00:00:00')", sqLiteConn);
+                    comm.ExecuteNonQuery();
+                }
+                else
+                {
+                    comm = new SQLiteCommand("INSERT INTO " + dbb + " (BALANCE, DATE) VALUES('" + v + "', '" + t2.ToString("yyyy-MM-dd HH:mm:ss") + "')", sqLiteConn);
+                    comm.ExecuteNonQuery();
+                }
                 k--;
             }
+
             //find last month's periodic transactions
             List<string> codes = new List<string>(); 
-            comm = new SQLiteCommand("SELECT * FROM " + dbt + " WHERE DATE([DATE]) >= '" + Convert.ToDateTime(LastDate).AddMonths(-1).ToString("yyyy-MM-dd") 
-                + "' AND [REPEATABILITY] IS NOT NULL ORDER BY DATE([DATE]) DESC", sqLiteConn);
+            comm = new SQLiteCommand("SELECT * FROM " + dbt + " WHERE [REPEATABILITY] IS NOT NULL", sqLiteConn);
             read = comm.ExecuteReader();
             while(read.Read())
             {
@@ -266,27 +270,21 @@ namespace Clerk
                 if (!codes.Contains(s))
                 {
                     string[] p = new string[6];
-                    p[0] = (string)read["DATE"];
-                    if (DBNull.Value.Equals(read["REPEATABILITY"]))
-                        p[1] = null;
-                    else
-                        p[1] = (string)read["REPEATABILITY"];
+                    p[0] = LastDate;
+                    p[1] = (string)read["REPEATABILITY"];
                     p[2] = (string)read["CATEGORY"];
                     p[3] = (string)read["TYPE"];
                     p[4] = ((double)read["VALUE"]).ToString();
-                    if (DBNull.Value.Equals(read["MAXVALUE"]))
-                        p[5] = null;
-                    else
-                        p[5] = ((double)read["MAXVALUE"]).ToString();
+                    p[5] = DBNull.Value.Equals(read["MAXVALUE"]) ? null : ((double)read["MAXVALUE"]).ToString();
                     codes.Add(s);
                     SimulateTransactions(sqLiteConn, p, s, dbb);
                 }
             }
         }
 
-        void SimulateTransactions(SQLiteConnection sqLiteConn, string[] InputData, string guid, string dbb)    //make a class of it - redef
+        void SimulateTransactions(SQLiteConnection sqLiteConn, string[] InputData, string guid, string dbb)
         {
-            SQLiteCommand comm = new SQLiteCommand("SELECT * FROM " + dbb + " WHERE DATE([DATE]) > '" + InputData[0] + "' ORDER BY DATE([DATE])", sqLiteConn);
+            SQLiteCommand comm = new SQLiteCommand("SELECT * FROM " + dbb + " WHERE DATETIME([DATE]) > '" + InputData[0] + "' ORDER BY DATE([DATE])", sqLiteConn);
             SQLiteDataReader read = comm.ExecuteReader();
             double val = 0;
             int l, temp = 1;

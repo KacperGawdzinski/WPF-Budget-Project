@@ -24,7 +24,7 @@ namespace Clerk
             InitializeComponent();
             SQLiteConnection sqLiteConn = new SQLiteConnection(@"Data Source=database.db;Version=3;");
             sqLiteConn.Open();
-            SQLiteCommand comm = new SQLiteCommand("CREATE TABLE IF NOT EXISTS USERNAME (MAIL TEXT, PASSWORD TEXT, USERNAME TEXT, IMAGE TEXT, CURRENCY TEXT, LATEST SIMULATION DATE TEXT)", sqLiteConn);
+            SQLiteCommand comm = new SQLiteCommand("CREATE TABLE IF NOT EXISTS USERINFO (MAIL TEXT, PASSWORD TEXT, USERNAME TEXT, IMAGE TEXT, CURRENCY TEXT)", sqLiteConn);
             comm.ExecuteNonQuery();
         }
 
@@ -71,9 +71,8 @@ namespace Clerk
                 }
                 else
                 {
-                    comm = new SQLiteCommand("INSERT INTO USERINFO ([MAIL], [PASSWORD], [USERNAME], [CURRENCY], [LATEST SIMULATION DATE]) VALUES('" + Mail.Text + "', '" + 
-                        Password.Password + "', '" + Username.Text + "', '" + Currency.Text + "', '" + 
-                        DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss") + "')", sqLiteConn);
+                    comm = new SQLiteCommand("INSERT INTO USERINFO ([MAIL], [PASSWORD], [USERNAME], [CURRENCY]) VALUES('" + Mail.Text + "', '" + 
+                        Password.Password + "', '" + Username.Text + "', '" + Currency.Text + "')", sqLiteConn);
                     comm.ExecuteNonQuery();
                     NavigationService.Navigate(new LoginPage());
                     Window OK = new Notification("Registration completed");
