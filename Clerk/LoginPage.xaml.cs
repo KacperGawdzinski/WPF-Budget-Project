@@ -22,6 +22,10 @@ namespace Clerk
         public LoginPage()
         {
             InitializeComponent();
+            SQLiteConnection sqLiteConn = new SQLiteConnection(@"Data Source=database.db;Version=3;");
+            sqLiteConn.Open();
+            SQLiteCommand comm = new SQLiteCommand("CREATE TABLE IF NOT EXISTS USERINFO (MAIL TEXT, PASSWORD TEXT, USERNAME TEXT, IMAGE TEXT, CURRENCY TEXT)", sqLiteConn);
+            comm.ExecuteNonQuery();
         }
 
         void Register_Click(object sender, EventArgs e)
@@ -39,7 +43,7 @@ namespace Clerk
             }
             SQLiteConnection sqLiteConn = new SQLiteConnection(dbConnectionString);
             sqLiteConn.Open();
-            string command = "select * from userinfo where mail='" + Mail.Text + "' and password='" + Password.Password + "'";
+            string command = "SELECT * FROM USERINFO WHERE MAIL ='" + Mail.Text + "' AND PASSWORD ='" + Password.Password + "'";
             SQLiteCommand comm = new SQLiteCommand(command, sqLiteConn);
             comm.ExecuteNonQuery();
             SQLiteDataReader read = comm.ExecuteReader();

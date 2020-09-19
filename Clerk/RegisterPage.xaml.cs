@@ -22,10 +22,6 @@ namespace Clerk
         public RegisterPage()
         {
             InitializeComponent();
-            SQLiteConnection sqLiteConn = new SQLiteConnection(@"Data Source=database.db;Version=3;");
-            sqLiteConn.Open();
-            SQLiteCommand comm = new SQLiteCommand("CREATE TABLE IF NOT EXISTS USERINFO (MAIL TEXT, PASSWORD TEXT, USERNAME TEXT, IMAGE TEXT, CURRENCY TEXT)", sqLiteConn);
-            comm.ExecuteNonQuery();
         }
 
         void Register_Click(object sender, EventArgs e)
