@@ -759,11 +759,11 @@
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "C:\\Users\\Kacper\\Desktop\\Clerk\\Clerk\\Clerk.csproj",
+      "projectUniqueName": "C:\\Users\\Kacper\\clerk\\Clerk\\Clerk.csproj",
       "projectName": "Clerk",
-      "projectPath": "C:\\Users\\Kacper\\Desktop\\Clerk\\Clerk\\Clerk.csproj",
+      "projectPath": "C:\\Users\\Kacper\\clerk\\Clerk\\Clerk.csproj",
       "packagesPath": "C:\\Users\\Kacper\\.nuget\\packages\\",
-      "outputPath": "C:\\Users\\Kacper\\Desktop\\Clerk\\Clerk\\obj\\",
+      "outputPath": "C:\\Users\\Kacper\\clerk\\Clerk\\obj\\",
       "projectStyle": "PackageReference",
       "skipContentFileWrite": true,
       "configFilePaths": [

@@ -4,15 +4,15 @@
 exe
 C#
 .cs
-C:\Users\Kacper\Desktop\Clerk\Clerk\obj\Debug\
+C:\Users\Kacper\clerk\Clerk\obj\Debug\
 Clerk
 none
 false
 DEBUG;TRACE
-C:\Users\Kacper\Desktop\Clerk\Clerk\App.xaml
+C:\Users\Kacper\clerk\Clerk\App.xaml
 10-1599149481
 
-15723648334
+15-1662980738
 23-1961960933
 AddPage.xaml;ButtonStyles.xaml;History.xaml;Home.xaml;LoginPage.xaml;Notification.xaml;ProgramWindow.xaml;LoginWindow.xaml;RegisterPage.xaml;RemovePage.xaml;
 

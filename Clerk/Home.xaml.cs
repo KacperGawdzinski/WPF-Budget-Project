@@ -244,31 +244,46 @@ namespace Clerk
             read.Read();
             string LastDate = ((string)read["DATE"]);
             double v = (double)read["BALANCE"];
-            DateTime t1 = Convert.ToDateTime(LastDate.Remove(10,9));
-            DateTime t2 = Convert.ToDateTime(DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss"));
-            TimeSpan y = t2.Subtract(t1);
+            DateTime NOD = Convert.ToDateTime(LastDate.Remove(10, 9));  //NewestOldDate
+            DateTime NND = Convert.ToDateTime(DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss")); //NewestNewDate
+            DateTime FND = NND; //FirstNewDate
+            TimeSpan y = NND.Subtract(NOD);
             int k = (int)y.TotalDays;
+            bool FirstNewEntry = true;
             while (k > 0)
             {
-                t1 = t1.AddDays(1);
-                if(k!=1)
+                NOD = NOD.AddDays(1);
+                if (k != 1)
                 {
-                    comm = new SQLiteCommand("INSERT INTO " + dbb + " (BALANCE, DATE) VALUES('" + v + "', '" + t1.ToString("yyyy-MM-dd") + " 00:00:00')", sqLiteConn);
+                    comm = new SQLiteCommand("INSERT INTO " + dbb + " (BALANCE, DATE) VALUES('" + v + "', '" + NOD.ToString("yyyy-MM-dd") + " 00:00:00')", sqLiteConn);
                     comm.ExecuteNonQuery();
+                    if (FirstNewEntry)
+                    {
+                        FND = Convert.ToDateTime(NOD.ToString("yyyy-MM-dd") + "00:00:00");
+                        FirstNewEntry = false;
+                    }
                 }
                 else
                 {
-                    comm = new SQLiteCommand("INSERT INTO " + dbb + " (BALANCE, DATE) VALUES('" + v + "', '" + t2.ToString("yyyy-MM-dd HH:mm:ss") + "')", sqLiteConn);
+                    comm = new SQLiteCommand("INSERT INTO " + dbb + " (BALANCE, DATE) VALUES('" + v + "', '" + NND.ToString("yyyy-MM-dd HH:mm:ss") + "')", sqLiteConn);
                     comm.ExecuteNonQuery();
+                    if (FirstNewEntry)
+                    {
+                        FND = Convert.ToDateTime(NND.ToString("yyyy-MM-dd HH:mm:ss"));
+                        FirstNewEntry = false;
+                    }
                 }
                 k--;
             }
 
-            //find last month's periodic transactions
-            List<string> codes = new List<string>(); 
-            comm = new SQLiteCommand("SELECT * FROM " + dbt + " WHERE [REPEATABILITY] IS NOT NULL", sqLiteConn);
+            //find and simulate last month's periodic transactions
+            List<string> codes = new List<string>();
+            SQLiteCommand comm2;
+            comm = new SQLiteCommand("SELECT * FROM " + dbt + " WHERE [REPEATABILITY] IS NOT NULL ORDER BY DATETIME([DATE]) DESC", sqLiteConn);
             read = comm.ExecuteReader();
-            while(read.Read())
+            double val = 0;
+            string LaterHour;
+            while (read.Read())
             {
                 string s = (string)read["ID"];
                 if (!codes.Contains(s))
@@ -279,31 +294,63 @@ namespace Clerk
                     p[2] = (string)read["TYPE"];
                     p[3] = ((double)read["VALUE"]).ToString();
                     p[4] = DBNull.Value.Equals(read["MAXVALUE"]) ? null : ((double)read["MAXVALUE"]).ToString();
-                    p[5] = (string)read["DATE"];
+                    DateTime TransactionDate = Convert.ToDateTime((string)read["DATE"]);
                     codes.Add(s);
-                    SimulateTransactions(sqLiteConn, p, s, dbb, LastDate);
+
+                    while (TransactionDate < FND) { //move transaction date to period we're updating
+                        if (p[0].Equals("Monthly"))
+                            TransactionDate = TransactionDate.AddMonths(1);
+                        if (p[0].Equals("Weekly"))
+                            TransactionDate = TransactionDate.AddDays(7);
+                    }
+                    if (p[0].Equals("Daily"))
+                        TransactionDate = Convert.ToDateTime(FND.ToString("yyyy-MM-dd") + TransactionDate.ToString("HH:mm:ss"));
+                    if (TransactionDate > NND)  //if it's behind this period, return
+                        break;
+                    DateTime Head = TransactionDate;
+                    do {    //if it's within this period, update table
+                        if(Head == TransactionDate && p[3].Equals("Weekly")) {
+                            val += Convert.ToDouble(p[3]);
+                            Head = Head.AddDays(7);
+                        }
+                        if (Head == TransactionDate && p[3].Equals("Monthly")) {
+                            val += Convert.ToDouble(p[3]);
+                            Head = Head.AddMonths(1);
+                        }
+                        if (Head == TransactionDate && p[3].Equals("Monthly")) {
+                            val += Convert.ToDouble(p[3]);
+                            Head = Head.AddDays(1);
+                        }
+                        if (Head > NND) {
+                            comm2 = new SQLiteCommand("SELECT * FROM [" + UserMail + "-balance] WHERE DATE LIKE '"
+                                + TransactionDate.ToString("yyyy-MM-dd") + "%'", sqLiteConn);
+                            SQLiteDataReader read2 = comm2.ExecuteReader();
+                            read2.Read();
+                            LaterHour = string.Compare(TransactionDate.ToString("yyyy-MM-dd HH:mm:ss"), ((string)read2["Date"])) == 1 ?
+                                TransactionDate.ToString("yyyy-MM-dd HH:mm:ss") : ((string)read2["Date"]);
+                            comm2 = new SQLiteCommand("UPDATE [" + UserMail + "-balance] SET BALANCE = BALANCE + '"
+                                            + val.ToString() + "', DATE = '" + LaterHour +
+                                            "'WHERE DATE([DATE]) LIKE '" + TransactionDate.ToString("yyyy-MM-dd") + "%'", sqLiteConn);
+                            comm2.ExecuteNonQuery();
+                        }
+                        comm2 = new SQLiteCommand("UPDATE [" + UserMail + "-balance] SET BALANCE = BALANCE + '"
+                                            + val.ToString() + "', DATE = '" + TransactionDate.ToString("yyyy-MM-dd HH:mm:ss") +
+                                            "'WHERE DATE([DATE]) LIKE '" + TransactionDate.ToString("yyyy-MM-dd") + "%'", sqLiteConn);
+                        comm2.ExecuteNonQuery();
+                        TransactionDate.AddDays(1);
+                    }
+                    while (Head <= NND);
+
+                    
                 }
             }
         }
 
-        void SimulateTransactions(SQLiteConnection sqLiteConn, string[] InputData, string guid, string dbb, string ld)
-        {
-            SQLiteCommand comm = new SQLiteCommand("SELECT * FROM " + dbb + " WHERE DATETIME([DATE]) > '" + ld + "' ORDER BY DATE([DATE])", sqLiteConn);
-            SQLiteDataReader read = comm.ExecuteReader();
-            double val = 0;
-            int temp = 1;
-            while (read.Read())
-            {
-                string date = (string)read["Date"];//ostatnia data
-                DateTime time = Convert.ToDateTime(date);
-                DateTime LastDate = Convert.ToDateTime(ld);
-                if (InputData[0].Equals("Monthly"))
-                    time.AddMonths(1);
-                else if (InputData[0].Equals("Weekly"))
-                    time.AddDays(7);
-                else
-                    time.AddDays(1);
 
+
+
+        void SimulateTransactions(SQLiteConnection sqLiteConn, string[] InputData, string guid, string dbb, string ld, DateTime LastNewDate, DateTime FirstNewDate)
+        {
 
 
 
@@ -347,7 +394,6 @@ namespace Clerk
                 comm.ExecuteNonQuery();
                 temp++;*/
             }
-        }
         string NullReturner(string s)
         {
             if (s == null)
