@@ -22,7 +22,7 @@ using System.Data;
 using System.IO;
 using System.CodeDom;
 using System.Data.Entity.ModelConfiguration.Configuration;
-//ADD HOUR TO BALANCE
+
 namespace Clerk
 {
     public partial class ArrayOfPacked
