@@ -1,14 +1,14 @@
 {
   "version": 2,
-  "dgSpecHash": "5Qu32nskYjxcBDFBijKc0rrZPnLz9ERafzZnlpfJh+2cPY+oY+3+3nqMfRdaDn7ACZTbEzJ2WjF/GRQIPEfJeQ==",
+  "dgSpecHash": "qmsDZVQKsDSaUUoZZ650jrN1XWabOKYkOsuXtYh+Q2y35mPuR7Vo7oZQ/P2aJxcuzWQ1/t/TZgYtFAfka8eOHw==",
   "success": true,
-  "projectFilePath": "C:\\Users\\Kacper\\clerk\\Clerk\\Clerk.csproj",
+  "projectFilePath": "C:\\Users\\Kacper\\Desktop\\Clerk\\Clerk\\Clerk.csproj",
   "expectedPackageFiles": [
     "C:\\Users\\Kacper\\.nuget\\packages\\entityframework\\6.3.0\\entityframework.6.3.0.nupkg.sha512",
     "C:\\Users\\Kacper\\.nuget\\packages\\livecharts\\0.9.7\\livecharts.0.9.7.nupkg.sha512",
     "C:\\Users\\Kacper\\.nuget\\packages\\livecharts.wpf\\0.9.7\\livecharts.wpf.0.9.7.nupkg.sha512",
-    "C:\\Users\\Kacper\\.nuget\\packages\\materialdesigncolors\\1.2.6\\materialdesigncolors.1.2.6.nupkg.sha512",
-    "C:\\Users\\Kacper\\.nuget\\packages\\materialdesignthemes\\3.1.3\\materialdesignthemes.3.1.3.nupkg.sha512",
+    "C:\\Users\\Kacper\\.nuget\\packages\\materialdesigncolors\\1.2.7\\materialdesigncolors.1.2.7.nupkg.sha512",
+    "C:\\Users\\Kacper\\.nuget\\packages\\materialdesignthemes\\3.2.0\\materialdesignthemes.3.2.0.nupkg.sha512",
     "C:\\Users\\Kacper\\.nuget\\packages\\system.data.sqlite\\1.0.113.1\\system.data.sqlite.1.0.113.1.nupkg.sha512",
     "C:\\Users\\Kacper\\.nuget\\packages\\system.data.sqlite.core\\1.0.113.1\\system.data.sqlite.core.1.0.113.1.nupkg.sha512",
     "C:\\Users\\Kacper\\.nuget\\packages\\system.data.sqlite.ef6\\1.0.113\\system.data.sqlite.ef6.1.0.113.nupkg.sha512",

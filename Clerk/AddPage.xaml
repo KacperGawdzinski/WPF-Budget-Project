@@ -39,17 +39,11 @@
             <TextBlock Margin="0 20 0 0" Text="Insert value" HorizontalAlignment="Center"/>
             <TextBox x:Name="ValueInsert" TextAlignment="Center" MinWidth="200" Margin="0 3 0 0" HorizontalAlignment="Center"/>
             <CheckBox x:Name="PeriodicCheck" Margin="0 20 0 0" Content="Periodic" HorizontalAlignment="Center" Checked="PeriodicChecked" Unchecked="PeriodicUnchecked"/>
-            <Grid x:Name="PeriodicGrid">
-                    <Grid.ColumnDefinitions>
-                        <ColumnDefinition Width="*"/>
-                        <ColumnDefinition Width="*"/>
-                    </Grid.ColumnDefinitions>
-            </Grid>
-                <Button x:Name="SaveButton" BorderBrush="#2e7d32" Background="#2e7d32"  Width="100" Height="40" Margin="0 10 0 0" Click="SaveClick">
-                <StackPanel Orientation="Horizontal">
-                    <materialDesign:PackIcon Kind="ContentSave" VerticalAlignment="Center" HorizontalAlignment="Center"/>
-                    <TextBlock Text="Save" Margin="10 0 0 0"/>
-                </StackPanel>
+            <Button x:Name="SaveButton" BorderBrush="#2e7d32" Background="#2e7d32"  Width="100" Height="40" Margin="0 10 0 0" Click="SaveClick">
+            <StackPanel Orientation="Horizontal">
+                <materialDesign:PackIcon Kind="ContentSave" VerticalAlignment="Center" HorizontalAlignment="Center"/>
+                <TextBlock Text="Save" Margin="10 0 0 0"/>
+            </StackPanel>
             </Button>
         </StackPanel>
         </Grid>

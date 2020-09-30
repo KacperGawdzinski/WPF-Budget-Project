@@ -19,6 +19,7 @@ using System.Collections.Specialized;
 using System.Data.Entity.ModelConfiguration.Configuration;
 using System.Data.Entity.Core;
 using System.Net.Http.Headers;
+using Xceed.Wpf.Toolkit;
 
 //TODO : MAKE UNIVERSAL FUNCTION FOR SQLITECOMMAND
 //TEST PERIODIC TRANSACTIONS IN FUTURE
@@ -96,6 +97,7 @@ namespace Clerk
             {
                 TypeInsertBuilt = true;
                 TextBox TypeInsert = new TextBox() {
+                    Name = "TypeInsert",
                     MinWidth = 200,
                     HorizontalAlignment = HorizontalAlignment.Center,
                     TextAlignment = TextAlignment.Center,
@@ -111,12 +113,6 @@ namespace Clerk
                 Stack.Children.Insert(3, TypeInsertText);
                 Stack.Children.Insert(4, TypeInsert); 
 
-                if(PeriodicCheck.IsChecked == true && SaveInsideGrid == false)
-                {
-                    Stack.Children.RemoveAt(Stack.Children.Count - 1);
-                    PeriodicGrid.Children.Add(MakeSaveButton(0, 150, 30, 0, 1));
-                    SaveInsideGrid = true;
-                }
                 if(!IncomeChecked)
                 {
                     MaxValueBuilt = true;
@@ -198,15 +194,39 @@ namespace Clerk
 
         void PeriodicChecked(object sender, EventArgs e)
         {
+            Grid PeriodicGrid = new Grid();
+            ColumnDefinition c1 = new ColumnDefinition();
+            c1.Width = new GridLength(1, GridUnitType.Star);
+            ColumnDefinition c2 = new ColumnDefinition();
+            c2.Width = new GridLength(1, GridUnitType.Star);
+            PeriodicGrid.ColumnDefinitions.Add(c1);
+            PeriodicGrid.ColumnDefinitions.Add(c2);
             TextBlock PeriodicText = new TextBlock(){
                 HorizontalAlignment = HorizontalAlignment.Center,
                 Text = "Repeatability",
-                Margin = new Thickness(0, 130, 30, 0)
+                Margin = new Thickness(0, 180, 40, 0)
+            };
+            TextBlock TimeText = new TextBlock()
+            {
+                HorizontalAlignment = HorizontalAlignment.Center,
+                Text = "Hour",
+                Margin = new Thickness(0, 80, 40, 0)
             };
             ComboBox PeriodicBox = new ComboBox(){
                 HorizontalAlignment = HorizontalAlignment.Center,
-                Margin = new Thickness(0, 30, 30, 0),
-                MinWidth = 150
+                Margin = new Thickness(0, 120, 30, 0),
+                MinWidth = 150,
+                HorizontalContentAlignment = HorizontalAlignment.Center,
+                VerticalContentAlignment = VerticalAlignment.Bottom
+            };
+            ComboBox TimePicker = new ComboBox() {
+                HorizontalContentAlignment = HorizontalAlignment.Center,
+                HorizontalAlignment = HorizontalAlignment.Center,
+                VerticalAlignment = VerticalAlignment.Top,
+                Margin = new Thickness(0, 100, 30, 0),
+                Width = 100,
+                Height = 40,
+                MaxDropDownHeight = 150
             };
             ComboBoxItem Day = new ComboBoxItem(){
                 Content = "Daily"
@@ -217,6 +237,11 @@ namespace Clerk
             ComboBoxItem Month = new ComboBoxItem(){
                 Content = "Monthly"
             };
+            DateTime x = new DateTime(1, 1, 1, 0, 0, 0);
+            for (int i = 24; i > 0; i--) {
+                TimePicker.Items.Add(new ComboBoxItem() { Content = x.ToString("HH:mm") });
+                x = x.AddHours(1);
+            }
             PeriodicBox.Items.Add(Day);
             PeriodicBox.Items.Add(Week);
             PeriodicBox.Items.Add(Month);
@@ -241,28 +266,22 @@ namespace Clerk
             Grid.SetColumn(StartDateText, 0);
             Grid.SetColumn(PeriodicText, 1);
             Grid.SetColumn(PeriodicBox, 1);
+            Grid.SetColumn(TimePicker, 1);
+            Grid.SetColumn(TimeText, 1);
             PeriodicGrid.Children.Add(StartDateText);
             PeriodicGrid.Children.Add(box);
             PeriodicGrid.Children.Add(PeriodicText);
             PeriodicGrid.Children.Add(PeriodicBox);
-            if(ExpendCheck.IsEnabled && TypeInsertBuilt)
-            {
-                Stack.Children.RemoveAt(Stack.Children.Count - 1);
-                PeriodicGrid.Children.Add(MakeSaveButton(0, 150, 30, 0, 1));
-                SaveInsideGrid = true;
-            }
+            PeriodicGrid.Children.Add(TimePicker);
+            PeriodicGrid.Children.Add(TimeText);
+            PeriodicGrid.Children.Add(MakeSaveButton(0, 300, 30, 0, 1));
+            Stack.Children.RemoveAt(Stack.Children.Count - 1);
+            Stack.Children.Add(PeriodicGrid);
         }
         void PeriodicUnchecked(object sender, EventArgs e)
         {
-            for(int i = 0; i < 4; i++)
-                PeriodicGrid.Children.RemoveAt(PeriodicGrid.Children.Count - 1);
-
-            if(SaveInsideGrid)
-            {
-                SaveInsideGrid = false;
-                PeriodicGrid.Children.RemoveAt(PeriodicGrid.Children.Count - 1);
-                Stack.Children.Add(MakeSaveButton(0, 20, 0, 0, 2));
-            }
+            Stack.Children.RemoveAt(Stack.Children.Count - 1);
+            Stack.Children.Add(MakeSaveButton(0, 20, 0, 0, 2));
         }
         Button MakeSaveButton(int a, int b, int c, int d, int column)
         {
@@ -287,8 +306,10 @@ namespace Clerk
                 Name = "SaveButton",
             };
             Save.Click += SaveClick;
-            Grid.SetColumn(Save, 1);
-            Grid.SetColumnSpan(Save,column);
+            if(column != 0) {
+                Grid.SetColumn(Save, 1);
+                Grid.SetColumnSpan(Save, column);
+            }
             return Save;
         }
         #endregion
@@ -326,37 +347,30 @@ namespace Clerk
                 l[2] = "Income";
             else if (ExpendCheck.IsChecked == true)
                 l[2] = "Expend";
-            else
-            {
+            else {
                 ShowError("Choose Category!");
                 return null;
             }
                 
             if (TypeCombo.Text == "New type...")
             {
-                foreach (var val in FindVisualChildren<TextBox>(MainGrid))
-                {
-                    if (k == 1)
-                    {
-                        if (val.Text.Length == 0)
-                        {
-                            ShowError("Insert new type!");
-                            return null;
-                        }
-                        if (val.Text.Length > 20)
-                        {
-                            ShowError("Type name is too long!");
-                            return null;
-                        }
-                        string[] temp = l[2].Equals("Income") ? ReadTypes(true) : ReadTypes(false);
-                        for (int i = 0; i < temp.Length; i++)
-                            if (temp[i] == val.Text)
-                            {
-                                ShowError("This column already exists!");
-                                return null;
-                            }
-                        l[3]=val.Text;
+                string TypeInsertBoxText = ((TextBox)LogicalTreeHelper.FindLogicalNode(MainGrid, "TypeInsert")).Text;
+                if (TypeInsertBoxText.Length == 0) {
+                    ShowError("Insert new type!");
+                    return null;
+                }
+                if (TypeInsertBoxText.Length > 20) {
+                    ShowError("Type name is too long!");
+                    return null;
+                }
+                string[] temp = l[2].Equals("Income") ? ReadTypes(true) : ReadTypes(false);
+                for (int i = 0; i < temp.Length; i++)
+                    if (temp[i] == TypeInsertBoxText) {
+                        ShowError("This column already exists!");
+                        return null;
                     }
+                l[3] = TypeInsertBoxText;
+
                     if (k == 2 || (k == 3 && ExpendCheck.IsChecked == true))
                     {
                         bool en = false;
@@ -381,7 +395,6 @@ namespace Clerk
                         if(k == 3)
                             l[5]=val.Text;
                     }
-                    k++;
                 }
             }
             else if (TypeCombo.Text != "")
@@ -501,17 +514,22 @@ namespace Clerk
                 DateTime t1 = Convert.ToDateTime(InputData[0]);
                 DateTime t2 = Convert.ToDateTime((string)read["Date"]);
                 TimeSpan y = t2.Subtract(t1);
-                double k = y.TotalDays;
-                if (k > 0) //check if we need to add new rows in the history
+                int k = (int)y.TotalDays;
+                double LastKnownBalanceValue = (double)read["Balance"];
+                while(k > 0)
                 {
-                    double InsertBalance = (double)read["Balance"];
-                    while(k > 0)
+                    if (k != 1)
                     {
-                        comm = new SQLiteCommand("INSERT INTO [" + UserMail + "-balance] (BALANCE, DATE) VALUES('"+ InsertBalance + "', '" + t1.ToString("yyyy-MM-dd") + "')", sqLiteConn);
+                        comm = new SQLiteCommand("INSERT INTO [" + UserMail + "-balance] (BALANCE, DATE) VALUES('" + LastKnownBalanceValue + "', '" + t1.ToString("yyyy-MM-dd") + " 00:00:00')", sqLiteConn);
                         comm.ExecuteNonQuery();
-                        t1 = t1.AddDays(1);
-                        k--;
                     }
+                    else
+                    {
+                        comm = new SQLiteCommand("INSERT INTO [" + UserMail + "-balance] (BALANCE, DATE) VALUES('" + LastKnownBalanceValue + "', '" + t1.ToString("yyyy-MM-dd HH:mm:ss") + "')", sqLiteConn);
+                        comm.ExecuteNonQuery();
+                    }
+                    t1 = t1.AddDays(1);
+                    k--;
                 }
                 //now we're sure that balance days were added so we have to modify their values
                 comm = new SQLiteCommand("SELECT * FROM [" + UserMail + "-balance] WHERE DATE([DATE]) >= '" + InputData[0] + "' ORDER BY DATE([DATE])", sqLiteConn);
@@ -529,7 +547,7 @@ namespace Clerk
                     if(l == 7 && temp == 7)
                     {
                         comm = new SQLiteCommand("INSERT INTO [" + UserMail + "-transactions] (ID, DATE, REPEATABILITY, CATEGORY, TYPE, VALUE, MAXVALUE) " +
-                               "values('" + guid.ToString() + "', '" + ((string)read["Date"]).Insert(10, " 00:00:00") + "', " + NullReturner(InputData[1]) + ", '" + InputData[2] + "', '" + InputData[3] + "', '" +
+                               "values('" + guid.ToString() + "', '" + ((string)read["Date"]) + "', " + NullReturner(InputData[1]) + ", '" + InputData[2] + "', '" + InputData[3] + "', '" +
                                InputData[4].Replace(',', '.') + "', " + NullReturner(InputData[5]) + ")", sqLiteConn);
                         comm.ExecuteNonQuery();
                         temp = 0;
@@ -540,7 +558,7 @@ namespace Clerk
                         if (((string)read["Date"]).Remove(0, 8).Equals(InputData[0].Remove(0, 8).Remove(2,9)))
                         {
                             comm = new SQLiteCommand("INSERT INTO [" + UserMail + "-transactions] (ID, DATE, REPEATABILITY, CATEGORY, TYPE, VALUE, MAXVALUE) " +
-                                   "values('" + guid.ToString() + "', '" + ((string)read["Date"]).Insert(10, " 00:00:00") + "', " + NullReturner(InputData[1]) + ", '" + InputData[2] + "', '" + InputData[3] + "', '" +
+                                   "values('" + guid.ToString() + "', '" + ((string)read["Date"]) + "', " + NullReturner(InputData[1]) + ", '" + InputData[2] + "', '" + InputData[3] + "', '" +
                                    InputData[4].Replace(',', '.') + "', " + NullReturner(InputData[5]) + ")", sqLiteConn);
                             comm.ExecuteNonQuery();
                             val = val + Convert.ToDouble(InputData[4].Replace('.', ','));
@@ -549,7 +567,7 @@ namespace Clerk
                     if(l == 2)
                     {
                         comm = new SQLiteCommand("INSERT INTO [" + UserMail + "-transactions] (ID, DATE, REPEATABILITY, CATEGORY, TYPE, VALUE, MAXVALUE) " +
-                                   "values('" + guid.ToString() + "', '" + ((string)read["Date"]).Insert(10, " 00:00:00") + "', " + NullReturner(InputData[1]) + ", '" + InputData[2] + "', '" + InputData[3] + "', '" +
+                                   "values('" + guid.ToString() + "', '" + ((string)read["Date"]) + "', " + NullReturner(InputData[1]) + ", '" + InputData[2] + "', '" + InputData[3] + "', '" +
                                    InputData[4].Replace(',', '.') + "', " + NullReturner(InputData[5]) + ")", sqLiteConn);
                         comm.ExecuteNonQuery();
                         val = val + Convert.ToDouble(InputData[4].Replace('.', ','));
