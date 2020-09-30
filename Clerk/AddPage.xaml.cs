@@ -19,7 +19,7 @@ using System.Collections.Specialized;
 using System.Data.Entity.ModelConfiguration.Configuration;
 using System.Data.Entity.Core;
 using System.Net.Http.Headers;
-using Xceed.Wpf.Toolkit;
+using System.Globalization;
 
 //TODO : MAKE UNIVERSAL FUNCTION FOR SQLITECOMMAND
 //TEST PERIODIC TRANSACTIONS IN FUTURE
@@ -39,8 +39,7 @@ namespace Clerk
         #region GUIAdapt
         bool IncomeChecked;
         bool MaxValueBuilt = false;
-        bool TypeInsertBuilt = false;
-        bool SaveInsideGrid = false;
+        bool InsertTypeBuilt = false;
         void CategoryChecked(object sender, EventArgs e)
         {
             IncomeChecked = ((CheckBox)sender).Name.Equals("IncomeCheck") ? true : false;
@@ -80,11 +79,11 @@ namespace Clerk
                 ExpendCheck.IsChecked = false;
             if (IncomeCheck.IsChecked == true && !income)
                 IncomeCheck.IsChecked = false;
-            if (TypeInsertBuilt)
+            if (InsertTypeBuilt)
             {
                 Stack.Children.RemoveAt(4);
                 Stack.Children.RemoveAt(3);
-                TypeInsertBuilt = false;
+                InsertTypeBuilt = false;
             }
             TypeCombo.Items.Clear();
             if (MaxValueBuilt)
@@ -93,11 +92,11 @@ namespace Clerk
 
         void TypeComboChanged(object sender, EventArgs e)
         {
-            if (TypeCombo.Text == "New type..." && TypeInsertBuilt == false)
+            if (TypeCombo.Text == "New type..." && InsertTypeBuilt == false)
             {
-                TypeInsertBuilt = true;
+                InsertTypeBuilt = true;
                 TextBox TypeInsert = new TextBox() {
-                    Name = "TypeInsert",
+                    Name = "InsertedType",
                     MinWidth = 200,
                     HorizontalAlignment = HorizontalAlignment.Center,
                     TextAlignment = TextAlignment.Center,
@@ -129,12 +128,14 @@ namespace Clerk
                         Text = "Insert max monthly value"
                     };
                     TextBox InMaxValue = new TextBox(){
+                        Name = "InsertedMaxValue",
                         Margin = new Thickness(0, 40, 60, 0),
                         HorizontalAlignment = HorizontalAlignment.Center,
                         MinWidth = 150,
                         TextAlignment = TextAlignment.Center
                     };
                     TextBox InValue = new TextBox(){
+                        Name = "InsertedValue",
                         HorizontalAlignment = HorizontalAlignment.Center,
                         Margin = new Thickness(50, 40, 0, 0),
                         MinWidth = 150,
@@ -160,11 +161,11 @@ namespace Clerk
             }
             else
             {
-                if (TypeInsertBuilt == true && TypeCombo.Text != "New type...")
+                if (InsertTypeBuilt == true && TypeCombo.Text != "New type...")
                 {
                     Stack.Children.RemoveAt(4);
                     Stack.Children.RemoveAt(3);
-                    TypeInsertBuilt = false;
+                    InsertTypeBuilt = false;
                     if(MaxValueBuilt)
                     {
                         MaxValueBuilt = false;
@@ -184,6 +185,7 @@ namespace Clerk
                 HorizontalAlignment = HorizontalAlignment.Center
             };
             TextBox InsVal = new TextBox(){
+                Name = "InsertedValue",
                 HorizontalAlignment = HorizontalAlignment.Center,
                 MinWidth = 200,
                 TextAlignment = TextAlignment.Center
@@ -213,6 +215,7 @@ namespace Clerk
                 Margin = new Thickness(0, 80, 40, 0)
             };
             ComboBox PeriodicBox = new ComboBox(){
+                Name = "PeriodicBox",
                 HorizontalAlignment = HorizontalAlignment.Center,
                 Margin = new Thickness(0, 120, 30, 0),
                 MinWidth = 150,
@@ -220,6 +223,7 @@ namespace Clerk
                 VerticalContentAlignment = VerticalAlignment.Bottom
             };
             ComboBox TimePicker = new ComboBox() {
+                Name = "TimePicker",
                 HorizontalContentAlignment = HorizontalAlignment.Center,
                 HorizontalAlignment = HorizontalAlignment.Center,
                 VerticalAlignment = VerticalAlignment.Top,
@@ -252,7 +256,8 @@ namespace Clerk
             };
             string d = DateTime.Today.ToString("yyyy.MM.dd");
             string[] t = d.Split('.');
-            Calendar Date = new Calendar(){
+            System.Windows.Controls.Calendar Date = new System.Windows.Controls.Calendar(){
+                Name = "Calendar",
                 DisplayDate = new DateTime(Convert.ToInt32(t[0]), Convert.ToInt32(t[1]), Convert.ToInt32(t[2]))
             };
             Viewbox box = new Viewbox(){
@@ -332,140 +337,89 @@ namespace Clerk
         }
         #endregion
         #region InputCheck
-        void ShowError(string warning)
-        {
+        void ShowError(string warning) {
             Window OK = new Notification(warning);
             OK.Show();
             return;
         }
 
-        string[] CheckInputData()
-        {
-            int k = 0;
-            string[] l = new string[6];
+        string[] CheckInputData() {
+            string[] InputData = new string[6];
             if (IncomeCheck.IsChecked == true)
-                l[2] = "Income";
+                InputData[2] = "Income";
             else if (ExpendCheck.IsChecked == true)
-                l[2] = "Expend";
+                InputData[2] = "Expend";
             else {
                 ShowError("Choose Category!");
                 return null;
             }
-                
-            if (TypeCombo.Text == "New type...")
-            {
-                string TypeInsertBoxText = ((TextBox)LogicalTreeHelper.FindLogicalNode(MainGrid, "TypeInsert")).Text;
-                if (TypeInsertBoxText.Length == 0) {
+
+            if (TypeCombo.Text == "New type...") {
+                InputData[3] = ((TextBox)LogicalTreeHelper.FindLogicalNode(MainGrid, "InsertedType")).Text;
+                if (InputData[3].Length == 0) {
                     ShowError("Insert new type!");
                     return null;
                 }
-                if (TypeInsertBoxText.Length > 20) {
-                    ShowError("Type name is too long!");
+                if (InputData[3].Length > 20) {
+                    ShowError("Insert shorter type!");
                     return null;
                 }
-                string[] temp = l[2].Equals("Income") ? ReadTypes(true) : ReadTypes(false);
-                for (int i = 0; i < temp.Length; i++)
-                    if (temp[i] == TypeInsertBoxText) {
-                        ShowError("This column already exists!");
+                string[] temp = InputData[2] == "Income" ? ReadTypes(true) : ReadTypes(false);
+                foreach (string x in temp)
+                    if (x == InputData[3]) {
+                        ShowError("Type already exists!");
                         return null;
                     }
-                l[3] = TypeInsertBoxText;
-
-                    if (k == 2 || (k == 3 && ExpendCheck.IsChecked == true))
-                    {
-                        bool en = false;
-                        if (val.Text.Length == 0)
-                        {
-                            ShowError("Insert value!");
-                            return null;
-                        }
-                        for (int i = 0; i < val.Text.Length; i++)
-                            if (!Char.IsDigit(val.Text[i]))
-                            {
-                                if((val.Text[i] == ',' || val.Text[i] == '.') && en == false)
-                                {
-                                    en = true;
-                                    continue;
-                                }
-                                ShowError("Value must be a number!");
-                                return null;
-                            }
-                        if(k == 2)
-                            l[4]=val.Text;
-                        if(k == 3)
-                            l[5]=val.Text;
-                    }
-                }
             }
-            else if (TypeCombo.Text != "")
-            {
-                l[3] = TypeCombo.Text;
-                foreach (var val in FindVisualChildren<TextBox>(this))
-                {
-                    if (k == 1)
-                    {
-                        bool en = false;
-                        if (val.Text.Length == 0)
-                        {
-                            ShowError("Insert value!");
-                            return null;
-                        }
-                        for (int i = 0; i < val.Text.Length; i++)
-                            if (!Char.IsDigit(val.Text[i]))
-                            {
-                                if ((val.Text[i] == ',' || val.Text[i] == '.') && en == false)
-                                {
-                                    en = true;
-                                    continue;
-                                }
-                                ShowError("Value must be a number!");
-                                return null;
-                            }
-                        l[4] = val.Text;
-                    }
-                    k++;
-                }
+            else if (TypeCombo.Text != "") {
+                InputData[3] = TypeCombo.Text;
             }
-            else
-            {
+            else {
                 ShowError("Choose type!");
                 return null;
             }
 
-            if (PeriodicCheck.IsChecked == true)
-            {
-                foreach (var val in FindVisualChildren<Calendar>(this))
-                {
-                    try
-                    {
-                        l[0] = val.SelectedDate.Value.ToString("yyyy-MM-dd HH:mm:ss");
-                    }
-                    catch (InvalidOperationException)
-                    {
-                        ShowError("Choose date!");
-                        return null;
-                    }
+            InputData[4] = ((TextBox)LogicalTreeHelper.FindLogicalNode(MainGrid, "InsertedValue")).Text;
+            if (InputData[4].Length == 0) {
+                ShowError("Insert value!");
+                return null;
+            }
+            if (!double.TryParse(InputData[4], System.Globalization.NumberStyles.Any, CultureInfo.InvariantCulture, out _)) { //discard the out parameter
+                ShowError("Value must be a number!");
+                return null;
+            }
+
+            if (ExpendCheck.IsChecked == true) {
+                InputData[5] = ((TextBox)LogicalTreeHelper.FindLogicalNode(MainGrid, "InsertedMaxValue")).Text;
+                if (InputData[5].Length == 0) {
+                    ShowError("Insert value!");
+                    return null;
                 }
-                k = 0;
-                foreach (var val in FindVisualChildren<ComboBox>(this))
-                {
-                    if (k == 1)
-                    {
-                        if (val.Text == "")
-                        {
-                            ShowError("Choose interval!");
-                            return null;
-                        }
-                        l[1] = val.Text;
-                        k++;
-                        continue;
-                    }
-                    k++;
+                if (!double.TryParse(InputData[5], System.Globalization.NumberStyles.Any, CultureInfo.InvariantCulture, out _)) {
+                    ShowError("Value must be a number!");
+                    return null;
+                }
+            }
+
+            if (PeriodicCheck.IsChecked == true) {
+                try {
+                    InputData[0] = ((System.Windows.Controls.Calendar)LogicalTreeHelper.FindLogicalNode(MainGrid, "Calendar")).SelectedDate.Value.ToString("yyyy-MM-dd");
+                }
+                catch (InvalidOperationException) {
+                    ShowError("Choose date!");
+                    return null;
+                }
+
+                InputData[0] += " " + ((ComboBox)LogicalTreeHelper.FindLogicalNode(MainGrid, "TimePicker")).Text + ":00";
+                InputData[1] = ((ComboBox)LogicalTreeHelper.FindLogicalNode(MainGrid, "PeriodicBox")).Text;
+                if (InputData[1] == "") {
+                    ShowError("Choose interval!");
+                    return null;
                 }
             }
             else
-                l[0] = DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss");
-            return l;
+                InputData[0] = DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss");
+            return InputData;
         }
         #endregion
         #region SaveData
