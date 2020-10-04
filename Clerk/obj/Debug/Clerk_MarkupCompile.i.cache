@@ -1,7 +1,7 @@
 ﻿Clerk
 
 
-exe
+winexe
 C#
 .cs
 C:\Users\Kacper\Desktop\Clerk\Clerk\obj\Debug\
@@ -16,5 +16,5 @@ C:\Users\Kacper\Desktop\Clerk\Clerk\App.xaml
 23-191271493
 AddPage.xaml;ButtonStyles.xaml;History.xaml;Home.xaml;LoginPage.xaml;Notification.xaml;ProgramWindow.xaml;LoginWindow.xaml;RegisterPage.xaml;RemovePage.xaml;
 
-False
+True
 
