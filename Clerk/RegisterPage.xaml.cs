@@ -67,8 +67,8 @@ namespace Clerk
                 }
                 else
                 {
-                    comm = new SQLiteCommand("INSERT INTO USERINFO ([MAIL], [PASSWORD], [USERNAME], [CURRENCY]) VALUES('" + Mail.Text + "', '" + 
-                        Password.Password + "', '" + Username.Text + "', '" + Currency.Text + "')", sqLiteConn);
+                    comm = new SQLiteCommand("INSERT INTO USERINFO ([MAIL], [PASSWORD], [USERNAME], [CURRENCY], [LSD]) VALUES('" + Mail.Text + "', '" + 
+                        Password.Password + "', '" + Username.Text + "', '" + Currency.Text + "', '" + DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss") + "')", sqLiteConn);
                     comm.ExecuteNonQuery();
                     NavigationService.Navigate(new LoginPage());
                     Window OK = new Notification("Registration completed");

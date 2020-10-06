@@ -24,7 +24,7 @@ namespace Clerk
             InitializeComponent();
             SQLiteConnection sqLiteConn = new SQLiteConnection(@"Data Source=database.db;Version=3;");
             sqLiteConn.Open();
-            SQLiteCommand comm = new SQLiteCommand("CREATE TABLE IF NOT EXISTS USERINFO (MAIL TEXT, PASSWORD TEXT, USERNAME TEXT, IMAGE TEXT, CURRENCY TEXT)", sqLiteConn);
+            SQLiteCommand comm = new SQLiteCommand("CREATE TABLE IF NOT EXISTS USERINFO (MAIL TEXT, PASSWORD TEXT, USERNAME TEXT, IMAGE TEXT, CURRENCY TEXT, LSD TEXT)", sqLiteConn); //LSD - latest simulation date
             comm.ExecuteNonQuery();
         }
 
